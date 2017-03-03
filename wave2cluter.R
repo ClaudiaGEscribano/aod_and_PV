@@ -11,10 +11,7 @@ library(zoo)
 wave2cluster <- function(x) {
     data <- as.data.frame(x)
 
-    ## elimino los NA del dataframe
-
     dataZoo <- zoo(t(data))
-    ## Aplico la descomposición wavelet sólo para los datos con valores disintos a na
 
     waveDecomposition <- apply(dataZoo, 2, FUN=function(x) modwt(x, n.levels=6))
     waveVariance <- lapply(waveDecomposition, FUN=function(x) wave.variance(x))
