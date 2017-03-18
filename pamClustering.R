@@ -1,7 +1,7 @@
 ## This script do the clustering with the pam algorithm.
 
-wheredata <- "/home/claudia/aerosoles_DATA/climatologia_AOD/AOD/bc/calc/"
-wherecalc <- "/home/claudia/GITHUB/aod_and_PV"
+wheredata <- "../data/"
+wherecalc <- "../aod_and_PV/"
 
 setwd(wheredata)
 load("or_features.Rdata")
