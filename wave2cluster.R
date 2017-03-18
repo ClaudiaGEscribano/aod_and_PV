@@ -21,6 +21,30 @@ wave2cluster <- function(x) {
     return(features)
 }
 
+################################################
+## Para descomponer las series temporales con wavelet es necesario centrarlas en el 0, por lo que calcularemos las anomalías del periodo y haremos la descomposición sobre eso
+
+wave2cluster <- function(x) {
+    data <- as.data.frame(x)
+    dataZoo <- zoo(t(data))
+
+    ## series de anomalías
+    M <- colMeans(dataZoo)
+    #dataZooM <- apply(dataZoo, 2, FUN=function(x) x- M[[x]])
+    a <-    lapply(seq(1:ncol(dataZoo)), FUN= function(x) dataZoo[,x]-M[[x]])
+    al <- do.call(cbind, a)
+    ## Aplico la descomposición wavelet
+
+    waveDecomposition <- apply(al, 2, FUN=function(x) modwt(x, n.levels=6)) ## el numero de niveles depende de la longitud
+    waveVariance <- lapply(waveDecomposition, FUN=function(x) wave.variance(x))
+ 
+    features <- lapply(1:ncol(dataZoo), FUN=function(x)
+                                 waveVariance[[x]]$wavevar[-7]/var(al[,x]))
+    return(features)
+}
+
+#################################################3
+
 
 ## bc
 
@@ -35,7 +59,7 @@ setwd(direc)
 
 listafeatures_bc<- wave2cluster(bc)
 
-bc_features <- do.call(rbind, listafeatures)
+bc_features <- do.call(rbind, listafeatures_bc)
 colnames(bc_features) <- c("f1","f2","f3", "f4","f5", "f6")
 save(bc_features, file='bc_features.Rdata')
 
@@ -57,7 +81,6 @@ colnames(sd_features) <- c("f1","f2","f3", "f4","f5", "f6")
 save(sd_features, file='sd_features.Rdata')
 
 ## or
-
 
 updir <- "/disco2/aerosoles_DATA/climatologia_AOD/AOD/or"
 direc <- "/disco2/aerosoles_DATA/climatologia_AOD/AOD/bc/calc"
@@ -108,4 +131,6 @@ su_features <- do.call(rbind, listafeatures_su)
 colnames(su_features) <- c("f1","f2","f3", "f4","f5", "f6")
 save(su_features, file='su_features.Rdata')
 ############################################################################
+
+
 
