@@ -1,0 +1,15 @@
+library(raster)
+library(rasterVis)
+
+load("/home/claudia/variabilidad/linea.Rdata")
+
+########################################################
+## 3. TWO
+######################################################
+
+fixedMonthly <- stack("../calc/fixed_monthlyProd_temp_20032009.grd")
+idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), "month")
+fixedMontly <- setZ(fixedMonthly, idx)
+
+## media de las series mensuales
+
