@@ -2,16 +2,59 @@
 
 library(raster)
 library(rasterVis)
+library(rgdal)
 
 ########################################################################################
 ## 1. FIXED 
 ####################################################################################
 
-load("/home/claudia/variabilidad/linea.Rdata")
+#load("/home/claudia/variabilidad/linea.Rdata")
+## the lon lat data has to be retrieved from the older files
 
-fixed30mean <- stack("/home/claudia/productividad/conTemperatura/YearlyProductivity30_fixed_temp2.gri")
+inputfile <- "/home/claudia/MeteoFrance/aod_and_PV/sim20032009/data/fixed_yearlyProd_temp_20032009.grd"
+inputfile2 <- "/home/claudia/MeteoFrance/aod_clusters/macc_regcm_2003_01_bc.nc"
 
-idx <- seq(as.Date("1983-01-01"), as.Date("2013-12-31"), "year")
+# Grab the lat and lon from the data
+lat <- raster(inputfile2, varname="lat")
+lon <- raster(inputfile2, varname="lon")
+
+# Convert to points and match the lat and lons
+plat <- rasterToPoints(lat)
+plon <- rasterToPoints(lon)
+lonlat <- cbind(plon[,3], plat[,3])
+
+## Define the LCC projection
+mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+
+## declare that projection into the latlon data
+lonlat <- SpatialPoints(lonlat, proj4string = mycrs) 
+plonlat <- spTransform(lonlat, CRSobj = mycrs)
+
+#take a look
+plonlat
+extent(plonlat)
+
+# Now we can properly set the coordinate information for the raster
+pr <- stack(inputfile)
+# Fix the projection and extent
+projection(pr) <- mycrs
+extent(pr) <- extent(plonlat) 
+# Take a look
+pr
+plot(pr)
+
+
+
+
+
+
+
+
+
+
+
+
+idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), "year")
 fixed30mean <- setZ(fixed30mean, idx)
 
 ## xyplot de la anomalía de produccion con el tiempo
