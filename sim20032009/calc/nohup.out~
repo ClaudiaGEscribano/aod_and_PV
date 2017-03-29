@@ -1,0 +1,94 @@
+Loading required package: methods
+Loading required package: sp
+
+ # ATTENTION: maps v3.0 has an updated 'world' map.        #
+ # Many country borders and names have changed since 1990. #
+ # Type '?world' or 'news(package="maps")'. See README_v3. #
+
+
+Checking rgeos availability: TRUE
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Loading required package: lattice
+Loading required package: latticeExtra
+Loading required package: RColorBrewer
+Time Zone set to UTC.
+
+
+Attaching package: ‘solaR’
+
+The following object is masked from ‘package:raster’:
+
+    getData
+
+Loading required namespace: ncdf4
+29 : 6 7 
+1 : 62 63 
+5 : 54 55 
+9 : 46 47 
+13 : 38 39 
+17 : 30 31 
+21 : 22 23 
+25 : 14 15 
+21 : 0.9229278 8.48715 
+22 : 20 21 
+5 : 0.6865072 9.727731 
+6 : 52 53 
+29 : 1.568076 8.888215 
+30 : 4 5 
+1 : 0 10.78188 
+2 : 60 61 
+17 : 0.6913896 9.056448 
+18 : 28 29 
+13 : 0.4831196 9.168298 
+14 : 36 37 
+25 : 1.113596 8.527662 
+26 : 12 13 
+9 : 0.5728291 8.761889 
+10 : 44 45 
+22 : 0.9023618 8.447933 
+23 : 18 19 
+6 : 0.6422388 9.79056 
+7 : 50 51 
+2 : 0.1257894 10.76622 
+3 : 58 59 
+30 : 1.717103 8.898769 
+31 : 2 3 
+18 : 0.7532582 8.752418 
+19 : 26 27 
+14 : 0.6468009 8.888456 
+15 : 34 35 
+26 : 1.236385 8.674043 
+27 : 10 11 
+10 : 0.4297756 8.688318 
+11 : 42 43 
+23 : 0.9247549 8.441976 
+24 : 16 17 
+7 : 0.517588 9.616172 
+8 : 48 49 
+3 : 0.3254451 9.915673 
+4 : 56 57 
+19 : 0.8863624 8.884004 
+20 : 24 25 
+15 : 0.6877647 8.952889 
+16 : 32 33 
+11 : 0.5197158 8.683523 
+12 : 40 41 
+27 : 1.378945 8.783194 
+28 : 8 9 
+31 : 2.13243 8.854732 
+32 : 1 1 
+32 : 2.245363 8.415436 
+24 : 1.00915 8.430875 
+8 : 0.4118463 8.813674 
+4 : 0.6241862 9.806403 
+20 : 0.8868126 8.482511 
+16 : 0.6571879 8.943899 
+12 : 0.495277 8.690346 
+28 : 0.9834625 8.797627 

@@ -1,0 +1,124 @@
+Loading required package: methods
+1;4205;0cLoading required package: sp
+
+ # ATTENTION: maps v3.0 has an updated 'world' map.        #
+ # Many country borders and names have changed since 1990. #
+ # Type '?world' or 'news(package="maps")'. See README_v3. #
+
+
+Checking rgeos availability: TRUE
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Loading required package: lattice
+Loading required package: latticeExtra
+Loading required package: RColorBrewer
+Time Zone set to UTC.
+
+
+Attaching package: ‘solaR’
+
+The following object is masked from ‘package:raster’:
+
+    getData
+
+Loading required namespace: ncdf4
+29 : 6 7 
+1 : 62 63 
+5 : 54 55 
+9 : 46 47 
+13 : 38 39 
+17 : 30 31 
+21 : 22 23 
+25 : 14 15 
+Loading required package: methods
+Loading required package: sp
+
+ # ATTENTION: maps v3.0 has an updated 'world' map.        #
+ # Many country borders and names have changed since 1990. #
+ # Type '?world' or 'news(package="maps")'. See README_v3. #
+
+
+Checking rgeos availability: TRUE
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Loading required package: lattice
+Loading required package: latticeExtra
+Loading required package: RColorBrewer
+Time Zone set to UTC.
+
+
+Attaching package: ‘solaR’
+
+The following object is masked from ‘package:raster’:
+
+    getData
+
+Loading required namespace: ncdf4
+1 : 62 63 
+9 : 46 47 
+13 : 38 39 
+5 : 54 55 
+17 : 30 31 
+21 : 22 23 
+29 : 6 7 
+25 : 14 15 
+17 : 980.6378 1591.87 
+18 : 28 29 
+9 : 899.4018 1472.055 
+10 : 44 45 
+13 : 904.0712 1619.503 
+14 : 36 37 
+21 : 1125.253 1500.446 
+22 : 20 21 
+1 : 811.1777 1355.196 
+2 : 60 61 
+29 : 1333.818 1689.597 
+30 : 4 5 
+5 : 848.1802 1611.498 
+6 : 52 53 
+25 : 1249.015 1579.417 
+26 : 12 13 
+10 : 864.318 1443.807 
+18 : 1041.249 1487.088 
+11 : 42 43 
+19 : 26 27 
+14 : 898.8216 1436.738 
+15 : 34 35 
+22 : 1149.551 1474.172 
+23 : 18 19 
+30 : 1381.84 1706.41 
+31 : 2 3 
+2 : 837.0575 1407.027 
+3 : 58 59 
+26 : 1291.345 1601.363 
+27 : 10 11 
+6 : 839.7877 1626.474 
+7 : 50 51 
+11 : 902.3007 1548.269 
+12 : 40 41 
+19 : 1078.496 1476.232 
+20 : 24 25 
+15 : 852.1169 1523.024 
+16 : 32 33 
+23 : 1164.884 1515.179 
+24 : 16 17 
+31 : 1393.97 1697.31 
+32 : 1 1 
+27 : 1310.958 1645.541 
+28 : 8 9 
+7 : 858.9023 1582.257 
+8 : 48 49 
+3 : 888.2215 1551.789 
+4 : 56 57 
