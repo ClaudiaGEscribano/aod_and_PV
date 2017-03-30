@@ -3,6 +3,7 @@
 library(raster)
 library(rasterVis)
 library(rgdal)
+library(zoo)
 
 ########################################################################################
 ## 1. FIXED 
@@ -11,78 +12,56 @@ library(rgdal)
 #load("/home/claudia/variabilidad/linea.Rdata")
 ## the lon lat data has to be retrieved from the older files
 
-inputfile <- "/home/claudia/MeteoFrance/aod_and_PV/sim20032009/data/fixed_yearlyProd_temp_20032009.grd"
-inputfile2 <- "/home/claudia/MeteoFrance/aod_clusters/macc_regcm_2003_01_bc.nc"
-
-# Grab the lat and lon from the data
-lat <- raster(inputfile2, varname="lat")
-lon <- raster(inputfile2, varname="lon")
-
-# Convert to points and match the lat and lons
-plat <- rasterToPoints(lat)
-plon <- rasterToPoints(lon)
-lonlat <- cbind(plon[,3], plat[,3])
-
-## Define the LCC projection
-mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
-
-## declare that projection into the latlon data
-lonlat <- SpatialPoints(lonlat, proj4string = mycrs) 
-plonlat <- spTransform(lonlat, CRSobj = mycrs)
-
-#take a look
-plonlat
-extent(plonlat)
-
-# Now we can properly set the coordinate information for the raster
-pr <- stack(inputfile)
-# Fix the projection and extent
-projection(pr) <- mycrs
-extent(pr) <- extent(plonlat) 
-# Take a look
-pr
-plot(pr)
-
-
-
-
-
-
-
-
-
-
-
+fixedYearly <- stack("/home/claudia/GITHUB/aod_and_PV/sim20032009/calc/fixed_yearlyProd_temp_20032009.grd") 
 
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), "year")
-fixed30mean <- setZ(fixed30mean, idx)
+
+fixedYearly <- setZ(fixedYearly, idx)
 
 ## xyplot de la anomalía de produccion con el tiempo
 
-mediaDomain30 <- cellStats(fixed30mean, mean)
+mediaDomainFixed <- cellStats(fixedYearly, mean)
 
-anomaliesFixed <- mediaDomain30-mean(mediaDomain30)
+anomaliesFixed <- mediaDomainFixed-mean(mediaDomainFixed)
 anomaliesFixed <- as.zoo(anomaliesFixed)
 
-pdf("anomaliesFixed.pdf")
+pdf("anomaliesFixed_c_aer.pdf")
 xyplot(anomaliesFixed)
 dev.off()
 
-anomaliesFixed_rel <- anomaliesFixed/mean(mediaDomain30)
+anomaliesFixed_rel <- anomaliesFixed/mean(mediaDomainFixed)
 anomaliesFixed_rel <- anomaliesFixed_rel*100
 anomaliesFixed_rel <- as.zoo(anomaliesFixed_rel)
 
-pdf("anomaliesFixed_rel.pdf")
+pdf("anomaliesFixed_rel_c_aer.pdf")
 xyplot(anomaliesFixed_rel)
 dev.off()
  
 ## mapas de produccion anual media
 
-fixedMean <- mean(fixed30mean)
+## boundaires data
 
-pdf("fixed_30y_mean.pdf")
-levelplot(fixedMean, margin=FALSE) + layer(sp.lines(linea))
-dev.off()
+ext <- as.vector(extent(fixedYearly))
+boundaries <- map('worldHires', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
+#boundaries$names
+IDs <- sapply(strsplit(boundaries$names, ":"), function(x) x[1])
+boundaries_sp<- map2SpatialPolygons(boundaries, IDs=IDs, proj4string=CRS(projection(fixedYearly)))
+ 
+border <- as(SpatialLines, boundaries_sp) ## no funciona
+
+#############################
+
+fixedMean <- mean(fixedYearly)
+
+pdf("fixedMean_yearly_c_aerPRUEBA3.pdf")
+levelplot(fixedMean, margin=FALSE) + layer(sp.polygons(boundaries_sp))
+dev.off() ## la proyeccion del mapa no es LCC-
+
+## pruebo a proyectar el raster a lata lon 
+
+fixedMeanlatlon <- projectRaster(fixedMean, crs=CRS("+proj=longlat +datum=WGS84"))
+
+
 
 pdf("fixed_30y_mean_contour.pdf")
 levelplot(fixedMean, margin=FALSE, contour=TRUE) + layer(sp.lines(linea))
