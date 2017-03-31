@@ -38,7 +38,7 @@ y <- init(SISS, v='y')
 #######################################################################
 
 ## Productividad anual. Dependiendo del tipo de seguidor en la función fooProd dentro de fooParallel tendré que cambiar el modeTrk de prodCGPV
-modeTrk <- 'two'
+modeTrk <- 'fixed'
 
 ## Parallel blocks configuration
 blocks <- 6
