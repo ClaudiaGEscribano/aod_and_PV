@@ -30,3 +30,7 @@ vignettes/*.pdf
 /sim20032009/calc/*.nc
 /sim20032009/calc/*.grd
 /sim20032009/calc/*.gri
+
+# figures generated
+
+/sim20032009/figs/*.pdf
