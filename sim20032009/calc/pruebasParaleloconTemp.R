@@ -10,10 +10,9 @@ source('fooProd.R')
 ## 1. DATA
 #########################################################################
 
-#load('/home/variabilidad/boundaries.Rdata')
-#load('/home/claudia/variabilidad/linea.Rdata')
+## PROJECT INFO
 
-## Datos de radiación y temperatura de 30 años
+SISS <- brick('/home/claudia/aerosoles_DATA/sim20032009/C-AER/rsds/C-AER/rsds_day_20032009.nc')
 
 #SISS <- brick('/home/claudia/clusters/SIS_cmsaf30_Wh')
 #Tas <- brick('/home/claudia/productividad/conTemperatura/temperatura005_ECAD.nc')
