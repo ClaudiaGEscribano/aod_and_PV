@@ -1,6 +1,6 @@
 ## This script put the projection info into the nc file in order to use the raster library.
 
-inputfile <- "/home/claudia/data/"
+inputfile <- "../data/C-NO/tas_no_day_20032009.nc"
 
 # Grab the lat and lon from the data
 lat <- raster(inputfile, varname="lat")
@@ -26,14 +26,16 @@ plonlat
 extent(plonlat)
 
 # Now we can properly set the coordinate information for the raster
-pr <- raster(inputfile, varname="aero")
+pr <- stack(inputfile, varname="tas")
 # Fix the projection and extent
 projection(pr) <- mycrs
 extent(pr) <- extent(plonlat) 
 # Take a look
 pr
-plot(pr)
+plot(pr) 
 
+
+writeRaster(pr, filename="tas_no_day_20032009_proj.grd", overwrite=TRUE)
 #####################################################################
 ## He representado los datos en LCC. Si quiero representar en lat/lon tengo q darle a los puntos lat lon esa proyeccion:
 

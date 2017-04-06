@@ -18,9 +18,9 @@ source('fooProd.R')
 #SISS <- brick('/home/claudia/clusters/SIS_cmsaf30_Wh')
 #Tas <- brick('/home/claudia/productividad/conTemperatura/temperatura005_ECAD.nc')
 
-SISS <- brick('rsds_day_20032009_proj.grd')
+SISS <- brick('rsds_no_day_20032009_proj.grd')
 SISS <- SISS*24
-Tas <- brick('tas_day_20032009_proj.grd')
+Tas <- brick('tas_no_day_20032009_proj.grd')
 
 ## Time index
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
@@ -80,6 +80,6 @@ out <- setValues(out, resCl)
 ##out <- setZ(out, unique(year(tt)))
 ##names(out) <- unique(year(tt))
 
-writeRaster(out, filename='two_yearlyProd_temp_20032009.grd', overwrite=TRUE)
+writeRaster(out, filename='fixedproj_no_monthlyProd_temp_20032009.grd', overwrite=TRUE)
 
 

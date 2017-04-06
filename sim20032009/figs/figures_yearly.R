@@ -49,6 +49,14 @@ boundaries_sp<- map2SpatialPolygons(boundaries, IDs=IDs, proj4string=CRS(project
  
 border <- as(SpatialLines, boundaries_sp) ## no funciona
 
+hrr.shp <- readShapePoly(boundaries_sp, verbose=TRUE, proj4string=)
+
+pdf("mapaPOli.pdf")
+plot(boundaries_sp)
+dev.off()
+
+hrr.shp.2 <- spTransform(boundaries_sp, CRS(projection(fixedYearly)))
+
 #############################
 
 fixedMean <- mean(fixedYearly)
