@@ -7,15 +7,24 @@ library(meteoForecast)
 
 today <- Sys.Date()
 testDay <- today - 7
-
+ 
 ## Retrieve raster data
 r <- getRaster('temp', day = testDay, frames = 1)
 
 ## I need projected data for the example. Not lat lon
 
-SIS <- stack("../data/SAT/remap_SISdm20032009_med44.nc", varname='SIS') 
+SIS <- stack("../data/SAT/remap_SISdm20032009_med44.nc", varname='SIS')
+lat <- raster("../data/SAT/remap_SISdm20032009_med44.nc", varname='lat')
+lon <- raster("../data/SAT/remap_SISdm20032009_med44.nc", varname='lon')
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
 projection(SIS) <- mycrs
+
+plat <- rasterToPoints(lat)
+plon <- rasterToPoints(lon)
+lonlat <- cbind(plon[,3], plat[,3])
+
+lonlat <- SpatialPoints(lonlat, proj4string = mycrs)
+extent(SIS) <- extent(lonlat)
 
 ## Here is where the graticule routine starts
 #crs.longlat <- CRS("+init=epsg:4326")
