@@ -151,6 +151,7 @@ dev.off()
 ## DIFERENCIA ANUAL ENTRE EL MODELO Y EL SATÉLITE:
 
 diferencia_caer_sat <- rsdsYm-SISym
+diferencia_sat_caer <- SISym -rsdsYm
 
 pdf("diferencia_rsds_caer_sat_yearlyMean_20032009.pdf")
 levelplot(diferencia_caer_sat, par.settings=RdBuTheme) +
@@ -167,6 +168,7 @@ levelplot(diferencia_caer_sat, par.settings=RdBuTheme) +
 dev.off()
 
 dif_rel_caer_sat <- diferencia_caer_sat/rsdsYm
+dif_rel_sat_caer <- diferencia_sat_caer/SISym
 
 pdf("dif_rel_rsds_caer_sat_yearlyMean_20032009.pdf")
 levelplot(dif_rel_caer_sat, par.settings=RdBuTheme) +
@@ -219,6 +221,7 @@ rsdsYmno <- mean(rsdsyno)
 rsdsYmno <- mask(rsdsYmno, mascara, maskvalue=0)
 
 diferencia_cno_sat <- rsdsYmno-SISym
+diferencia_sat_cno <- SISym - rsdsYmno
 
 pdf("diferencia_rsds_cno_sat_yearlyMean_20032009.pdf")
 levelplot(diferencia_cno_sat, par.settings=RdBuTheme) +
@@ -235,6 +238,7 @@ levelplot(diferencia_cno_sat, par.settings=RdBuTheme) +
 dev.off()
 
 dif_rel_cno_sat <- diferencia_cno_sat/rsdsYmno
+dif_rel_sat_cno <- diferencia_sat_cno/SISym
 
 pdf("dif_rel_rsds_cno_sat_yearlyMean_20032009.pdf")
 levelplot(dif_rel_cno_sat, par.settings=RdBuTheme) +
@@ -251,15 +255,17 @@ levelplot(dif_rel_cno_sat, par.settings=RdBuTheme) +
 dev.off()
 
 ## DIFERENCIAS RELATIVAS EN UN MISMO GRÁFICO
+
 s <- stack(diferencia_caer_sat, diferencia_cno_sat)
 names(s) <- c("CAER-SAT","CNO-SAT")
+s1 <- stack(diferencia_sat_caer, diferencia_sat_cno)
+names(s1) <- c("SAT-CAER","SAT-CNO")
 
-s[is.na(s)] <- 0
 
 ## paleta
 div.pal <- brewer.pal(n=11, 'RdBu')
 
-rng <- range(s[])
+rng <- range(s1[], na.rm=TRUE)
 nInt <- 13
 
 inc0 <- diff(rng)/nInt
@@ -268,8 +274,8 @@ inc <- abs(rng[1])/(n0+1/2)
 n1 <- ceiling((rng[2]/inc-1/2)+1)
 breaks <- seq(rng[1],by=inc,length=n0+1+n1)
 
-idxx <- findInterval(s[], breaks, rightmost.closed=TRUE)
-mids <-tapply(s[], idxx,median)
+idxx <- findInterval(s1[], breaks, rightmost.closed=TRUE)
+mids <-tapply(s1[], idxx,median)
 mx <- max(abs(breaks))
 
 break2pal <- function(x,mx,pal){
@@ -294,4 +300,352 @@ levelplot(s, par.settings=rasterTheme(region=pal)) +
                   adj = c(-0.25, -0.25),
                   cex = 0.6))
 dev.off()
- 
+
+pdf("dif_rel_sat_caer_cno_20032009.pdf")
+levelplot(s1, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.6)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.6))
+dev.off()
+
+
+## CICLO ANUAL
+
+library(zoo)
+month <- function(x) as.numeric(format(x, '%m'))
+
+SISm <- zApply(SISproy, by=month, fun='mean')
+names(SISm) <- month.abb
+SISm <- mask(SISm, mascara, maskvalue=0)
+
+## ciclo anual de C-AER
+
+rsdsm <- zApply(rsds, by=month, fun='mean')
+names(rsdsm) <- month.abb
+rsdsm <- mask(rsdsm, mascara, maskvalue=0)
+
+## ciclo anual de C-NO
+
+rsdsnom <- zApply(rsdsno, by=month, fun='mean')
+names(rsdsnom) <- month.abb
+rsdsnom <- mask(rsdsnom, mascara, maskvalue=0)
+
+## represento la diferencia entre las dos simulaciones y la diferencias entre cada una de ellas y el satélite.
+
+pdf("ciclo_anual_rsds_caer_20032009.pdf")
+levelplot(rsdsm) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+pdf("ciclo_anual_rsds_cno_20032009.pdf")
+levelplot(rsdsnom) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+pdf("ciclo_anual_rsds_sat_20032009.pdf")
+levelplot(SISm) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## Diferencias de las dos simulaciones con el sat y entre ellas:
+
+## DIF C-AER-SAT/DIF C-NO-SAT
+
+## represento la diferencia relativa entre las simulaciones y el satélite tomando de referencia el satélite:
+
+rel_dif_cicloAnual_sat_caer<- (SISm - rsdsm)/SISm
+
+## paleta
+div.pal <- brewer.pal(n=11, 'RdBu')
+
+rng <- range(rel_dif_cicloAnual_sat_caer[], na.rm=TRUE)
+nInt <- 13
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(rel_dif_cicloAnual_sat_caer[], breaks, rightmost.closed=TRUE)
+mids <-tapply(rel_dif_cicloAnual_sat_caer[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+
+
+pdf("rel_dif_cicloAnual_sat_caer.pdf")
+levelplot(rel_dif_cicloAnual_sat_caer, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## Diferencia relativa con la simulacion cno
+
+rel_dif_cicloAnual_sat_cno<- (SISm - rsdsnom)/SISm
+
+rng <- range(rel_dif_cicloAnual_sat_cno[], na.rm=TRUE)
+nInt <- 13
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(rel_dif_cicloAnual_sat_cno[], breaks, rightmost.closed=TRUE)
+mids <-tapply(rel_dif_cicloAnual_sat_cno[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+
+
+pdf("rel_dif_cicloAnual_sat_cno.pdf")
+levelplot(rel_dif_cicloAnual_sat_cno, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## los los ciclos anuales a la vez:
+
+s <- stack(rel_dif_cicloAnual_sat_caer, rel_dif_cicloAnual_sat_cno)
+
+rng <- range(s[], na.rm=TRUE)
+nInt <- 13
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(s[], breaks, rightmost.closed=TRUE)
+mids <-tapply(s[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+
+pdf("rel_dif_cicloAnual_sat_caer_cno.pdf")
+levelplot(s, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## elimino valores por debajo de -1
+
+s[s[] < -0.8] <- -0.8
+pdf("rel_dif_cicloAnual_sat_caer_cnoFiltered.pdf")
+levelplot(s, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## FILTRO TAMBIÉN LAS COMPARACIONES POR SEPARADO:
+
+rel_dif_cicloAnual_sat_cno[rel_dif_cicloAnual_sat_cno[] < -1] <- -1 
+pdf("rel_dif_cicloAnual_sat_cnoFiltered.pdf")
+levelplot(rel_dif_cicloAnual_sat_cno, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+rel_dif_cicloAnual_sat_caer[rel_dif_cicloAnual_sat_caer[] < -1] <- -1 
+pdf("rel_dif_cicloAnual_sat_caerFiltered.pdf")
+levelplot(rel_dif_cicloAnual_sat_caer, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## Voy a calcular el bias de cada una de las simulaciones en el ciclo anual:
+
+biasRsds <- SISm- rsdsm
+biasRsdsno <- SISm - rsdsnom
+
+desviacion <- biasRsds -biasRsdsno
+
+rng <- range(desviacion[], na.rm=TRUE)
+nInt <- 13
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(desviacion[], breaks, rightmost.closed=TRUE)
+mids <-tapply(desviacion[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+
+pdf("desviacion_CicloAnual_sat_caer_cno_20032009.pdf")
+levelplot(desviacion, par.settings=rasterTheme(region=pal)) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+pdf("desviacion_CicloAnual_sat_caer_cno_20032009default.pdf")
+levelplot(desviacion) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+
+desviacionrel <- (biasRsds -biasRsdsno)/SISm
+
+rng <- range(desviacionrel[], na.rm=TRUE)
+nInt <- 13
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(desviacionrel[], breaks, rightmost.closed=TRUE)
+mids <-tapply(desviacionrel[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+
+pdf("desviacionrel_CicloAnual_sat_caer_cno_20032009default.pdf")
+levelplot(desviacionrel) +
+    ## and the graticule
+    layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
