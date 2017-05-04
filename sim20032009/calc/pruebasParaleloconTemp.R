@@ -12,7 +12,7 @@ source('fooProd.R')
 
 ## PROJECT INFO
 
-SISS <- brick('/home/claudia/aerosoles_DATA/sim20032009/C-AER/rsds/C-AER/rsds_day_20032009.nc')
+#SISS <- brick('/home/claudia/aerosoles_DATA/sim20032009/C-AER/rsds/C-AER/rsds_day_20032009.nc')
 
 #SISS <- brick('/home/claudia/clusters/SIS_cmsaf30_Wh')
 #Tas <- brick('/home/claudia/productividad/conTemperatura/temperatura005_ECAD.nc')

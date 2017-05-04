@@ -15,7 +15,7 @@ lonlat <- cbind(plon[,3], plat[,3])
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
 
 ## declare that projection into the latlon data
-lonlat <- SpatialPoints(lonlat, proj4string = mycrs) 
+lonlat <- SpatialPoints(lonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
 
 ## Need the rgdal package to project it to the original coordinate system
 library("rgdal")
