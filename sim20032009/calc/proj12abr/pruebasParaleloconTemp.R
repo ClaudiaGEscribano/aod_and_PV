@@ -20,6 +20,7 @@ SISS <- brick('../../data/SAT/SISdm20032009eur.nc', varname='SIS')
 
 #SISS <- brick('rsds_no_day_20032009_proj.grd')
 SISS <- SISS*24
+
 Tas <- brick('../../data/TEMP/tg_0.44deg_20032009.nc')
 #Tas <- brick('tas_no_day_20032009_proj.grd')
 
@@ -30,6 +31,16 @@ names(Tas) <- tt
 
 SISS <- setZ(SISS, tt)
 Tas <- setZ(Tas, tt)
+
+## ## Crop objects
+## e <- extent(-5, 5, 55, 72)
+## SISS <- crop(SISS, e)
+## Tas <- crop(Tas, e)
+
+## ## Subset time period
+## SISS <- subset(SISS, 1:365)
+## Tas <- subset(Tas, 1:365)
+## tt <- tt[1:365]
 
 ## latitude values as a new raster
 ## y <- raster("../../data/SAT/SISdm20032009eur44.nc", varname='lat') Esto es para los modelos que tienen estos datos
@@ -59,17 +70,25 @@ resCl <- mclapply(iCluster,
                           vTa <- getValues(Tas, bs$row[i], bs$nrow[i])                             
                           lat <- getValues(y, bs$row[i], bs$nrows[i])
                           vals <- cbind(lat, vG0, vTa)
-                          cat(i, ':', range(lat), '\n')
+                          cat('Lat: ', i, ':', range(lat), '\n')
                           res0 <- try(apply(vals, MARGIN=1L,
                                             FUN=fooProd,
                                             modeTrk = modeTrk))
-                          cat(i, ':', range(res0), '\n')
-                          if (inherits(res0, 'try-error')) res0 <- NA
-                          else  do.call(cbind, res0)
+                          if (!inherits(res0, 'try-error')) 
+                          {
+                              res0 <- do.call(cbind, res0)
+                              cat('Res: ', i, ':', range(res0), '\n')
+                          } else
+                          {
+                              res0 <- NA
+                              cat("Res:", i, ": NA\n")
+                          }
+                          res0
                       })
                       do.call(cbind, resList)
                   },
                   mc.cores = nodes)
+
 ## The result of mclapply is a list with as many elements as nodes
 resCl <- do.call(cbind, resCl)  
 resCl <- t(resCl)
