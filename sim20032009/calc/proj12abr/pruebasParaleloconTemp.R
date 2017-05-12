@@ -51,7 +51,7 @@ y <- init(SISS, v='y')
 #######################################################################
 
 ## Productividad anual. Dependiendo del tipo de seguidor en la función fooProd dentro de fooParallel tendré que cambiar el modeTrk de prodCGPV
-modeTrk <- 'fixed'
+modeTrk <- 'two'
 
 ## Parallel blocks configuration
 blocks <- 6
@@ -101,6 +101,6 @@ out <- setValues(out, resCl)
 ##out <- setZ(out, unique(year(tt)))
 ##names(out) <- unique(year(tt))
 
-writeRaster(out, filename='fixed_sat_monthlyProd_temp_20032009.grd', overwrite=TRUE)
+writeRaster(out, filename='twoAxes_sat_monthlyProd_temp_20032009.grd', overwrite=TRUE)
 
 
