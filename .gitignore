@@ -29,6 +29,7 @@ vignettes/*.pdf
 /sim20032009/calc/points/*.R
 /sim20032009/figs/*.R
 /sim20032009/figs/*.R~
+/sim20032009/figs/*#*
 
 
 #  data files
