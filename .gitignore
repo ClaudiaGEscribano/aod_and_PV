@@ -27,6 +27,9 @@ vignettes/*.pdf
 # some scrach on R scripts
 /sim20032009/*.R
 /sim20032009/calc/points/*.R
+/sim20032009/figs/*.R
+/sim20032009/figs/*.R~
+
 
 #  data files
 /sim19792012/data/REF/*.nc
