@@ -39,7 +39,7 @@ vignettes/*.pdf
 /sim20032009/figs/*.grd
 /sim20032009/figs/*.gri
 /sim20032009/figs/*.Rdata
-
+/sim20032009/figs/*.nc
 
 # figures generated
 
