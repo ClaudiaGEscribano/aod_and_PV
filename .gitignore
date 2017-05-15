@@ -39,6 +39,10 @@ vignettes/*.pdf
 /sim20032009/calc/proj12abr/*gri
 /sim20031009/calc/regions/*.Rdata
 /sim20032009/calc/points/*.Rdata
+/sim20032009/calc/points/one/*.Rdata
+/sim20032009/calc/points/fixed/*.Rdata
+/sim20032009/calc/points/two/*.Rdata
+/sim20032009/calc/points/rsds/*.Rdata
 /sim20032009/calc/cv/*grd
 /sim20032009/calc/cv/*gri
 /sim20032009/figs/*.grd
