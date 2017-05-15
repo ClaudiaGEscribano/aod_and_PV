@@ -30,6 +30,7 @@ vignettes/*.pdf
 #  data files
 /sim19792012/data/REF/*.nc
 /sim19792012/data/TRANS/*.nc
+/sim20032009/data/*
 /sim20032009/data/C-AER/*.nc
 /sim20032009/data/NO-AER/*.nc
 /sim20032009/calc/*.nc
