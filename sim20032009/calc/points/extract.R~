@@ -1,0 +1,29 @@
+## This script is for extract the data from raster in the lat/long points that I define and use it for calc.
+
+library(raster)
+
+## Lat lon data of the BSRN estations
+
+lat <- c(51.9711, 50.2167, 44.083,42.816,52.21,46.815,30.8597,22.7903)
+lon <- c(4.9267, -5.3167, 5.059, -1.601, 14.122, 6.944, 34.7794, 5.5292)
+bsrn <- c("cabaw", "camborne", "carpentras", "cener", "lindenberg", "pyrene", "sedeboker","tamanrasset")
+
+bsrnlonlat <- data.frame(bsrn, lon, lat)
+##########################################################
+## 1. SIS satelite
+##########################################################
+
+SIS <- stack("../../data/SAT/SISdm20032009eur.grd", varname='SIS')
+
+## I extract all the points converting the lat lon into SpatialPoints.
+
+uno <- subset(SIS, 1:10)
+a <- extract(uno, SpatialPoints(cbind(lon, lat)))
+
+############################################################
+## 2. MODELO: CAER
+############################################################
+
+## En este caso tendré que ver si se comporta de la misma manera cuando la proyección es otra.
+
+## Necestio darle toda la info antes te poder extraer los valores, es decir, extraer los putnos lon lat del raster, proyectarlos a mycrs, asignarselo al raster, darle la extension correcta etc. Una vez hecho esto puedo extraer estos valores.
