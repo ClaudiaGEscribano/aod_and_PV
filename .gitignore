@@ -25,6 +25,8 @@ vignettes/*.pdf
 .httr-oauth
 
 #  data files
+/sim19792012/data/REF/*.nc
+/sim19792012/data/TRANS/*.nc
 /sim20032009/data/C-AER/*.nc
 /sim20032009/data/NO-AER/*.nc
 /sim20032009/calc/*.nc
@@ -32,6 +34,8 @@ vignettes/*.pdf
 /sim20032009/calc/*.gri
 /sim20032009/calc/proj12abr/*grd
 /sim20032009/calc/proj12abr/*gri
+/sim20031009/calc/regions/*.Rdata
+/sim20032009/calc/points/*.Rdata
 
 # figures generated
 
