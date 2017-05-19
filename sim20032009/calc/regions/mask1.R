@@ -65,16 +65,15 @@ table(signif(zonasdf))
 
 zonas1 <- signif(zonasdf)
 zonas1[zonas1[] == 3.99997] <- 1
-zonas1[zonas1[] == 4] <- 2
-zonas1[zonas1[] == 4.3] <- 3
-zonas1[zonas1[] == 4.7] <- 4
-zonas1[zonas1[] == 6] <- 7
-zonas1[zonas1[] == 5.3] <- 6
-zonas1[zonas1[] == 6.3] <- 8
-zonas1[zonas1[] == 6.6] <- 9
+zonas1[zonas1[] == 4] <- 1
+zonas1[zonas1[] == 4.3] <- 2
+zonas1[zonas1[] == 4.7] <- 3
+zonas1[zonas1[] == 5.3] <- 4
+zonas1[zonas1[] == 6.3] <- 7
+zonas1[zonas1[] == 6.6] <- 8
 
 zonasv <- as.vector(zonas1)
 zonas <- raster(zonas_land)
 zonas <- setValues(zonas, values=zonas1[,1])
 
-writeRaster(zonas, filename='zonas.grd')
+writeRaster(zonas, filename='zonas.grd', overwrite=TRUE)
