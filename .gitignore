@@ -61,6 +61,8 @@ vignettes/*.pdf
 /sim20032009/figs/*.Rdata
 /sim20032009/figs/*.nc
 
+sim20032009/calc/regions/zones_ald_MAD50.nc
+
 # generated files
 
 /sim20032009/calc/proj12abr/*~
