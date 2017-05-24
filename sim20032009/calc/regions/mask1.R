@@ -19,7 +19,7 @@ zonaslonlat <- SpatialPoints(zonaslonlat, proj4string = CRS("+proj=longlat +datu
 
 zonaslonlat
 extent(zonaslonlat)
-
+ 
 pzonaslonlat <- spTransform(zonaslonlat, CRSobj = mycrs)
                                         # Take a look
 pzonaslonlat
@@ -69,6 +69,8 @@ zonas1[zonas1[] == 4] <- 1
 zonas1[zonas1[] == 4.3] <- 2
 zonas1[zonas1[] == 4.7] <- 3
 zonas1[zonas1[] == 5.3] <- 4
+zonas1[zonas1[] == 5] <- 5
+zonas1[zonas1[] == 6] <- 6
 zonas1[zonas1[] == 6.3] <- 7
 zonas1[zonas1[] == 6.6] <- 8
 
