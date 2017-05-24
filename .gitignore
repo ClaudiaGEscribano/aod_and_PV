@@ -78,3 +78,12 @@ sim20032009/calc/regions/zones_ald_MAD50.nc
 
 /sim20032009/calc/regions/*.pdf
 /sim20032009/calc/*.pdf
+
+# data from 198029012
+
+/sim19792012/data/*.nc
+/sim19792012/data/*.grd
+/sim19792012/data/*.gri
+
+/sim19792012/calc/*.grd
+/sim19792012/calc/*.gri
