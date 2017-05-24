@@ -1,3 +1,4 @@
+
 library(raster)
 
 ##bc <- stack("../data/AOD/aod_bc_monthly20032009.grd")
