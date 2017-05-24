@@ -69,3 +69,5 @@ vignettes/*.pdf
 /sim20032009/figs/points/*.pdf
 /sim20032009/figs/CFC/*.pdf
 /sim20032009/figs/AOD/*.pdf
+
+/sim20032009/calc/regions/*.pdf
