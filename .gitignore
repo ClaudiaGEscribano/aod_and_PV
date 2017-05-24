@@ -87,3 +87,7 @@ sim20032009/calc/regions/zones_ald_MAD50.nc
 
 /sim19792012/calc/*.grd
 /sim19792012/calc/*.gri
+
+# data form JJA 2012
+
+/simJJA2012/data/*.nc
