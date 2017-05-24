@@ -46,7 +46,7 @@ vignettes/*.pdf
 /sim20032009/calc/proj12abr/*grd
 /sim20032009/calc/proj12abr/*gri
 /sim20032009/calc/malproy/*
-/sim20031009/calc/regions/*.Rdata
+/sim20032009/calc/regions/*.Rdata
 /sim20032009/calc/regions/*.grd
 /sim20032009/calc/regions/*.gri
 /sim20032009/calc/points/*.Rdata
