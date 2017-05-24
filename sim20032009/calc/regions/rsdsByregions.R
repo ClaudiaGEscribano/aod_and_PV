@@ -139,19 +139,19 @@ save(cno_rsds_cicloMean_zones, file='cno_rsds_cicloMean_zones.Rdata')
 
 Dif_caer_sat_zonas <- caer_rsds_yearlyMean_zones[,2:8]- sat_rsds_yearlyMean_zones[,2:8]
 Dif_caer_sat_zonas <- as.data.frame(Dif_caer_sat_zonas)
-Dif_caer_sat_zonas$zonas <- 1:9
+Dif_caer_sat_zonas$zonas <- 1:8
 
 Dif_cno_sat_zonas <- cno_rsds_yearlyMean_zones[,2:8]- sat_rsds_yearlyMean_zones[,2:8]
 Dif_cno_sat_zonas <- as.data.frame(Dif_cno_sat_zonas)
-Dif_cno_sat_zonas$zonas <- 1:9
+Dif_cno_sat_zonas$zonas <- 1:8
 
 save(Dif_caer_sat_zonas, file='Dif_caer_sat_zonas.Rdata')
 save(Dif_cno_sat_zonas, file='Dif_cno_sat_zonas.Rdata')
 
 Dif_rel_caer_sat_zonas <- Dif_caer_sat_zonas[,1:7]/sat_rsds_yearlyMean_zones[,2:8]
-Dif_rel_caer_sat_zonas$zonas <- 1:9
+Dif_rel_caer_sat_zonas$zonas <- 1:8
 Dif_rel_cno_sat_zonas <- Dif_cno_sat_zonas[,1:7]/sat_rsds_yearlyMean_zones[,2:8]
-Dif_rel_cno_sat_zonas$zonas <- 1:9
+Dif_rel_cno_sat_zonas$zonas <- 1:8
 
 save(Dif_rel_caer_sat_zonas, file='Dif_rel_caer_sat_zonas.Rdata')
 save(Dif_rel_cno_sat_zonas, file='Dif_rel_cno_sat_zonas.Rdata')

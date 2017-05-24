@@ -90,7 +90,7 @@ caer_fixed_yearlyMean_zones <- zonal(fixedY, zonas, fun='mean')
 save(caer_fixed_yearlyMean_zones, file='caer_fixed_yearlyMean_zones.Rdata')
 
 ## ciclo anual
-
+ 
 fixedYCiclocaer <- stack("../proj12abr/fixed_caer_monthlyProd_temp_20032009.grd")
 projection(fixedYCiclocaer) <- projection(prsdslonlat)
 extent(fixedYCiclocaer) <- extent(prsdslonlat)
@@ -139,24 +139,30 @@ fixedYCiclocno <- setZ(fixedYCiclocno,idx)
 month <- function(x) as.numeric(format(x, '%m'))
 fixedYCiclocno <-  zApply(fixedYCiclocno, by=month, 'mean')
 
-
 cno_fixed_cicloMean_zones <- zonal(fixedYCiclocno, zonas, fun='mean')
 save(cno_fixed_cicloMean_zones, file='cno_fixed_cicloMean_zones.Rdata')
 
 ##################################
 ## DIFERENCIAS ##
-
+ 
 Dif_fixed_caer_sat_zonas <- caer_fixed_yearlyMean_zones[,2:8]- sat_fixed_yearlyMean_zones[,2:8]
 Dif_fixed_caer_sat_zonas <- as.data.frame(Dif_fixed_caer_sat_zonas)
-Dif_fixed_caer_sat_zonas$zonas <- 1:9
+Dif_fixed_caer_sat_zonas$zonas <- 1:8
 
 Dif_fixed_cno_sat_zonas <- cno_fixed_yearlyMean_zones[,2:8]- sat_fixed_yearlyMean_zones[,2:8]
 Dif_fixed_cno_sat_zonas <- as.data.frame(Dif_fixed_cno_sat_zonas)
-Dif_fixed_cno_sat_zonas$zonas <- 1:9
+Dif_fixed_cno_sat_zonas$zonas <- 1:8
+
+Dif_fixed_caer_cno_zonas <- caer_fixed_yearlyMean_zones[,2:8]- cno_fixed_yearlyMean_zones[,2:8]
+Dif_fixed_caer_cno_zonas <- as.data.frame(Dif_fixed_caer_cno_zonas)
+Dif_fixed_caer_cno_zonas$zonas <- 1:8
+
 
 save(Dif_fixed_caer_sat_zonas, file='Dif_fixed_caer_sat_zonas.Rdata')
 save(Dif_fixed_cno_sat_zonas, file='Dif_fixed_cno_sat_zonas.Rdata')
- 
+save(Dif_fixed_caer_cno_zonas, file='Dif_fixed_caer_cno_zonas.Rdata')
+
+
 ## ONE ##
 
 oneY <- stack("../proj12abr/oneAxis_caer_yearlyProd_temp_20032009.grd") ## C-AER
@@ -201,7 +207,7 @@ extent(oneYCiclocaer) <- extent(prsdslonlat)
 oneYCiclocaer <- setZ(oneYCiclocaer,idx)
 
 month <- function(x) as.numeric(format(x, '%m'))
-oneYCiclosat <-  zApply(oneYCiclocaer, by=month, 'mean')
+oneYCiclocaer <-  zApply(oneYCiclocaer, by=month, 'mean')
 
 caer_one_cicloMean_zones <- zonal(oneYCiclocaer, zonas, fun='mean')
 save(caer_one_cicloMean_zones, file='caer_one_cicloMean_zones.Rdata')
@@ -215,7 +221,7 @@ cno_one_yearlyMean_zones <- zonal(oneYno, zonas, fun='mean')
 save(cno_one_yearlyMean_zones, file='cno_one_yearlyMean_zones.Rdata')
 
 ## ciclo anual
- 
+  
 oneYCiclocno <- stack("../proj12abr/oneAxis_cno_monthlyProd_temp_20032009.grd")
 
 projection(oneYCiclocno) <- projection(prsdslonlat) 
@@ -233,15 +239,20 @@ save(cno_one_cicloMean_zones, file='cno_one_cicloMean_zones.Rdata')
 
 Dif_one_caer_sat_zonas <- caer_one_yearlyMean_zones[,2:8]- sat_one_yearlyMean_zones[,2:8]
 Dif_one_caer_sat_zonas <- as.data.frame(Dif_one_caer_sat_zonas)
-Dif_one_caer_sat_zonas$zonas <- 1:9
+Dif_one_caer_sat_zonas$zonas <- 1:8
  
 Dif_one_cno_sat_zonas <- cno_one_yearlyMean_zones[,2:8]- sat_one_yearlyMean_zones[,2:8]
 Dif_one_cno_sat_zonas <- as.data.frame(Dif_one_cno_sat_zonas)
-Dif_one_cno_sat_zonas$zonas <- 1:9
- 
+Dif_one_cno_sat_zonas$zonas <- 1:8
+
+Dif_one_caer_cno_zonas <- caer_one_yearlyMean_zones[,2:8]- cno_one_yearlyMean_zones[,2:8]
+Dif_one_caer_cno_zonas <- as.data.frame(Dif_one_caer_cno_zonas)
+Dif_one_caer_cno_zonas$zonas <- 1:8
+
 save(Dif_one_caer_sat_zonas, file='Dif_one_caer_sat_zonas.Rdata')
 save(Dif_one_cno_sat_zonas, file='Dif_one_cno_sat_zonas.Rdata')
-
+save(Dif_one_caer_cno_zonas, file='Dif_one_caer_cno_zonas.Rdata')
+ 
 ## TWO ##
 
 twoY <- stack("../proj12abr/twoAxes_caer_yearlyProd_temp_20032009.grd") ## C-AER
@@ -287,7 +298,7 @@ extent(twoYCiclocaer) <- extent(prsdslonlat)
 twoYCiclocaer <- setZ(twoYCiclocaer,idx)
 
 month <- function(x) as.numeric(format(x, '%m'))
-twoYCiclosat <-  zApply(twoYCiclocaer, by=month, 'mean')
+twoYCiclocaer <-  zApply(twoYCiclocaer, by=month, 'mean')
 
 caer_two_cicloMean_zones <- zonal(twoYCiclocaer, zonas, fun='mean')
 save(caer_two_cicloMean_zones, file='caer_two_cicloMean_zones.Rdata')
@@ -319,54 +330,77 @@ save(cno_two_cicloMean_zones, file='cno_two_cicloMean_zones.Rdata')
 
 Dif_two_caer_sat_zonas <- caer_two_yearlyMean_zones[,2:8]- sat_two_yearlyMean_zones[,2:8]
 Dif_two_caer_sat_zonas <- as.data.frame(Dif_two_caer_sat_zonas)
-Dif_two_caer_sat_zonas$zonas <- 1:9
+Dif_two_caer_sat_zonas$zonas <- 1:8
  
 Dif_two_cno_sat_zonas <- cno_two_yearlyMean_zones[,2:8]- sat_two_yearlyMean_zones[,2:8]
 Dif_two_cno_sat_zonas <- as.data.frame(Dif_two_cno_sat_zonas)
-Dif_two_cno_sat_zonas$zonas <- 1:9
- 
+Dif_two_cno_sat_zonas$zonas <- 1:8
+
+Dif_two_caer_cno_zonas <- caer_two_yearlyMean_zones[,2:8]- cno_two_yearlyMean_zones[,2:8]
+Dif_two_caer_cno_zonas <- as.data.frame(Dif_two_caer_cno_zonas)
+Dif_two_caer_cno_zonas$zonas <- 1:8
+
 save(Dif_two_caer_sat_zonas, file='Dif_two_caer_sat_zonas.Rdata')
 save(Dif_two_cno_sat_zonas, file='Dif_two_cno_sat_zonas.Rdata')
+save(Dif_two_caer_cno_zonas, file='Dif_two_caer_cno_zonas.Rdata')
 
 #### Diferencias relativas por zonas ####
 
 Dif_rel_fixed_caer_sat_zonas<- (caer_fixed_yearlyMean_zones[,2:8]- sat_fixed_yearlyMean_zones[,2:8])/sat_fixed_yearlyMean_zones[,2:8]
 Dif_rel_fixed_caer_sat_zonas<- as.data.frame(Dif_rel_fixed_caer_sat_zonas)
-Dif_rel_fixed_caer_sat_zonas$zonas <- 1:9
+Dif_rel_fixed_caer_sat_zonas$zonas <- 1:8
 
 save(Dif_rel_fixed_caer_sat_zonas, file='Dif_rel_fixed_caer_sat_zonas.Rdata')
 
 Dif_rel_fixed_cno_sat_zonas<- (cno_fixed_yearlyMean_zones[,2:8]- sat_fixed_yearlyMean_zones[,2:8])/sat_fixed_yearlyMean_zones[,2:8]
 Dif_rel_fixed_cno_sat_zonas<- as.data.frame(Dif_rel_fixed_cno_sat_zonas)
-Dif_rel_fixed_cno_sat_zonas$zonas <- 1:9
+Dif_rel_fixed_cno_sat_zonas$zonas <- 1:8
 
 save(Dif_rel_fixed_cno_sat_zonas, file='Dif_rel_fixed_cno_sat_zonas.Rdata')
 
+Dif_rel_fixed_caer_cno_zonas<- (caer_fixed_yearlyMean_zones[,2:8]- cno_fixed_yearlyMean_zones[,2:8])/cno_fixed_yearlyMean_zones[,2:8]
+Dif_rel_fixed_caer_cno_zonas<- as.data.frame(Dif_rel_fixed_caer_cno_zonas)
+Dif_rel_fixed_caer_cno_zonas$zonas <- 1:8
+
+save(Dif_rel_fixed_caer_cno_zonas, file='Dif_rel_fixed_caer_cno_zonas.Rdata')
 
 ## one
 
 Dif_rel_one_caer_sat_zonas <- (caer_one_yearlyMean_zones[,2:8]- sat_one_yearlyMean_zones[,2:8])/sat_one_yearlyMean_zones[,2:8]
 Dif_rel_one_caer_sat_zonas<- as.data.frame(Dif_rel_one_caer_sat_zonas)
-Dif_rel_one_caer_sat_zonas$zonas <- 1:9
+Dif_rel_one_caer_sat_zonas$zonas <- 1:8
 
 save(Dif_rel_one_caer_sat_zonas, file='Dif_rel_one_caer_sat_zonas.Rdata')
 
 Dif_rel_one_cno_sat_zonas<- (cno_one_yearlyMean_zones[,2:8]- sat_one_yearlyMean_zones[,2:8])/sat_one_yearlyMean_zones[,2:8]
 Dif_rel_one_cno_sat_zonas<- as.data.frame(Dif_rel_one_cno_sat_zonas)
-Dif_rel_one_cno_sat_zonas$zonas <- 1:9
+Dif_rel_one_cno_sat_zonas$zonas <- 1:8
 
 save(Dif_rel_one_cno_sat_zonas, file='Dif_rel_one_cno_sat_zonas.Rdata')
+
+Dif_rel_one_caer_cno_zonas<- (caer_one_yearlyMean_zones[,2:8]- cno_one_yearlyMean_zones[,2:8])/cno_one_yearlyMean_zones[,2:8]
+Dif_rel_one_caer_cno_zonas<- as.data.frame(Dif_rel_one_caer_cno_zonas)
+Dif_rel_one_caer_cno_zonas$zonas <- 1:8
+
+save(Dif_rel_one_caer_cno_zonas, file='Dif_rel_one_sat_cno_zonas.Rdata')
 
 ## two
 
 Dif_rel_two_caer_sat_zonas <- (caer_two_yearlyMean_zones[,2:8]- sat_two_yearlyMean_zones[,2:8])/sat_two_yearlyMean_zones[,2:8]
 Dif_rel_two_caer_sat_zonas<- as.data.frame(Dif_rel_two_caer_sat_zonas)
-Dif_rel_two_caer_sat_zonas$zonas <- 1:9
+Dif_rel_two_caer_sat_zonas$zonas <- 1:8
  
 save(Dif_rel_two_caer_sat_zonas, file='Dif_rel_two_caer_sat_zonas.Rdata')
 
 Dif_rel_two_cno_sat_zonas<- (cno_two_yearlyMean_zones[,2:8]- sat_two_yearlyMean_zones[,2:8])/sat_two_yearlyMean_zones[,2:8]
 Dif_rel_two_cno_sat_zonas<- as.data.frame(Dif_rel_two_cno_sat_zonas)
-Dif_rel_two_cno_sat_zonas$zonas <- 1:9
+Dif_rel_two_cno_sat_zonas$zonas <- 1:8
 
 save(Dif_rel_two_cno_sat_zonas, file='Dif_rel_two_cno_sat_zonas.Rdata')
+
+Dif_rel_two_caer_cno_zonas<- (caer_two_yearlyMean_zones[,2:8]- cno_two_yearlyMean_zones[,2:8])/cno_two_yearlyMean_zones[,2:8]
+Dif_rel_two_caer_cno_zonas<- as.data.frame(Dif_rel_two_caer_cno_zonas)
+Dif_rel_two_caer_cno_zonas$zonas <- 1:8
+
+save(Dif_rel_two_caer_cno_zonas, file='Dif_rel_two_caer_cno_zonas.Rdata')
+
