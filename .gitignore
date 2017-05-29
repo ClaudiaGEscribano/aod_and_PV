@@ -77,7 +77,8 @@ sim20032009/calc/regions/zones_ald_MAD50.nc
 
 /sim20032009/figs/*.pdf
 /sim20032009/figs/regions/*.pdf
-/sim20032009/figs/points/*.pdf
+/sim20032009/figs/points/fixed/*.pdf
+/sim20032009/figs/points/rsds/*.pdf
 /sim20032009/figs/CFC/*.pdf
 /sim20032009/figs/AOD/*.pdf
 
