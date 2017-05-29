@@ -62,6 +62,8 @@ vignettes/*.pdf
 /sim20032009/figs/*.gri
 /sim20032009/figs/*.Rdata
 /sim20032009/figs/*.nc
+/sim20032009/figs/CFC/*.grd
+/sim20032009/figs/CFC/*gri
 
 sim20032009/calc/regions/zones_ald_MAD50.nc
 
