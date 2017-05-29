@@ -30,6 +30,8 @@ vignettes/*.pdf
 /sim20032009/figs/*.R
 /sim20032009/figs/*.R~
 /sim20032009/figs/*#*
+/sim20032009/figs/AOD/*#*
+/sim20032009/figs/AOD/*~
 /sim20032009/calc/cor/*
 
 #  data files
