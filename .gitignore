@@ -108,3 +108,9 @@ sim20032009/calc/regions/zones_ald_MAD50.nc
 # others JJA
 
 /simJJA2012/calc/*~
+
+# de manera temporal ignoro 1980-2012
+
+/sim19792012/calc/*
+/sim19792012/data/*
+/sim19792012/figs/*
