@@ -7,16 +7,19 @@ library(zoo)
 ## ## load the real data ## ##
 ##############################
 
-load("../carmonaYf.Rdata")
+load("../photocampaYf.Rdata")
+
+lat <- 41.1
+lon <- 1.19
 
 ## los datos son la energía diaria acumulada. Calculo la media mensual de eergía diaria acumulada.
 
-carmonaMon <- aggregate(Yf, by=as.yearmon, 'mean')
+photocampaMon <- aggregate(Yf, by=as.yearmon, 'mean', na.rm=TRUE)
 p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x)) # para comprobar si faltan días
-carmonaMon <- zoo(rowMeans(carmonaMon), index(carmonaMon))
+photocampaMon <- zoo(rowMeans(photocampaMon), index(photocampaMon))
 
-## extract at the point in the stack of models en sat ##
-########################################################
+## extract at the point in the stack ##
+#######################################
 
 ## 1. Hay que asignar al raster la proyección que le corresponde. Para CAER es LCC, para el satélite es long/lat.
 
@@ -43,18 +46,18 @@ extent(mascara) <- extent(pmaslonlat)
 ## CAER
 #######
 
-two <- stack("../../proj12abr/twoAxes_caer_monthlyProd_temp_20032009.grd")
+fixed <- stack("../../proj12abr/fixed_caer_monthlyProd_temp_20032009.grd")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-two <- setZ(two, idx)
+fixed <- setZ(fixed, idx)
  
 ## defino el raster del modelo bien:
 
-projection(two) <- projection(mascara)
-extent(two) <- extent(mascara)
+projection(fixed) <- projection(mascara)
+extent(fixed) <- extent(mascara)
 
 ## Hago las medias anuales de la simulación C-AER
 
-twoMeses <- zApply(two, by=as.yearmon, fun='mean')
+fixedMeses <- zApply(fixed, by=as.yearmon, fun='mean')
 
 ## EXTRAER AQUI
 
@@ -64,91 +67,72 @@ twoMeses <- zApply(two, by=as.yearmon, fun='mean')
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 
-twoMeses_caer <- extract(twoMeses, bsrnlonlat, method="simple")
+fixedMeses_caer <- extract(fixedMeses, bsrnlonlat, method="simple")
 
-carmona_twoMeses_caer <- as.zoo(t(twoMeses_caer), as.yearmon(idx))
-
+photocampa_fixedMeses_caer <- as.zoo(t(fixedMeses_caer), as.yearmon(idx))
 #######
 ## SAT
 #######
 
-twosat <- stack("../../proj12abr/twoAxes_sat_monthlyProd_temp_20032009.grd")
+fixedsat <- stack("../../proj12abr/fixed_sat_monthlyProd_temp_20032009.grd")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-twosat <- setZ(twosat, idx) 
+fixedsat <- setZ(fixedsat, idx) 
 
-twoMesessat <- zApply(twosat, by=as.yearmon, fun='mean')
+fixedMesessat <- zApply(fixedsat, by=as.yearmon, fun='mean')
 
-lat <- c(37.4)
-lon <- c(-5.66)
+photocampalonlat <- data.frame(lon, lat)
 
-carmonalonlat <- data.frame(lon, lat)
+photocampa_fixedMeses_sat <- extract(fixedMesessat, SpatialPoints(cbind(lon, lat)))
 
-carmona_twoMeses_sat <- extract(twoMesessat, SpatialPoints(cbind(lon, lat)))
-
-carmona_twoMeses_sat <- as.zoo(t(carmona_twoMeses_sat), as.yearmon(idx))
+photocampa_fixedMeses_sat <- as.zoo(t(photocampa_fixedMeses_sat), as.yearmon(idx))
 ## 2. después extraer el punto en la latitud que buscamos.
 
 ## comparacion
-  
-c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, all=FALSE)
-names(c) <- c("REAL", "SAT","CAER")
-
-## elimino el ultimo mes porque los datos son de solo 14 dias.
-c2 <- c[-18,]
  
-pdf("seriesCarmona.pdf")
-xyplot(c2, scales = list(y = list(relation = "same", alternating = FALSE)), superpose=TRUE, type='b')
-dev.off()
-
-
-pdf("seriesCarmona2.pdf")
-xyplot(c2,scales = list(x = list(at = index(c2), rot=45)), superpose=TRUE, type='b')
-dev.off()
-
 ## añadir cno
 
-twocno <- stack("../../proj12abr/twoAxes_cno_monthlyProd_temp_20032009.grd")
+fixedcno <- stack("../../proj12abr/fixed_cno_monthlyProd_temp_20032009.grd")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-twocno <- setZ(twocno, idx)
+fixedcno <- setZ(fixedcno, idx)
  
 ## defino el raster del modelo bien:
 
-projection(twocno) <- projection(mascara)
-extent(twocno) <- extent(mascara)
+projection(fixedcno) <- projection(mascara)
+extent(fixedcno) <- extent(mascara)
 
 ## Hago las medias anuales de la simulación C-AER
 
-twoMesescno <- zApply(twocno, by=as.yearmon, fun='mean')
+fixedMesescno <- zApply(fixedcno, by=as.yearmon, fun='mean')
 
 ## EXTRAER AQUI
-
+ 
 ## Para extraer los puntos del modelo necesito un Spatialdata con la lat y la lon primero.
 ## Ahora proyecto los puntos que quiero extraer a LCC
 
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 
-twoMeses_cno <- extract(twoMesescno, bsrnlonlat, method="simple")
+fixedMeses_cno <- extract(fixedMesescno, bsrnlonlat, method="simple")
 
-carmona_twoMeses_cno <- as.zoo(t(twoMeses_cno), as.yearmon(idx))
+photocampa_fixedMeses_cno <- as.zoo(t(fixedMeses_cno), as.yearmon(idx))
 
-c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, carmona_twoMeses_cno, all=FALSE)
+c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, all=FALSE)
 names(c) <- c("REAL", "SAT","CAER", "CNO")
 
 ## elimino el ultimo mes porque los datos son de solo 14 dias.
 c2 <- c[-18,]
-
-pdf("seriesCarmona3.pdf")
-xyplot(c2,scales = list(x = list(at = index(c2), rot=45)), superpose=TRUE, type='b')
+  
+pdf("seriesPhotocampa.pdf")
+xyplot(c,scales = list(x = list(at = index(c), rot=45)), superpose=TRUE, type='b')
 dev.off()
 
-######## AOD #########
-######################
+######### AOD ##########
+#######################
 
 aod <- stack("../../AOD_total_monthly20032009.grd")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
 aod <- setZ(aod, idx)
- 
+
 ## defino el raster de aod bien:
 
 projection(aod) <- projection(mascara)
@@ -156,24 +140,24 @@ aod <- crop(aod, mascara)
 extent(aod) <- extent(mascara)
 
 aod <- extract(aod, bsrnlonlat, method="simple")
-carmona_aod <- as.zoo(t(aod), as.yearmon(idx))
+photocampa_aod <- as.zoo(t(aod), as.yearmon(idx))
 
-c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, carmona_twoMeses_cno, carmona_aod, all=FALSE)
+c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, all=FALSE) 
 names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD")
 
 c2 <- c[-18,]
- 
-pdf("seriesCarmonaAOD2.pdf")
-xyplot(c2,screens=c(1,1,1,1,2),scales = list(x = list(at = index(c2), rot=45)), type='b')
+  
+pdf("seriesPhotocampaAOD.pdf")
+xyplot(c,screens=c(1,1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
 
+##  con los dias que hay por mes:
 
-## pruebas para que el panel dos sea mas pequeño o sean barras etc.
+dias <- p[,1]
 
-    panel = function(...) {
-        panel.grid(col="grey", lwd=0.1)
-        panel.abline(h=0, col='black', lwd=1)
-               panel.xyplot(...)
-       }
-)
- 
+c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, dias, all=FALSE) 
+names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD", "Days")
+
+pdf("seriesPhotocampaAOD3.pdf")
+xyplot(c,screens=c(1,1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+dev.off()
