@@ -8,6 +8,7 @@ library(zoo)
 ##############################
 
 load("../carmonaYf.Rdata")
+load("carmonaSimYf_month.Rdata")
 
 ## los datos son la energía diaria acumulada. Calculo la media mensual de eergía diaria acumulada.
 
@@ -157,7 +158,7 @@ extent(aod) <- extent(mascara)
 
 aod <- extract(aod, bsrnlonlat, method="simple")
 carmona_aod <- as.zoo(t(aod), as.yearmon(idx))
-
+ 
 c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, carmona_twoMeses_cno, carmona_aod, all=FALSE)
 names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD")
 
@@ -177,3 +178,17 @@ dev.off()
        }
 )
  
+########################################
+##comparación con una simulacion de CAER con los datos del sistema corregidos################
+
+tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
+xProd <- zoo(xProd, order.by=as.yearmon(tt))
+c <- merge(carmonaMon, xProd, carmona_twoMeses_caer, carmona_aod, all=FALSE)
+names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "AOD")
+
+
+pdf("seriesCarmonaCAER.pdf")
+xyplot(c,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+dev.off()
+
+
