@@ -8,6 +8,7 @@ library(zoo)
 ##############################
 
 load("../photocampaYf.Rdata")
+load("photocampaSimYf_month.Rdata")
 
 lat <- 41.1
 lon <- 1.19
@@ -152,7 +153,7 @@ xyplot(c,screens=c(1,1,1,1,2),scales = list(x = list(at = index(c), rot=45)), ty
 dev.off()
 
 ##  con los dias que hay por mes:
-
+ 
 dias <- p[,1]
 
 c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, dias, all=FALSE) 
@@ -160,4 +161,15 @@ names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD", "Days")
 
 pdf("seriesPhotocampaAOD3.pdf")
 xyplot(c,screens=c(1,1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+dev.off()
+
+############################################################
+## comparación con una simulacion de CAER con los datos del sistema corregidos################
+
+xProd <- as.zoo(xProd, order.by=index(photocampaMon))
+c <- merge(photocampaMon, xProd, photocampa_fixedMeses_caer, dias, photocampa_aod, all=FALSE)
+names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
+
+pdf("seriesPhotocampaCAER.pdf")
+xyplot(c,screens=c(1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
