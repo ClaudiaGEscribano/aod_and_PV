@@ -5,6 +5,7 @@ library(maptools)
 library(mapdata)
 library(rgdal)
 
+data(worldMapEnv)
 ## load the AOD monthly data.
 
 ## datos del satélite en lat/lon
@@ -63,7 +64,7 @@ labsLat <- labs[!labs$islon,]
 crs.lonlat <- CRS("+proj=longlat +datum=WGS84")
 
 ext <- as.vector(extent(projectExtent(AOD, crs.lonlat)))
-boundaries <- map('worldHires', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
+boundaries <- map('world', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
 
 IDs <- sapply(strsplit(boundaries$names, ":"), function(x) x[1])
 boundaries_sp<- map2SpatialPolygons(boundaries, IDs=IDs, proj4string=crs.lonlat)
@@ -73,7 +74,7 @@ boundaries_lcc <- spTransform(boundaries_sp, mycrs)
 border <- as(boundaries_lcc, 'SpatialLines') ## no funciona
 
 ## MEDIA ANUAL AOD
-
+ 
 load("../../calc/border_aod.Rdata")
 extent(AOD_anual) <- extent(mascara)
 
