@@ -110,6 +110,11 @@ sim20032009/calc/regions/zones_ald_MAD50.nc
 /simJJA2012/data/NO/*.nc
 /simJJA2012/calc/*.Rdata
 /simJJA2012/figs/*.Rdata
+/simJJA2012/figs/*.pdf
+
+# ignorar pruebas de figuras en JJA
+
+/simJJA2012/figs/*.R
 
 # others JJA
 
