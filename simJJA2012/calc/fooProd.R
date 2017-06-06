@@ -1,4 +1,4 @@
-fooProd <- function(data, modeTrk = 'fixed', timePeriod = 'month'){
+fooProd <- function(data, modeTrk = 'two', timePeriod = 'day'){
     ## Number of days
     n <- (length(data) - 1)/2
     lat <- data[1]
@@ -8,22 +8,21 @@ fooProd <- function(data, modeTrk = 'fixed', timePeriod = 'month'){
               order.by = tt)
     Prod <- prodGCPV(lat = lat,
                      modeRad = 'bdI',
-                     sample='3 hours',
                      dataRad= list(lat = lat, file = BD),
-                     keep.night=FALSE, modeTrk = 'fixed')
+                     keep.night=TRUE, modeTrk = 'fixed')
     switch(timePeriod,
            year = as.data.frameY(Prod)['Yf'],
-           month = as.data.frameM(Prod)['Yf']
+           month = as.data.frameM(Prod)['Yf'],
+           day= as.data.frameD(Prod)['Yf']
            )
 }
 
-## Falta definir bien el objeto zoo, por los pasos de tiempo etc. Quizás dónde empieza la serie etc.
-
-
 ## ## Example with a cell
 
-## iCell <- 10000
-## xG <- SISS[iCell]
-## xT <- Tas[iCell]
-## lat <- y[iCell]
-## xx <- c(lat, xG, xT)
+#iCell <- 10000
+#xG <- SISS[iCell]
+#xT <- Tas[iCell]
+#lat <- lat[iCell]
+#xx <- c(lat, xG, xT)
+
+#fooProd(xx, 'daily')
