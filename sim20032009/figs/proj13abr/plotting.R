@@ -5,6 +5,7 @@ library(maptools)
 library(mapdata)
 library(rgdal)
 
+data(worldMapEnv)
 ## FIXED YEARLY##
 
 ## load PVoutput files 
@@ -60,7 +61,7 @@ fixedYsat <- setZ(fixedYsat, idx)
 crs.lonlat <- CRS("+proj=longlat +datum=WGS84")
 
 ext <- as.vector(extent(projectExtent(fixedYsat, crs.lonlat)))
-boundaries <- map('worldHires', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
+boundaries <- map('world', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
 
 IDs <- sapply(strsplit(boundaries$names, ":"), function(x) x[1])
 boundaries_sp<- map2SpatialPolygons(boundaries, IDs=IDs, proj4string=crs.lonlat)
@@ -117,7 +118,7 @@ dev.off()
 
 ## Diferencia relativa entre las dos simulaciones:
 
-Dif_fixedY <- (fixedYmean-fixedYnomean)/fixedYmean
+Dif_fixedY <- (fixedYmean-fixedYnomean)/fixedYnomean
 
 ## paleta de diferencias relativas:
 
@@ -199,7 +200,7 @@ dev.off()
 
 ## Diferencia relativa entre las dos simulaciones:
 
-Dif_oneY <- (oneYmean-oneYnomean)/oneYmean
+Dif_oneY <- (oneYmean-oneYnomean)/oneYnomean
 
 pdf("Dif_rel_caer_cno_one_yearlyProd_20032009.pdf")
 levelplot(Dif_oneY)+ layer(sp.lines(border))+
@@ -256,7 +257,7 @@ dev.off()
 
 ## Diferencia relativa entre las dos simulaciones:
 
-Dif_twoY <- (twoYmean-twoYnomean)/twoYmean
+Dif_twoY <- (twoYmean-twoYnomean)/twoYnomean
 
 pdf("Dif_rel_caer_cno_two_yearlyProd_20032009.pdf")
 levelplot(Dif_twoY)+ layer(sp.lines(border))+
@@ -277,8 +278,8 @@ s <-  stack(Dif_fixedY, Dif_oneY, Dif_twoY)
 names(s) <- c("FIXED.CAER.CNO", "ONE.CAER.CNO", "TWO.CAER.CNO")
 
 pdf("Dif_rel_caer_cno_all_yearlyProd_20032009.pdf")
-levelplot(s)+ layer(sp.lines(border))+
-    layer(sp.lines(grat)) +
+levelplot(s, scales=list(draw=FALSE))+ layer(sp.lines(border, lwd=0.5))+
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -664,14 +665,14 @@ SONfixedcno <- mean(SONfixedcno)
 
 ## DJF
 
-DJF_fixed_rel_dif <- (DJFfixedcaer-DJFfixedcno)/DJFfixedcaer
+DJF_fixed_rel_dif <- (DJFfixedcaer-DJFfixedcno)/DJFfixedcno
 
 ## paleta
 
 div.pal <- brewer.pal(n=11, 'RdBu')
 
 rng <- range(DJF_fixed_rel_dif[], na.rm=TRUE)
-nInt <- 13
+nInt <- 9
 
 inc0 <- diff(rng)/nInt
 n0 <- floor(abs(rng[1])/inc0)
@@ -707,7 +708,7 @@ dev.off()
 
 ## JJA
 
-JJA_fixed_rel_dif <- (JJAfixedcaer-JJAfixedcno)/JJAfixedcaer
+JJA_fixed_rel_dif <- (JJAfixedcaer-JJAfixedcno)/JJAfixedcno
 
 pdf("dif_rel_JJA_fixed_caer_cno_20032009.pdf")
 levelplot(JJA_fixed_rel_dif) + layer(sp.lines(border))+
@@ -725,7 +726,7 @@ dev.off()
 
 ## MAM
 
-MAM_fixed_rel_dif <- (MAMfixedcaer-MAMfixedcno)/MAMfixedcaer
+MAM_fixed_rel_dif <- (MAMfixedcaer-MAMfixedcno)/MAMfixedcno
 
 pdf("dif_rel_MAM_fixed_caer_cno_20032009.pdf")
 levelplot(MAM_fixed_rel_dif) + layer(sp.lines(border))+
@@ -743,12 +744,33 @@ dev.off()
 
 ## SON
 
-SON_fixed_rel_dif <- (SONfixedcaer-SONfixedcno)/SONfixedcaer
+SON_fixed_rel_dif <- (SONfixedcaer-SONfixedcno)/SONfixedcno
 
 pdf("dif_rel_SON_fixed_caer_cno_20032009.pdf")
 levelplot(SON_fixed_rel_dif) + layer(sp.lines(border))+
     ## and the graticule
     layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## figura con las 4 estaciones para fixed.
+
+s <- stack(DJF_fixed_rel_dif, MAM_fixed_rel_dif, JJA_fixed_rel_dif, SON_fixed_rel_dif)
+names(s) <- c("DFJ", "MAM", "JJA","SON")
+
+my.at <- seq(0, -0.35, by=-0.05)
+
+pdf("dif_rel_SEASON_fixed_caer_cno_20032009.pdf")
+levelplot(s, layout=c(2,2), at=my.at, scales=list(draw=FALSE)) + layer(sp.lines(border, lwd=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -861,9 +883,30 @@ noviembre <- Meses[[11]]
 SONonecno <- stack(septiembre, octubre, diciembre)
 SONonecno <- mean(SONonecno)
 
+## ONE axis todas las estaciones
+
+s <- stack(DJF_one_rel_dif, MAM_one_rel_dif, JJA_one_rel_dif, SON_one_rel_dif)
+names(s) <- c("DJF", "MAM", "JJA","SON")
+
+my.at <- seq(0, -0.35, by=-0.05)
+
+pdf("dif_rel_SEASON_one_caer_cno_20032009.pdf")
+levelplot(s, layout=c(2,2), at=my.at, scales=list(draw=FALSE)) + layer(sp.lines(border, lwd=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
 ## DJF
 
-DJF_one_rel_dif <- (DJFonecaer-DJFonecno)/DJFonecaer
+DJF_one_rel_dif <- (DJFonecaer-DJFonecno)/DJFonecno
 
 pdf("dif_rel_DJF_one_caer_cno_20032009.pdf")
 levelplot(DJF_one_rel_dif) + layer(sp.lines(border))+
@@ -881,7 +924,7 @@ dev.off()
 
 ## JJA
 
-JJA_one_rel_dif <- (JJAonecaer-JJAonecno)/JJAonecaer
+JJA_one_rel_dif <- (JJAonecaer-JJAonecno)/JJAonecno
 
 pdf("dif_rel_JJA_one_caer_cno_20032009.pdf")
 levelplot(JJA_one_rel_dif) + layer(sp.lines(border))+
@@ -899,7 +942,7 @@ dev.off()
 
 ## MAM
 
-MAM_one_rel_dif <- (MAMonecaer-MAMonecno)/MAMonecaer
+MAM_one_rel_dif <- (MAMonecaer-MAMonecno)/MAMonecno
 
 pdf("dif_rel_MAM_one_caer_cno_20032009.pdf")
 levelplot(MAM_one_rel_dif) + layer(sp.lines(border))+
@@ -917,7 +960,7 @@ dev.off()
 
 ## SON
 
-SON_one_rel_dif <- (SONonecaer-SONonecno)/SONonecaer
+SON_one_rel_dif <- (SONonecaer-SONonecno)/SONonecno
 
 pdf("dif_rel_SON_one_caer_cno_20032009.pdf")
 levelplot(SON_one_rel_dif) + layer(sp.lines(border))+
@@ -1039,7 +1082,7 @@ SONtwocno <- mean(SONtwocno)
 
 ## DJF
 
-DJF_two_rel_dif <- (DJFtwocaer-DJFtwocno)/DJFtwocaer
+DJF_two_rel_dif <- (DJFtwocaer-DJFtwocno)/DJFtwocno
  
 pdf("dif_rel_DJF_two_caer_cno_20032009.pdf")
 levelplot(DJF_two_rel_dif) + layer(sp.lines(border))+
@@ -1057,7 +1100,7 @@ dev.off()
 
 ## JJA
 
-JJA_two_rel_dif <- (JJAtwocaer-JJAtwocno)/JJAtwocaer
+JJA_two_rel_dif <- (JJAtwocaer-JJAtwocno)/JJAtwocno
  
 pdf("dif_rel_JJA_two_caer_cno_20032009.pdf")
 levelplot(JJA_two_rel_dif) + layer(sp.lines(border))+
@@ -1075,7 +1118,7 @@ dev.off()
 
 ## MAM
 
-MAM_two_rel_dif <- (MAMtwocaer-MAMtwocno)/MAMtwocaer
+MAM_two_rel_dif <- (MAMtwocaer-MAMtwocno)/MAMtwocno
  
 pdf("dif_rel_MAM_two_caer_cno_20032009.pdf")
 levelplot(MAM_two_rel_dif) + layer(sp.lines(border))+
@@ -1093,12 +1136,33 @@ dev.off()
 
 ## SON
 
-SON_two_rel_dif <- (SONtwocaer-SONtwocno)/SONtwocaer
+SON_two_rel_dif <- (SONtwocaer-SONtwocno)/SONtwocno
  
 pdf("dif_rel_SON_two_caer_cno_20032009.pdf")
 levelplot(SON_two_rel_dif) + layer(sp.lines(border))+
     ## and the graticule
     layer(sp.lines(grat)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## TWO todas las estaciones juntas
+
+s <- stack(DJF_two_rel_dif, MAM_two_rel_dif, JJA_two_rel_dif, SON_two_rel_dif)
+names(s) <- c("DJF", "MAM", "JJA","SON")
+
+my.at <- seq(0, -0.35, by=-0.05)
+
+pdf("dif_rel_SEASON_two_caer_cno_20032009.pdf")
+levelplot(s, layout=c(2,2), at=my.at, scales=list(draw=FALSE)) + layer(sp.lines(border, lwd=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
