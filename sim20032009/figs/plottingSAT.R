@@ -5,6 +5,7 @@ library(maptools)
 library(mapdata)
 library(rgdal)
 
+data(worldMapEnv)
 ## load the cmsaf daily data.
 
 ## datos del satélite en lat/lon
@@ -53,7 +54,6 @@ SISproy <- setZ(SISproy, idx)
 ## hago la media por años para representar.
 
 year <- function(x) as.numeric(format(x, '%y'))
-
 SISy <- zApply(SISproy, by=year, fun='mean')
 
 ## Media del satelite:
@@ -89,7 +89,7 @@ labsLat <- labs[!labs$islon,]
 crs.lonlat <- CRS("+proj=longlat +datum=WGS84")
 
 ext <- as.vector(extent(projectExtent(SISym, crs.lonlat)))
-boundaries <- map('worldHires', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
+boundaries <- map('world', fill=TRUE, exact=FALSE, xlim=ext[1:2], ylim= ext[3:4], plot=FALSE)
 
 IDs <- sapply(strsplit(boundaries$names, ":"), function(x) x[1])
 boundaries_sp<- map2SpatialPolygons(boundaries, IDs=IDs, proj4string=crs.lonlat)
@@ -167,11 +167,36 @@ dev.off()
 diferencia_caer_sat <- rsdsYm-SISym
 diferencia_sat_caer <- SISym -rsdsYm
 
+## paleta
+div.pal <- brewer.pal(n=11, 'RdBu')
+
+rng <- range(diferencia_caer_sat[], na.rm=TRUE)
+nInt <- 9
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(diferencia_caer_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(diferencia_caer_sat[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[3] <- "#FFFFFF"
+
 pdf("diferencia_rsds_caer_sat_yearlyMean_20032009.pdf")
-levelplot(diferencia_caer_sat, par.settings=RdBuTheme) +
-    layer(sp.lines(border))+
+levelplot(diferencia_caer_sat, margin=FALSE, scales=list(draw=FALSE),at=breaks, par.settings=rasterTheme(region=pal)) +
+    layer(sp.lines(border, lwd=0.5))+
     ## and the graticule
-    layer(sp.lines(grat)) +
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -184,12 +209,40 @@ dev.off()
 
 dif_rel_caer_sat <- diferencia_caer_sat/rsdsYm
 dif_rel_sat_caer <- diferencia_sat_caer/SISym
+dif_rel_caer_sat <- diferencia_caer_sat/SISym
+
+## paleta:
+
+div.pal <- brewer.pal(n=11, 'RdBu')
+
+rng <- range(dif_rel_caer_sat[], na.rm=TRUE)
+nInt <- 9
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(dif_rel_caer_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(dif_rel_caer_sat[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[3] <- "#FFFFFF"
+
 
 pdf("dif_rel_rsds_caer_sat_yearlyMean_20032009.pdf")
-levelplot(dif_rel_caer_sat, par.settings=RdBuTheme) +
-    layer(sp.lines(border))+
+levelplot(dif_rel_caer_sat, at=breaks, margin=FALSE, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) +
+    layer(sp.lines(border, lwd=0.5))+
     ## and the graticule
-    layer(sp.lines(grat)) +
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -239,11 +292,37 @@ rsdsYmno <- mask(rsdsYmno, mascara, maskvalue=0)
 diferencia_cno_sat <- rsdsYmno-SISym
 diferencia_sat_cno <- SISym - rsdsYmno
 
+## paleta:
+
+div.pal <- brewer.pal(n=11, 'RdBu')
+
+rng <- range(diferencia_cno_sat[], na.rm=TRUE)
+nInt <- 9
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(diferencia_cno_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(diferencia_cno_sat[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[3] <- "#FFFFFF"
+
 pdf("diferencia_rsds_cno_sat_yearlyMean_20032009.pdf")
-levelplot(diferencia_cno_sat, par.settings=RdBuTheme) +
-    layer(sp.lines(border))
+levelplot(diferencia_cno_sat, at=breaks,margin=FALSE, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) +
+    layer(sp.lines(border, lwd=0.5))
     ## and the graticule
-    + layer(sp.lines(grat)) +
+    + layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -256,9 +335,36 @@ dev.off()
 
 dif_rel_cno_sat <- diferencia_cno_sat/rsdsYmno
 dif_rel_sat_cno <- diferencia_sat_cno/SISym
+dif_rel_cno_sat <- diferencia_cno_sat/SISym
+
+## paleta:
+
+div.pal <- brewer.pal(n=11, 'RdBu')
+
+rng <- range(dif_rel_cno_sat[], na.rm=TRUE)
+nInt <- 9
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(dif_rel_cno_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(dif_rel_cno_sat[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[3] <- "#FFFFFF"
 
 pdf("dif_rel_rsds_cno_sat_yearlyMean_20032009.pdf")
-levelplot(dif_rel_cno_sat, par.settings=RdBuTheme) +
+levelplot(dif_rel_cno_sat, par.settings=rasterTheme(region=pal), margin=FALSE, scales=list(draw=FALSE)) +
     layer(sp.lines(border))+
     ## and the graticule
     layer(sp.lines(grat)) +
@@ -276,15 +382,15 @@ dev.off()
 
 s <- stack(diferencia_caer_sat, diferencia_cno_sat)
 names(s) <- c("CAER-SAT","CNO-SAT")
-s1 <- stack(dif_rel_sat_caer, dif_rel_sat_cno)
-names(s1) <- c("SAT-CAER","SAT-CNO")
+s1 <- stack(dif_rel_caer_sat, dif_rel_cno_sat)
+names(s1) <- c("CAER-SAT","CNO-SAT")
 
 
 ## paleta
 div.pal <- brewer.pal(n=11, 'RdBu')
 
 rng <- range(s1[], na.rm=TRUE)
-nInt <- 13
+nInt <- 9
 
 inc0 <- diff(rng)/nInt
 n0 <- floor(abs(rng[1])/inc0)
@@ -303,13 +409,13 @@ break2pal <- function(x,mx,pal){
 
 divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
+pal[2] <- "#FFFFFF"
 
-
-pdf("dif_rel_sat_caer_cno_20032009.pdf")
-levelplot(s1, par.settings=rasterTheme(region=pal)) +
-    layer(sp.lines(border))+
+pdf("dif_rel_caer_sat_cno_20032009.pdf")
+levelplot(s1, at=breaks, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) +
+    layer(sp.lines(border, lwd=0.5))+
     ## and the graticule
-    layer(sp.lines(grat)) +
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -908,17 +1014,21 @@ SONCNO <- mean(SONCNO)
 
 JJAdif_sat_caer <- JJA-JJACAER
 JJAdif_rel_sat_caer <- JJAdif_sat_caer/JJA
+JJAdif_caer_sat <- JJACAER-JJA
+JJAdif_rel_caer_sat <- JJAdif_caer_sat/JJA
 
 ## JJA SAT/C-NO
 
 JJAdif_sat_cno <- JJA-JJACNO
 JJAdif_rel_sat_cno <- JJAdif_sat_cno/JJA
+JJAdif_cno_sat <- JJACNO - JJA
+JJAdif_rel_cno_sat<- JJAdif_cno_sat/JJA
 
 ## Paleta sat/cno
 
 div.pal <- brewer.pal(n=11, 'RdBu')
-rng <- range(JJAdif_rel_sat_cno[], na.rm=TRUE)
-nInt <- 13
+rng <- range(JJAdif_rel_cno_sat[], na.rm=TRUE)
+nInt <- 9
 
 inc0 <- diff(rng)/nInt
 n0 <- floor(abs(rng[1])/inc0)
@@ -926,8 +1036,8 @@ inc <- abs(rng[1])/(n0+1/2)
 n1 <- ceiling((rng[2]/inc-1/2)+1)
 breaks <- seq(rng[1],by=inc,length=n0+1+n1)
 
-idxx <- findInterval(JJAdif_rel_sat_cno[], breaks, rightmost.closed=TRUE)
-mids <-tapply(JJAdif_rel_sat_cno[], idxx,median)
+idxx <- findInterval(JJAdif_rel_cno_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(JJAdif_rel_cno_sat[], idxx,median)
 mx <- max(abs(breaks))
 
 break2pal <- function(x,mx,pal){
@@ -937,11 +1047,94 @@ break2pal <- function(x,mx,pal){
 
 divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
+pal[2] <- "#FFFFFF"
 
-pdf("JJAdif_rel_sat_cno.pdf")
-levelplot(JJAdif_rel_sat_cno, par.settings=rasterTheme(region=pal)) + layer(sp.lines(border))+
+pdf("JJAdif_rel_caer_sat.pdf")
+levelplot(JJAdif_rel_caer_sat, margin=FALSE, scales=list(draw=FALSE), at=breaks,,par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, lwd=0.5))+
     ## and the graticule
-    layer(sp.lines(grat)) +
+    layer(sp.lines(grat, lwd=0.5)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+div.pal <- brewer.pal(n=11, 'RdBu')
+rng <- range(JJAdif_rel_cno_sat[], na.rm=TRUE)
+nInt <- 9
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(JJAdif_rel_cno_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(JJAdif_rel_cno_sat[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[2] <- "#FFFFFF"
+
+
+
+pdf("JJAdif_rel_cno_sat.pdf")
+levelplot(JJAdif_rel_cno_sat, at=breaks, margin=FALSE, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, led=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## los dos modelos JJA juntos
+
+s <- stack(JJAdif_rel_caer_sat, JJAdif_rel_cno_sat)
+names(s) <- c("CAER.SAT", "CNO.SAT")
+    
+## paleta
+
+div.pal <- brewer.pal(n=11, 'RdBu')
+rng <- range(s[], na.rm=TRUE)
+nInt <- 9
+
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(s[], breaks, rightmost.closed=TRUE)
+mids <-tapply(s[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[2] <- "#FFFFFF"
+
+pdf("JJAdif_rel_caer_cno_sat.pdf")
+levelplot(s, at=breaks, layout=c(2,1),margin=FALSE, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, led=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -957,12 +1150,14 @@ dev.off()
 
 DJFdif_sat_caer <- DJF-DJFCAER
 DJFdif_rel_sat_caer <- DJFdif_sat_caer/DJF
+DJFdif_caer_sat<- DJFCAER-DJF
+DJFdif_rel_caer_sat <- DJFdif_caer_sat/DJF
 
 ## Paleta
-
+ 
 div.pal <- brewer.pal(n=11, 'RdBu')
-rng <- range(DJFdif_rel_sat_caer[], na.rm=TRUE)
-nInt <- 13
+rng <- range(DJFdif_rel_caer_sat[], na.rm=TRUE)
+nInt <- 9
 
 inc0 <- diff(rng)/nInt
 n0 <- floor(abs(rng[1])/inc0)
@@ -970,8 +1165,8 @@ inc <- abs(rng[1])/(n0+1/2)
 n1 <- ceiling((rng[2]/inc-1/2)+1)
 breaks <- seq(rng[1],by=inc,length=n0+1+n1)
 
-idxx <- findInterval(DJFdif_rel_sat_caer[], breaks, rightmost.closed=TRUE)
-mids <-tapply(DJFdif_rel_sat_caer[], idxx,median)
+idxx <- findInterval(DJFdif_rel_caer_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(DJFdif_rel_caer_sat[], idxx,median)
 mx <- max(abs(breaks))
 
 break2pal <- function(x,mx,pal){
@@ -981,11 +1176,12 @@ break2pal <- function(x,mx,pal){
 
 divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
-
-pdf("DJFdif_rel_sat_caer.pdf")
-levelplot(DJFdif_rel_sat_caer, par.settings=rasterTheme(region=pal)) + layer(sp.lines(border))+
+pal[2] <- "#FFFFFF"
+    
+pdf("DJFdif_rel_caer_sat.pdf")
+levelplot(DJFdif_rel_caer_sat, margin=FALSE, scales=list(draw=FALSE), at=breaks, par.settings=rasterTheme(region=pal)) + layer(sp.lines(border,lwd=0.5))+
     ## and the graticule
-    layer(sp.lines(grat)) +
+    layer(sp.lines(grat,lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -1000,12 +1196,14 @@ dev.off()
 
 DJFdif_sat_cno <- DJF-DJFCNO
 DJFdif_rel_sat_cno <- DJFdif_sat_cno/DJF
+DJFdif_cno_sat<- DJFCNO-DJF
+DJFdif_rel_cno_sat<- DJFdif_cno_sat/DJF
 
 ## Paleta
 
 div.pal <- brewer.pal(n=11, 'RdBu')
-rng <- range(DJFdif_rel_sat_cno[], na.rm=TRUE)
-nInt <- 13
+rng <- range(DJFdif_rel_cno_sat[], na.rm=TRUE)
+nInt <- 9
  
 inc0 <- diff(rng)/nInt
 n0 <- floor(abs(rng[1])/inc0)
@@ -1013,8 +1211,52 @@ inc <- abs(rng[1])/(n0+1/2)
 n1 <- ceiling((rng[2]/inc-1/2)+1)
 breaks <- seq(rng[1],by=inc,length=n0+1+n1)
 
-idxx <- findInterval(DJFdif_rel_sat_cno[], breaks, rightmost.closed=TRUE)
-mids <-tapply(DJFdif_rel_sat_cno[], idxx,median)
+idxx <- findInterval(DJFdif_rel_cno_sat[], breaks, rightmost.closed=TRUE)
+mids <-tapply(DJFdif_rel_cno_sat[], idxx,median)
+mx <- max(abs(breaks))
+
+break2pal <- function(x,mx,pal){
+    y <- 1/2*(x/mx+1)
+    rgb(pal(y), maxColorValue=255)
+}
+
+divRamp <-colorRamp(div.pal)
+pal <- break2pal(mids, mx, divRamp)
+pal[1] <- "#FFFFFF"
+
+pdf("DJFdif_rel_cno_sat.pdf")
+levelplot(DJFdif_rel_cno_sat, margin=FALSE, at=breaks, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, lwd=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.3)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.3))
+dev.off()
+
+## meses de invierno juntos:
+
+s <- stack(DJFdif_rel_caer_sat, DJFdif_rel_cno_sat)
+names(s) <- c("CAER.SAT", "CNO.SAT")
+
+## Paleta
+
+div.pal <- brewer.pal(n=11, 'RdBu')
+rng <- range(s[], na.rm=TRUE)
+nInt <- 9
+ 
+inc0 <- diff(rng)/nInt
+n0 <- floor(abs(rng[1])/inc0)
+inc <- abs(rng[1])/(n0+1/2)
+n1 <- ceiling((rng[2]/inc-1/2)+1)
+breaks <- seq(rng[1],by=inc,length=n0+1+n1)
+
+idxx <- findInterval(s[], breaks, rightmost.closed=TRUE)
+mids <-tapply(s[], idxx,median)
 mx <- max(abs(breaks))
 
 break2pal <- function(x,mx,pal){
@@ -1025,10 +1267,12 @@ break2pal <- function(x,mx,pal){
 divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
 
-pdf("DJFdif_rel_sat_cno.pdf")
-levelplot(DJFdif_rel_sat_cno, par.settings=rasterTheme(region=pal)) + layer(sp.lines(border))+
+pal[2] <- "#FFFFFF"
+
+pdf("DJFdif_rel_caer_cno_sat.pdf")
+levelplot(s, layout=c(2,1),margin=FALSE, at=breaks, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, lwd=0.5))+
     ## and the graticule
-    layer(sp.lines(grat)) +
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
