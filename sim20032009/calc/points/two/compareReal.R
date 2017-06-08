@@ -10,7 +10,7 @@ library(zoo)
 load("../carmonaYf.Rdata")
 load("carmonaSimYf_month.Rdata")
 
-## los datos son la energía diaria acumulada. Calculo la media mensual de eergía diaria acumulada.
+## los datos son la energía diaria acumulada. Calculo la media mensual de energía diaria acumulada.
 
 carmonaMon <- aggregate(Yf, by=as.yearmon, 'mean')
 p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x)) # para comprobar si faltan días
@@ -183,12 +183,23 @@ dev.off()
 
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
 xProd <- zoo(xProd, order.by=as.yearmon(tt))
-c <- merge(carmonaMon, xProd, carmona_twoMeses_caer, carmona_aod, all=FALSE)
-names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "AOD")
-
+c <- merge(carmonaMon, xProd, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
+names(c) <- c("REAL", "CAER_SIS", "CNO_GEN", "SAT", "AOD")
 
 pdf("seriesCarmonaCAER.pdf")
 xyplot(c,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
 
+## creo un objeto que sea la diferencia
+
+b <-c[,2:4]-c[,1]
+b$AOD <- c[,5]
+z <- c("DIF REAL DATA", "AOD")
+
+pdf("seriesDifCarmona.pdf")
+xyplot(b,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE, strip=strip.custom(factor.levels=z),
+       panel=function(...) {
+          panel.xyplot(...)
+          panel.abline(h=c(0, 0.5, 1.0, 1.5), col='grey')})
+dev.off()
 
