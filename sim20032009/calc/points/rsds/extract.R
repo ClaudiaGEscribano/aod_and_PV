@@ -7,7 +7,7 @@ library(raster)
 lat <- c(51.9711, 50.2167, 44.083,42.816,52.21,46.815,30.8597,22.7903)
 lon <- c(4.9267, -5.3167, 5.059, -1.601, 14.122, 6.944, 34.7794, 5.5292)
 bsrn <- c("cabaw", "camborne", "carpentras", "cener", "lindenberg", "pyrene", "sedeboker","tamanrasset")
-
+ 
 bsrnlonlat <- data.frame(bsrn, lon, lat)
 
 ## MASCARA ##
