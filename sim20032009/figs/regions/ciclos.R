@@ -76,11 +76,11 @@ cnoF$data <- "cno"
 
 fixed <- rbind(satF,caerF,cnoF)
 
-fixed$zonas <- rep(c("AFRW","AFRE", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),36)
+fixed$zonas <- rep(c("1.AFRW","2.AFRE", "3.MIDE", "5.EURS", "6.EURW","7.EURC","4.EURE","8.BISL"),36)
 names(fixed) <- c("zonas", "month", "fixed", "data")
 
 pdf("ciclosAnualsFIXED.pdf")
-xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type='l', lwd=2, scales=list(rot=45),auto.key=TRUE,
+xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type='l', lwd=2, scales=list(rot=45),ylab='fixed [kWh/kWp]', auto.key=TRUE,
     panel = function(...) {
         panel.grid(col="grey", lwd=0.1)
         panel.abline(h=0, col='black', lwd=1)
@@ -111,11 +111,11 @@ cnoO$data <- "cno"
 
 one <- rbind(satO,caerO,cnoO)
 
-one$zonas <- rep(c("AFRW","AFRE", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),36)
+one$zonas <- rep(c("AFRW","AFRE", "MIDE", "EURW", "EURS","NEUR","EURE","BISL"),36)
 names(one) <- c("zonas", "month", "one", "data")
 
 pdf("ciclosAnualsONE.pdf")
-xyplot(one~month|as.factor(zonas), group=data, data=one, type='l', lwd=2, scales=list(rot=45),auto.key=TRUE,
+xyplot(one~month|as.factor(zonas), group=data, data=one, type='l', ylab='one [kWh/kWp]',lwd=2, scales=list(rot=45),auto.key=TRUE,
     panel = function(...) {
         panel.grid(col="grey", lwd=0.1)
         panel.abline(h=0, col='black', lwd=1)
@@ -145,11 +145,11 @@ cnoT$data <- "cno"
 
 two <- rbind(satT,caerT,cnoT)
 
-two$zonas <- rep(c("AFRW","AFRE", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),36)
+two$zonas <- rep(c("AFRW","AFRE", "MIDE", "EURS", "EURW","EURC","EURE","BISL"),36)
 names(two) <- c("zonas", "month", "two", "data")
 
 pdf("ciclosAnualsTWO.pdf")
-xyplot(two~month|as.factor(zonas), group=data, data=two, type='l', lwd=2, scales=list(rot=45),auto.key=TRUE,
+xyplot(two~month|as.factor(zonas), group=data, data=two, type='l', ylab='two [kWh/kWp]',lwd=2, scales=list(rot=45),auto.key=TRUE,
     panel = function(...) {
         panel.grid(col="grey", lwd=0.1)
         panel.abline(h=0, col='black', lwd=1)
@@ -169,7 +169,7 @@ caerT$value <- (caerT$value - cnoT$value)/cnoT$value
 
 modelsDif <- rbind(caerF, caerO, caerT)
 
-modelsDif$zonas <- rep(c("AFRW","AFRE", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),36)
+modelsDif$zonas <- rep(c("AFRW","AFRE", "MIDE", "EURW", "EURS","EURC","EURE","BISL"),36)
 names(modelsDif) <- c("zonas", "month", "rel.dif", "model", "type")
 
 pdf("ciclosAnualsMODELS.pdf")

@@ -64,7 +64,7 @@ dftable$id <-c(1,2,3,4,5,6,7,8,9)
 table(signif(zonasdf))
 
 zonas1 <- signif(zonasdf)
-zonas1[zonas1[] == 3.99997] <- 1
+zonas1[zonas1[] == 3.99997] <- 4 
 zonas1[zonas1[] == 4] <- 1
 zonas1[zonas1[] == 4.3] <- 2
 zonas1[zonas1[] == 4.7] <- 3
@@ -79,3 +79,13 @@ zonas <- raster(zonas_land)
 zonas <- setValues(zonas, values=zonas1[,1])
 
 writeRaster(zonas, filename='zonas.grd', overwrite=TRUE)
+
+##represento el mapa de zonas
+
+my.at <- seq(1:8)
+myPal <- brewer.pal(9, 'Set1')
+myTheme <- rasterTheme(region = myPal)
+ 
+pdf("zonasmejoradas2.pdf", height=4, width=5)
+levelplot(zonas,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme)
+dev.off()

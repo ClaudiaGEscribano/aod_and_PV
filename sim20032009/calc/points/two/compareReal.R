@@ -62,6 +62,9 @@ twoMeses <- zApply(two, by=as.yearmon, fun='mean')
 ## Para extraer los puntos del modelo necesito un Spatialdata con la lat y la lon primero.
 ## Ahora proyecto los puntos que quiero extraer a LCC
 
+lat <- c(37.4)
+lon <- c(-5.66)
+
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 
@@ -184,7 +187,9 @@ dev.off()
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
 xProd <- zoo(xProd, order.by=as.yearmon(tt))
 c <- merge(carmonaMon, xProd, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
-names(c) <- c("REAL", "CAER_SIS", "CNO_GEN", "SAT", "AOD")
+names(c) <- c("REAL", "CAER", "CNO", "SAT", "AOD")
+
+c <- c[-18]
 
 pdf("seriesCarmonaCAER.pdf")
 xyplot(c,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
@@ -194,7 +199,7 @@ dev.off()
 
 b <-c[,2:4]-c[,1]
 b$AOD <- c[,5]
-z <- c("DIF REAL DATA", "AOD")
+z <- c("DIF REAL DATA [kWh/kWp]", "AOD")
 
 pdf("seriesDifCarmona.pdf")
 xyplot(b,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE, strip=strip.custom(factor.levels=z),
@@ -203,3 +208,45 @@ xyplot(b,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type
           panel.abline(h=c(0, 0.5, 1.0, 1.5), col='grey')})
 dev.off()
 
+
+###
+
+caer <-as.data.frame( b[,1])
+cno <- as.data.frame(b[,2])
+sat <- as.data.frame(b[,3])
+AOD <- as.data.frame(b[,4])
+
+caer$model <- "caer"
+names(caer) <- c("value", "model")
+cno$model <- "cno"
+names(cno) <- c("value", "model")
+sat$model <- "sat"
+names(sat) <- c("value", "model")
+
+data <- rbind(caer, cno, sat)
+data$AOD <- rep(b[,4], 3)
+
+myTheme <- custom.theme.2(pch = 20, cex = 1.3)
+
+pdf("scatterALL2.pdf")
+xyplot(value~AOD, group=model, data=data, par.settings =custom.theme(pch=20, cex=1.3), auto.key=TRUE,
+       panel=function(...){
+       panel.xyplot(...)
+       panel.abline(h=c(0.5, 0, 1.0), col='grey')})
+dev.off()
+ 
+
+sat <- as.vector(carmona_twoMeses_sat)
+cno <- as.vector(twoMeses_cno)
+aod <- as.vector(aod)
+xProd <- as.vector(xProd)
+carmona <- as.vector(carmonaMon)
+
+matrix <- cbind( cno, sat, aod, xProd, carmona)
+df <- as.data.frame(matrix)
+names(df) <- c( "cno", "sat", "aod", "xProd")
+ 
+dfm <- df[,4]-df[1:3]
+##
+
+x <- data.frame(b)

@@ -183,7 +183,7 @@ names(dif_two) <- c("zonas", "year", "rel.dif", "var")
 
 rel_dif <- rbind(dif_fixed, dif_one, dif_two)
 
-rel_dif$zonas <- rep(c("AFRE","AFRW", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),21)
+rel_dif$zonas <- rep(c("1.AFRW","2.AFRE", "3.MEDE", "6.EURW", "5.EURS","7.EURC","4.EURE","8.BISL"),21)
  
 pdf("rel_dif_types_caer_cno.pdf") 
 xyplot(rel.dif~year|as.factor(zonas), group=var, data=rel_dif, type='l', lwd=2, scales=list(rot=45), auto.key=TRUE,
