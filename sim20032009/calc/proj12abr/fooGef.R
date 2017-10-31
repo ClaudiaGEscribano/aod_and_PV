@@ -1,5 +1,5 @@
 
-fooGef <- function(data, modeTrk='fixed'){
+fooGef <- function(data, modeTrk='fixed', timePeriod='year'){
     n <- (length(data) - 1)/2
     lat <- data[1]
     g0 <- data[2:(n + 1)]
@@ -11,7 +11,7 @@ fooGef <- function(data, modeTrk='fixed'){
                    dataRad=list(lat=lat, file=BD),
                    modeTrk=modeTrk)
     switch(timePeriod,
-           year = as.data.frameY(Prod)['Yf'],
-           month = as.data.frameM(Prod)['Yf']
+           year = as.data.frameY(gef)['Gefd'],
+           month = as.data.frameM(gef)['Gefd']
            )
 }
