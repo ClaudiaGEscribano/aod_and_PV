@@ -59,6 +59,8 @@ vignettes/*.pdf
 /sim20032009/calc/points/rsds/*.Rdata
 /sim20032009/calc/cv/*grd
 /sim20032009/calc/cv/*gri
+/sim20032009/calc/aod/*grd
+/sim20032009/calc/aod/*gri
 /sim20032009/figs/*.grd
 /sim20032009/figs/*.gri
 /sim20032009/figs/*.Rdata
