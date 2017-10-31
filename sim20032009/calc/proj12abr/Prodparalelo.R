@@ -5,7 +5,7 @@ library(parallel)
 library(solaR)
  
 ## Calculat productivity using parallel function
-source('fooProd.R')
+source('fooGef.R')
 
 ##########################################################################
 ## 1. DATA
@@ -35,7 +35,7 @@ names(Tas) <- tt
 SISS <- setZ(SISS, tt)
 Tas <- setZ(Tas, tt)
 
-Tas[!is.na(Tas)] <- 25
+##Tas[!is.na(Tas)] <- 25
 ## ## Crop objects
 ## e <- extent(-5, 5, 55, 72)
 ## SISS <- crop(SISS, e)
@@ -76,7 +76,7 @@ resCl <- mclapply(iCluster,
                           vals <- cbind(lat, vG0, vTa)
                           cat('Lat: ', i, ':', range(lat), '\n')
                           res0 <- try(apply(vals, MARGIN=1L,
-                                            FUN=fooProd,
+                                            FUN=fooGef,
                                             modeTrk = modeTrk))
                           if (!inherits(res0, 'try-error')) 
                           {
@@ -105,6 +105,6 @@ out <- setValues(out, resCl)
 ##out <- setZ(out, unique(year(tt)))
 ##names(out) <- unique(year(tt))
 
-writeRaster(out, filename='fixed_sat_yearlyProd_20032009.grd', overwrite=TRUE)
+writeRaster(out, filename='Gef_fixed_sat_yearlyProd_20032009.grd', overwrite=TRUE)
 
 
