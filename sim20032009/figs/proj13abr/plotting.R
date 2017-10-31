@@ -10,9 +10,9 @@ data(worldMapEnv)
 
 ## load PVoutput files 
 
-fixedY <- stack("../../calc/proj12abr/fixed_caer_yearlyProd_temp_20032009.grd") ## C-AER
-fixedYno <- stack("../../calc/proj12abr/fixed_cno_yearlyProd_temp_20032009.grd")
-fixedYsat <- stack("../../calc/proj12abr/fixed_sat_yearlyProd_temp_20032009.grd")
+fixedY <- stack("../../calc/proj12abr/output/fixed_caer_yearlyProd_temp_20032009.grd") ## C-AER
+fixedYno <- stack("../../calc/proj12abr/output/fixed_cno_yearlyProd_temp_20032009.grd")
+fixedYsat <- stack("../../calc/proj12abr/output/fixed_sat_yearlyProd_temp_20032009.grd")
 
 ## mask
 
@@ -101,11 +101,14 @@ fixedYsatmean <- mean(fixedYsat)
 fixedYsatmean <- mask(fixedYsatmean, mask=mascara, maskvalue=0)
 
 s <- stack(fixedYmean, fixedYnomean, fixedYsatmean)
-names(s) <- c("FIXED.CAER", "FIXED.CNO", "FIXED.SAT")
- 
-pdf("caer_cno_sat_fixed_yearlyProd_20032009.pdf")
-levelplot(s, scales=list(draw=FALSE))+ layer(sp.lines(border, lwd=0.5))+
-    layer(sp.lines(grat)) +
+names(s) <- c("CAER", "CNO", "SAT")
+
+s2 <- stack(fixedYmean-fixedYsatmean, fixedYnomean-fixedYsatmean)
+names(s2) <- c("AER-SAT", "NOAER-SAT")
+
+pdf("caer_SAT_cno_SAT_fixed_yearlyProd_20032009.pdf")
+levelplot(s2, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'),layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -119,9 +122,9 @@ dev.off()
 ## Diferencia relativa entre las dos simulaciones:
 
 Dif_fixedY <- (fixedYmean-fixedYnomean)/fixedYnomean
-
+Dif_fixedY2 <- (fixedYmean-fixedYnomean)
 ## paleta de diferencias relativas:
-
+ 
 div.pal <- brewer.pal(n=11, 'RdBu')
 
 rng <- range(Dif_fixedY[], na.rm=TRUE)
@@ -145,9 +148,19 @@ break2pal <- function(x,mx,pal){
 divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
 
-pdf("Dif_rel_caer_cno_fixed_yearlyProd_20032009.pdf")
-levelplot(Dif_fixedY)+ layer(sp.lines(border))+
-    layer(sp.lines(grat)) +
+my.at <- seq(-400, -25, 25)
+ThreeModelsDif <- stack(Dif_fixedY2, Dif_oneY2, Dif_twoY2)
+names(ThreeModelsDif) <- c("FIXED", "ONE", "TWO")
+
+ThreeModelsRelative <- stack(Dif_fixedY, Dif_oneY, Dif_twoY)
+names(ThreeModelsRelative) <- c("FIXED", "ONE", "TWO")
+
+ThreeModelsDif[ThreeModelsDif <= -400] <- -400
+my.at <- seq(-0.20, 0, 0.02)
+
+pdf("DifRel_caer_cno_all_yearlyProd_20032009.pdf")
+levelplot(ThreeModelsRelative,at=my.at,layout=c(3,1), colorkey=list(space='bottom'), scales=list(draw=FALSE), margin=FALSE)+ layer(sp.lines(border, lwd=0.5))+
+    layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -160,9 +173,9 @@ dev.off()
 
 ## ONE AXIS YEARLY ##
 
-oneY <- stack("../../calc/proj12abr/oneAxis_caer_yearlyProd_temp_20032009.grd") ## C-AER
-oneYno <- stack("../../calc/proj12abr/oneAxis_cno_yearlyProd_temp_20032009.grd")
-oneYsat <- stack("../../calc/proj12abr/oneAxis_sat_yearlyProd_temp_20032009.grd")
+oneY <- stack("../../calc/proj12abr/output/oneAxis_caer_yearlyProd_temp_20032009.grd") ## C-AER
+oneYno <- stack("../../calc/proj12abr/output/oneAxis_cno_yearlyProd_temp_20032009.grd")
+oneYsat <- stack("../../calc/proj12abr/output/oneAxis_sat_yearlyProd_temp_20032009.grd")
 
 projection(oneY) <- projection(mascara)
 extent(oneY) <- extent(mascara)
@@ -201,6 +214,7 @@ dev.off()
 ## Diferencia relativa entre las dos simulaciones:
 
 Dif_oneY <- (oneYmean-oneYnomean)/oneYnomean
+Dif_oneY2 <- (oneYmean-oneYnomean)
 
 pdf("Dif_rel_caer_cno_one_yearlyProd_20032009.pdf")
 levelplot(Dif_oneY)+ layer(sp.lines(border))+
@@ -217,9 +231,9 @@ dev.off()
 
 ## TWO AXES YEARLY ##
 
-twoY <- stack("../../calc/proj12abr/twoAxes_caer_yearlyProd_temp_20032009.grd") ## C-AER
-twoYno <- stack("../../calc/proj12abr/twoAxes_cno_yearlyProd_temp_20032009.grd")
-twoYsat <- stack("../../calc/proj12abr/twoAxes_sat_yearlyProd_temp_20032009.grd")
+twoY <- stack("../../calc/proj12abr/output/twoAxes_caer_yearlyProd_temp_20032009.grd") ## C-AER
+twoYno <- stack("../../calc/proj12abr/output/twoAxes_cno_yearlyProd_temp_20032009.grd")
+twoYsat <- stack("../../calc/proj12abr/output/twoAxes_sat_yearlyProd_temp_20032009.grd")
 
 projection(twoY) <- projection(mascara)
 extent(twoY) <- extent(mascara)
@@ -258,6 +272,7 @@ dev.off()
 ## Diferencia relativa entre las dos simulaciones:
 
 Dif_twoY <- (twoYmean-twoYnomean)/twoYnomean
+Dif_twoY2 <- (twoYmean-twoYnomean)
 
 pdf("Dif_rel_caer_cno_two_yearlyProd_20032009.pdf")
 levelplot(Dif_twoY)+ layer(sp.lines(border))+

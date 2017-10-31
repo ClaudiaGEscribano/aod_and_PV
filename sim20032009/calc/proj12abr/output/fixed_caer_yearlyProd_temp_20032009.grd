@@ -1,0 +1,25 @@
+[general]
+creator=R package 'raster'
+created=2017-04-12 14:37:04
+[georeference]
+nrows=63
+ncols=101
+xmin=0.5
+ymin=0.5
+xmax=101.5
+ymax=63.5
+projection=NA
+[data]
+datatype=FLT8S
+byteorder=little
+nbands=7
+bandorder=BIL
+minvalue=735.555818094985:738.814695818219:700.0009210789:737.887392719733:714.717411839337:687.376533487992:703.497459178399
+maxvalue=1821.79919347:1836.21502874706:1831.50207038935:1831.53162906244:1850.39239070472:1828.04143274385:1832.11275390863
+nodatavalue=-1.7e+308
+[legend]
+legendtype=
+values=
+color=
+[description]
+layername=X2003:X2004:X2005:X2006:X2007:X2008:X2009

@@ -10,11 +10,11 @@ data(worldMapEnv)
 
 ## datos del satélite en lat/lon
 
-AOD <- stack("../../calc/AOD_total_monthly20032009.grd")
+AOD <- stack("../../calc/aod/AOD_total_monthly20032009.grd")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
 AOD <- setZ(AOD, idx)
-AOD_ciclo <- stack("../../calc/AOD_total_ciclo20032009.grd")
-AOD_anual <- stack("../../calc/AOD_total_yearly20032009.grd")
+AOD_ciclo <- stack("../../calc/aod/AOD_total_ciclo20032009.grd")
+AOD_anual <- stack("../../calc/aod/AOD_total_yearly20032009.grd")
 
 ## raster de la máscara tierra/mar. La proyección de esta máscara es LCC.
 
@@ -40,8 +40,8 @@ extent(mascara) <- extent(pmaslonlat)
 
 library(graticule)
 
-lons <- seq(-20, 50, by=10)
-lats <- seq(25, 55, by=5)
+lons <- seq(-30, 70, by=10)
+lats <- seq(20, 80, by=5)
 
 ## optionally, specify the extents of the meridians and parallels
 ## here we push them out a little on each side
@@ -122,9 +122,36 @@ dev.off()
 
 ## ESTACIONAL AOD
 
+DJF <- stack("../../calc/aod/DJF_aod.grd")
+MAM <- stack("../../calc/aod/MAM_aod.grd")
+JJA <- stack("../../calc/aod/JJA_aod.grd")
+SON <- stack("../../calc/aod/SON_aod.grd")
 
+seasonal <- stack(DJF, MAM, JJA, SON)
+names(seasonal) <- c("DJF", "MAM", "JJA", "SON")
+  
+my.at <- seq(0, 0.6, 0.05)
+div.pal <- brewer.pal(n=11, 'RdYlGn')
+pal <- rev(div.pal)
+pal[1] <- "#FFFFFF"
 
+seasonal[seasonal[]>=0.6] <-0.6
 
+pdf("seasonalAOD.pdf")
+
+levelplot(seasonal, at=my.at,scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, lwd=0.2))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.2)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.6)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.6))
+dev.off()
+ 
 
 
 
