@@ -109,7 +109,7 @@ fooProd <- function(data, modeTrk = 'two', timePeriod = 'month'){
                      modeRad = 'bd',
                      dataRad= list(lat = lat, file = BD),
                      modeTrk = modeTrk,
-                     beta=12,
+                     #beta=12,
                      module=list(Vocn=57.6, Iscn=4.7, Vmn=46.08, Imn=4.49, Ncs=96, Ncp=1),
                      generator=list(Nms=11,Nmp=12),
                      inverter=list(Ki=c(0.01,0.025,0.05),Pinv=25000,Vmin=405)

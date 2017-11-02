@@ -13,11 +13,20 @@ load("photocampaSimYf_month.Rdata")
 lat <- 41.1
 lon <- 1.19
 
-## los datos son la energía diaria acumulada. Calculo la media mensual de eergía diaria acumulada.
+## los datos son la energía diaria acumulada. Calculo la media mensual de energía diaria acumulada.
+
+## creo que el problema está en los tres inversores, porque estaba haciendo la media en lugar de sumar la salida de los 3.
+
+Yf[is.na(Yf)] <- 0 ## Los NA los sustituyo por O. Cuando los 3 inversores den 0, hay que eliminar ese día para hacer la media.
+Yf2 <- apply(Yf, 1, 'sum') ## sumo los 3 inversores para quitar los días que los tres dan 0
+Yf <- Yf[which(Yf2 != 0),] ## Yf tiene solo los días en los que alguno de los 3 inversores es distinto de cero
+
 
 photocampaMon <- aggregate(Yf, by=as.yearmon, 'mean', na.rm=TRUE)
 p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x)) # para comprobar si faltan días
-photocampaMon <- zoo(rowMeans(photocampaMon), index(photocampaMon))
+## photocampaMon <- zoo(rowMeans(photocampaMon, na.rm=TRUE), index(photocampaMon))
+## photocampaMon <- photocampaMon*3  
+photocampaMon <- zoo(apply(photocampaMon, 1, 'sum', na.rm=TRUE), index(photocampaMon))
 
 ## extract at the point in the stack ##
 #######################################

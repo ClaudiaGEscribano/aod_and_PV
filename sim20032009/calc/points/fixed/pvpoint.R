@@ -1,8 +1,10 @@
 ## compute pv production in a point of the domain in order to compare with real data
 
-## LOAD RSDS DATA FROM MODELS ##
+###############################################
+## 1. LOAD RSDS DATA FROM MODELS ##
+###############################################
 
-## Tengo que proyectar los datos del modelo para poder extraer el punto
+## 1.1 Tengo que proyectar los datos del modelo para poder extraer el punto
 
 ## CAER ##
 
@@ -10,7 +12,7 @@ SISS <- brick('../../../data/C-AER/rsds_day_20032009.nc', varname='rsds')
 SISS*24
 Tas <- brick('../../../data/C-AER/tas_day_20032009.nc')
  
- ## time steps
+## time steps
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 names(SISS) <- tt
 names(Tas) <- tt
@@ -41,7 +43,7 @@ extent(SISS) <- extent(lonlat)
 projection(Tas) <- projection(lonlat)
 extent(Tas) <- extent(lonlat)
 
-## EXTRACT THE DATA AT THE POINT ##
+## 1.2 EXTRACT THE DATA AT THE POINT ##
 
 ## latitud de la planta:
 
@@ -56,7 +58,7 @@ sis <- extract(SISS, bsrnlonlat, method="simple")
 tas <- extract(Tas, bsrnlonlat, method="simple")
 
 #######################################
-## FUNCIÓN CALCULO DE PRODUCTIVIDAD
+## 2. FUNCIÓN CALCULO DE PRODUCTIVIDAD
 #######################################
 
 ## data from the installation ##
@@ -82,7 +84,8 @@ Ncp <- 1
 
 Pg <- Nmp * Nms * (Vmn * Imn)/1000 ## kwp
 
-fooProd <- function(data, modeTrk = 'fixed', timePeriod = 'month'){
+
+fooProd <- function(data, modeTrk = 'fixed', timePeriod=''){
     ## Number of days
     n <- (length(data) - 1)/2
     lat <- data[1]
@@ -95,6 +98,7 @@ fooProd <- function(data, modeTrk = 'fixed', timePeriod = 'month'){
                      dataRad= list(lat = lat, file = BD),
                      modeTrk = modeTrk,
                      beta=12,
+                     alfa=0,
                      module=list(Vocn=21.6, Iscn=6.54, Vmn=17.4, Imn=6.09, Ncs=36, Ncp=1),
                      generator=list(Nms=35,Nmp=27),
                      inverter=list(Pinv=100000,Vmin=450)
@@ -110,4 +114,4 @@ tas <- as.vector(tas)
 xx <- c(lat, sis, tas)
 
 xProd <- fooProd(xx) timePeriod = 'year') 
-xProd <- fooProd(xx) timePeriod = 'month')
+xProd <- fooProd(xx, timePeriod = 'month')

@@ -15,8 +15,8 @@ source('fooGef.R')
 
 ## Cambio de ficheros dependiendo de si la radiación la obtengo de la simulación CAER, CNO o del satélite
 
-##SISS <- brick('../../data/C-AER/rsds_day_20032009.nc')
-SISS <- brick('../../data/SAT/SISdm20032009eur.nc', varname='SIS') 
+SISS <- brick('../../data/C-AER/rsds_day_20032009.nc')
+##SISS <- brick('../../data/SAT/SISdm20032009eur.nc', varname='SIS') 
 
 #SISS <- brick('/home/claudia/clusters/SIS_cmsaf30_Wh')
 #Tas <- brick('/home/claudia/productividad/conTemperatura/temperatura005_ECAD.nc')
@@ -24,8 +24,8 @@ SISS <- brick('../../data/SAT/SISdm20032009eur.nc', varname='SIS')
 ##SISS <- brick('rsds_no_day_20032009_proj.grd')
 SISS <- SISS*24
 
-Tas <- brick('../../data/TEMP/tg_0.44deg_20032009.nc')
-#Tas <- brick('tas_no_day_20032009_proj.grd')
+#Tas <- brick('../../data/TEMP/tg_0.44deg_20032009.nc')
+Tas <- brick('../../data/C-AER/tas_day_20032009.nc')
 
 ## Time index
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
@@ -47,8 +47,8 @@ Tas <- setZ(Tas, tt)
 ## tt <- tt[1:365]
 
 ## latitude values as a new raster
-## y <- raster("../../data/SAT/SISdm20032009eur44.nc", varname='lat') Esto es para los modelos que tienen estos datos
-y <- init(SISS, v='y')
+y <- raster("../../data/C-AER/rsds_day_20032009.nc", varname='lat') #Esto es para los modelos que tienen estos datos
+##y <- init(SISS, v='y')
 
 ########################################################################
 ## 2. ProdCGPV Yearly productivity
@@ -105,6 +105,6 @@ out <- setValues(out, resCl)
 ##out <- setZ(out, unique(year(tt)))
 ##names(out) <- unique(year(tt))
 
-writeRaster(out, filename='Gef_fixed_sat_yearlyProd_20032009.grd', overwrite=TRUE)
+writeRaster(out, filename='Gef_fixed_caer_yearlyProd_20032009.grd', overwrite=TRUE)
 
 
