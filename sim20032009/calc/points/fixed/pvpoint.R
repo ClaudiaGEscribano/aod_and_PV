@@ -113,5 +113,5 @@ sis <- as.vector(sis)
 tas <- as.vector(tas)
 xx <- c(lat, sis, tas)
 
-xProd <- fooProd(xx) timePeriod = 'year') 
+xProd <- fooProd(xx, timePeriod = 'year') 
 xProd <- fooProd(xx, timePeriod = 'month')
