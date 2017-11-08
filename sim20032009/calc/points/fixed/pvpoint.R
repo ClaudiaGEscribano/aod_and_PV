@@ -20,12 +20,37 @@ names(Tas) <- tt
 SISS <- setZ(SISS, tt)
 Tas <- setZ(Tas, tt)
 
+##______________________________________
+
 ## PROJECT THE 2 RASTERS ##
 
+## mascara ##
+
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+
+mascara <- raster("../../../figs/masque_terre_mer.nc", varname='zon_new')
+maslat <- raster("../../../figs/masque_terre_mer.nc", varname='lat')
+maslon <- raster("../../../figs/masque_terre_mer.nc", varname='lon')
+
+pmaslat <- rasterToPoints(maslat)
+pmaslon <- rasterToPoints(maslon)
+maslonlat <- cbind(pmaslon[,3], pmaslat[,3])
+
+# Specify the lonlat as spatial points with projection as long/lat
+maslonlat <- SpatialPoints(maslonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
+pmaslonlat <- spTransform(maslonlat, CRSobj = mycrs)
+
+projection(mascara) <- mycrs
+extent(mascara) <- extent(pmaslonlat)
+##
+
+projection(SISS) <- projection(mascara)
+extent(SISS) <- extent(mascara)
+
+
 latsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lat')
 lonsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lon')
-
+ 
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
 
 plat <- rasterToPoints(latsis)
@@ -33,6 +58,7 @@ plon <- rasterToPoints(lonsis)
 lonlat <- cbind(plon[,3], plat[,3])
 
 # Specify the lonlat as spatial points with projection as long/lat
+
 lonlat <- SpatialPoints(lonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
 lonlat <- spTransform(lonlat, CRSobj = mycrs) 
 projection(SISS) <- projection(lonlat)
@@ -40,8 +66,33 @@ extent(SISS) <- extent(lonlat)
 
 ## proyecto la temperatura
 
-projection(Tas) <- projection(lonlat)
-extent(Tas) <- extent(lonlat)
+projection(Tas) <- projection(mascara)
+extent(Tas) <- extent(mascara)
+
+##_________________________________________________________
+                                        
+##PROJECT THE 2 RASTERS ##
+
+#mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+#latsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lat')
+#lonsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lon')
+
+#mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+
+#plat <- rasterToPoints(latsis)
+#plon <- rasterToPoints(lonsis)
+#lonlat <- cbind(plon[,3], plat[,3])
+
+# Specify the lonlat as spatial points with projection as long/lat
+#lonlat <- SpatialPoints(lonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
+#lonlat <- spTransform(lonlat, CRSobj = mycrs) 
+#projection(SISS) <- projection(lonlat)
+#extent(SISS) <- extent(lonlat)
+
+## proyecto la temperatura
+
+#projection(Tas) <- projection(lonlat)
+#extent(Tas) <- extent(lonlat)
 
 ## 1.2 EXTRACT THE DATA AT THE POINT ##
 

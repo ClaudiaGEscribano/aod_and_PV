@@ -69,6 +69,9 @@ extent(Tas) <- extent(mascara)
 lat <- 37.4
 lon <- -5.66
 
+lat <- 41.1
+lon <- 1.19
+
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)

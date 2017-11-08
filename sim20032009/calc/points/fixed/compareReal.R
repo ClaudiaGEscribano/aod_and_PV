@@ -176,7 +176,7 @@ dev.off()
 ## comparación con una simulacion de CAER con los datos del sistema corregidos################
 
 xProd <- as.zoo(xProd, order.by=index(photocampaMon))
-c <- merge(photocampaMon, xProd, photocampa_fixedMeses_caer, dias, photocampa_aod, all=FALSE)
+c <- merge(photocampaMon, z), photocampa_fixedMeses_caer, dias, photocampa_aod, all=FALSE)
 names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
 
 pdf("seriesPhotocampaCAER.pdf")
