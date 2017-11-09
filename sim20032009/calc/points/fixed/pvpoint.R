@@ -7,11 +7,10 @@
 ## 1.1 Tengo que proyectar los datos del modelo para poder extraer el punto
 
 ## CAER ##
-
 SISS <- brick('../../../data/C-AER/rsds_day_20032009.nc', varname='rsds')
-SISS*24
+SISS <- SISS*24
 Tas <- brick('../../../data/C-AER/tas_day_20032009.nc')
- 
+
 ## time steps
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 names(SISS) <- tt
@@ -20,13 +19,9 @@ names(Tas) <- tt
 SISS <- setZ(SISS, tt)
 Tas <- setZ(Tas, tt)
 
-##______________________________________
-
 ## PROJECT THE 2 RASTERS ##
 
 ## mascara ##
-
-mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
 
 mascara <- raster("../../../figs/masque_terre_mer.nc", varname='zon_new')
 maslat <- raster("../../../figs/masque_terre_mer.nc", varname='lat')
@@ -50,7 +45,7 @@ extent(SISS) <- extent(mascara)
 
 latsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lat')
 lonsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lon')
- 
+
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
 
 plat <- rasterToPoints(latsis)
@@ -58,7 +53,6 @@ plon <- rasterToPoints(lonsis)
 lonlat <- cbind(plon[,3], plat[,3])
 
 # Specify the lonlat as spatial points with projection as long/lat
-
 lonlat <- SpatialPoints(lonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
 lonlat <- spTransform(lonlat, CRSobj = mycrs) 
 projection(SISS) <- projection(lonlat)
@@ -66,33 +60,8 @@ extent(SISS) <- extent(lonlat)
 
 ## proyecto la temperatura
 
-projection(Tas) <- projection(mascara)
-extent(Tas) <- extent(mascara)
-
-##_________________________________________________________
-                                        
-##PROJECT THE 2 RASTERS ##
-
-#mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
-#latsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lat')
-#lonsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lon')
-
-#mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
-
-#plat <- rasterToPoints(latsis)
-#plon <- rasterToPoints(lonsis)
-#lonlat <- cbind(plon[,3], plat[,3])
-
-# Specify the lonlat as spatial points with projection as long/lat
-#lonlat <- SpatialPoints(lonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
-#lonlat <- spTransform(lonlat, CRSobj = mycrs) 
-#projection(SISS) <- projection(lonlat)
-#extent(SISS) <- extent(lonlat)
-
-## proyecto la temperatura
-
-#projection(Tas) <- projection(lonlat)
-#extent(Tas) <- extent(lonlat)
+projection(Tas) <- projection(lonlat)
+extent(Tas) <- extent(SISS)
 
 ## 1.2 EXTRACT THE DATA AT THE POINT ##
 
@@ -100,6 +69,9 @@ extent(Tas) <- extent(mascara)
 
 lat <- 41.1
 lon <- 1.19
+
+#lat <- 37.4
+#lon <- -5.66
 
 mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
@@ -165,4 +137,4 @@ tas <- as.vector(tas)
 xx <- c(lat, sis, tas)
 
 xProd <- fooProd(xx, timePeriod = 'year') 
-xProd <- fooProd(xx, timePeriod = 'month')
+xProd <- fooProd(xx, timePeriod = 'month') 

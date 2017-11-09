@@ -15,18 +15,22 @@ lon <- 1.19
 
 ## los datos son la energía diaria acumulada. Calculo la media mensual de energía diaria acumulada.
 
-## creo que el problema está en los tres inversores, porque estaba haciendo la media en lugar de sumar la salida de los 3.
+## _______ ESTO NO SALE.
+## ¿Debería eliminar los nas antes de hacer operaciones?
 
-Yf[is.na(Yf)] <- 0 ## Los NA los sustituyo por O. Cuando los 3 inversores den 0, hay que eliminar ese día para hacer la media.
-Yf2 <- apply(Yf, 1, 'sum') ## sumo los 3 inversores para quitar los días que los tres dan 0
-Yf <- Yf[which(Yf2 != 0),] ## Yf tiene solo los días en los que alguno de los 3 inversores es distinto de cero
+##Yf[is.na(Yf)] <- 0 ## Los NA los sustituyo por O. Cuando los 3 inversores den 0, hay que eliminar ese día para hacer la media.
+##Yf2 <- apply(Yf, 1, 'sum') ## sumo los 3 inversores para quitar los días que los tres dan 0
+##Yf <- Yf[which(Yf2 != 0),] ## Yf tiene solo los días en los que alguno de los 3 inversores es distinto de cero
+## _________
 
 
 photocampaMon <- aggregate(Yf, by=as.yearmon, 'mean', na.rm=TRUE)
-p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x)) # para comprobar si faltan días
-## photocampaMon <- zoo(rowMeans(photocampaMon, na.rm=TRUE), index(photocampaMon))
-## photocampaMon <- photocampaMon*3  
-photocampaMon <- zoo(apply(photocampaMon, 1, 'sum', na.rm=TRUE), index(photocampaMon))
+## para comprobar si faltan días 
+p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x))
+## Para los meses en los que hay Nan en algún inversor, no haygo la media, sino que tomo el único valor que hay.
+photocampaMon[1,1] <- sum(photocampaMon[1,], na.rm=TRUE)
+photocampaMon[1,3] <- sum(photocampaMon[1,], na.rm=TRUE)
+photocampaMon <- zoo(rowMeans(photocampaMon, na.rm=TRUE), index(photocampaMon))
 
 ## extract at the point in the stack ##
 #######################################
@@ -175,8 +179,11 @@ dev.off()
 ############################################################
 ## comparación con una simulacion de CAER con los datos del sistema corregidos################
 
-xProd <- as.zoo(xProd, order.by=index(photocampaMon))
-c <- merge(photocampaMon, z), photocampa_fixedMeses_caer, dias, photocampa_aod, all=FALSE)
+tt <- seq(as.Date('2003-01-01'), as.Date('2009-12-31'), 'month')
+
+xProd <- as.zoo(xProd, order.by=as.yearmon(tt))
+c <- merge(photocampaMon, xProd2), photocampa_fixedMeses_caer, dias, photocampa_aod, all=FALSE)
+c <- c[which(index(c) >= "ene 2003" & index(c) <= "dic 2003")]
 names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
 
 pdf("seriesPhotocampaCAER.pdf")
