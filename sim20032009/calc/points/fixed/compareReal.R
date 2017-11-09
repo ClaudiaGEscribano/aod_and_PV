@@ -182,10 +182,14 @@ dev.off()
 tt <- seq(as.Date('2003-01-01'), as.Date('2009-12-31'), 'month')
 
 xProd <- as.zoo(xProd, order.by=as.yearmon(tt))
-c <- merge(photocampaMon, xProd2), photocampa_fixedMeses_caer, dias, photocampa_aod, all=FALSE)
+photocampa_fixedMeses_caer <- xProd
+photocampa_fixedMeses_no <- xProd
+photocampa_fixed_sat <- xProd
+c <- merge(photocampaMon, photocampa_fixedMeses_caer, photocampa_fixedMeses_no, photocampa_fixed_sat)dias, photocampa_aod, all=FALSE)
 c <- c[which(index(c) >= "ene 2003" & index(c) <= "dic 2003")]
+names(c) <- c("REAL", "CAER", "CNO", "SAT")
 names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
 
-pdf("seriesPhotocampaCAER.pdf")
-xyplot(c,screens=c(1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+pdf("seriesPhotocampaaerno.pdf")
+xyplot(c,screens=c(1,1,1,1,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
