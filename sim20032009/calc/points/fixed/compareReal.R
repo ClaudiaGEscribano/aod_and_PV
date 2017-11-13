@@ -7,33 +7,32 @@ library(zoo)
 ## ## load the real data ## ##
 ##############################
 
-load("../photocampaYf.Rdata")
-load("photocampaSimYf_month.Rdata")
+## datos 2003
+##load("../photocampaYf.Rdata")
+
+## datos 2003-2005
+load("../photocampa.Rdata")
+
+## simulados
+##load("photocampaSimYf_month.Rdata")
 
 lat <- 41.1
 lon <- 1.19
 
-## los datos son la energía diaria acumulada. Calculo la media mensual de energía diaria acumulada.
 
-## _______ ESTO NO SALE.
-## ¿Debería eliminar los nas antes de hacer operaciones?
-
-##Yf[is.na(Yf)] <- 0 ## Los NA los sustituyo por O. Cuando los 3 inversores den 0, hay que eliminar ese día para hacer la media.
-##Yf2 <- apply(Yf, 1, 'sum') ## sumo los 3 inversores para quitar los días que los tres dan 0
-##Yf <- Yf[which(Yf2 != 0),] ## Yf tiene solo los días en los que alguno de los 3 inversores es distinto de cero
-## _________
-
-
-photocampaMon <- aggregate(Yf, by=as.yearmon, 'mean', na.rm=TRUE)
-## para comprobar si faltan días 
-p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x))
+## agrego los datos diarios por medias mensuales de energía diaria
+photocampaMon <- aggregate(photocampa$Yf, by=as.yearmon, 'mean', na.rm=TRUE)
+## para comprobar si faltan días en el mes
+p <-aggregate(photocampa$Yf, by=as.yearmon, FUN=function(x) length(x))
 ## Para los meses en los que hay Nan en algún inversor, no haygo la media, sino que tomo el único valor que hay.
-photocampaMon[1,1] <- sum(photocampaMon[1,], na.rm=TRUE)
-photocampaMon[1,3] <- sum(photocampaMon[1,], na.rm=TRUE)
-photocampaMon <- zoo(rowMeans(photocampaMon, na.rm=TRUE), index(photocampaMon))
+
+## La energía Yf es la que tengo que comparar con los datos simulados. Algunos de los valores menores de lo esperado debido a paradas por mantenimiento, mejora etc. Por ello, podemos simular con la Gefectiva para compara con la simulada con datos del modelo.
+
 
 ## extract at the point in the stack ##
 #######################################
+
+## Las simulaciones generales tienen un sistema que no se corresponde con la planta real, es genérico. Si se quiere, se puede extraer la información de un raster en una latitud concreta con el código a continuación, pero para una comparación hay que simular la generación en un putno con las características del sistema concreto. Los resultados de esto es la salida de pvpoint.R
 
 ## 1. Hay que asignar al raster la proyección que le corresponde. Para CAER es LCC, para el satélite es long/lat.
 
@@ -84,61 +83,10 @@ bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 fixedMeses_caer <- extract(fixedMeses, bsrnlonlat, method="simple")
 
 photocampa_fixedMeses_caer <- as.zoo(t(fixedMeses_caer), as.yearmon(idx))
-#######
-## SAT
-#######
 
-fixedsat <- stack("../../proj12abr/fixed_sat_monthlyProd_temp_20032009.grd")
-idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-fixedsat <- setZ(fixedsat, idx) 
+##############################################################################################
 
-fixedMesessat <- zApply(fixedsat, by=as.yearmon, fun='mean')
-
-photocampalonlat <- data.frame(lon, lat)
-
-photocampa_fixedMeses_sat <- extract(fixedMesessat, SpatialPoints(cbind(lon, lat)))
-
-photocampa_fixedMeses_sat <- as.zoo(t(photocampa_fixedMeses_sat), as.yearmon(idx))
-## 2. después extraer el punto en la latitud que buscamos.
-
-## comparacion
- 
-## añadir cno
-
-fixedcno <- stack("../../proj12abr/fixed_cno_monthlyProd_temp_20032009.grd")
-idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-fixedcno <- setZ(fixedcno, idx)
- 
-## defino el raster del modelo bien:
-
-projection(fixedcno) <- projection(mascara)
-extent(fixedcno) <- extent(mascara)
-
-## Hago las medias anuales de la simulación C-AER
-
-fixedMesescno <- zApply(fixedcno, by=as.yearmon, fun='mean')
-
-## EXTRAER AQUI
- 
-## Para extraer los puntos del modelo necesito un Spatialdata con la lat y la lon primero.
-## Ahora proyecto los puntos que quiero extraer a LCC
-
-bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
-bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
-
-fixedMeses_cno <- extract(fixedMesescno, bsrnlonlat, method="simple")
-
-photocampa_fixedMeses_cno <- as.zoo(t(fixedMeses_cno), as.yearmon(idx))
-
-c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, all=FALSE)
-names(c) <- c("REAL", "SAT","CAER", "CNO")
-
-## elimino el ultimo mes porque los datos son de solo 14 dias.
-c2 <- c[-18,]
-  
-pdf("seriesPhotocampa.pdf")
-xyplot(c,scales = list(x = list(at = index(c), rot=45)), superpose=TRUE, type='b')
-dev.off()
+## Se puede extraer el valor del AOD en ese punto concreto
 
 ######### AOD ##########
 #######################
@@ -156,32 +104,36 @@ extent(aod) <- extent(mascara)
 aod <- extract(aod, bsrnlonlat, method="simple")
 photocampa_aod <- as.zoo(t(aod), as.yearmon(idx))
 
-c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, all=FALSE) 
-names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD")
+#c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, all=FALSE) 
+#names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD")
 
-c2 <- c[-18,]
+#c2 <- c[-18,]
   
-pdf("seriesPhotocampaAOD.pdf")
-xyplot(c,screens=c(1,1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
-dev.off()
+#pdf("seriesPhotocampaAOD.pdf")
+#xyplot(c,screens=c(1,1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+#dev.off()
 
 ##  con los dias que hay por mes:
  
-dias <- p[,1]
+#dias <- p[,1]
 
-c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, dias, all=FALSE) 
-names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD", "Days")
+#c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, dias, all=FALSE) 
+#names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD", "Days")
 
-pdf("seriesPhotocampaAOD3.pdf")
-xyplot(c,screens=c(1,1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
-dev.off()
+#pdf("seriesPhotocampaAOD3.pdf")
+#xyplot(c,screens=c(1,1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+#dev.off()
 
-############################################################
+#####################################################################################################
+
+## 2. COMPARACIÓN CON LA SIMULACIÓN CON DATOS DEL pv system CORRECTOS
+
 ## comparación con una simulacion de CAER con los datos del sistema corregidos################
 
 tt <- seq(as.Date('2003-01-01'), as.Date('2009-12-31'), 'month')
 
 xProd <- as.zoo(xProd, order.by=as.yearmon(tt))
+ 
 photocampa_fixedMeses_caer <- xProd
 photocampa_fixedMeses_no <- xProd
 photocampa_fixed_sat <- xProd
