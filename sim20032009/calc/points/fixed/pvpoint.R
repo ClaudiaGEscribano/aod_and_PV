@@ -126,14 +126,14 @@ Ncp <- 1
 
 Pg <- Nmp * Nms * (Vmn * Imn)/1000 ## kwp
 
-
+ 
 fooProd <- function(data, modeTrk = 'fixed', timePeriod=''){
     ## Number of days
     n <- (length(data) - 1)/2
     lat <- data[1]
     g0 <- data[2:(n + 1)]
     Ta <- data[(n + 2):(2*n + 1)]
-    BD <- zoo(data.frame(G0 = g0, Ta = Ta),
+    BD <- zoo(data.frame(G0 = g0, Ta = 25),
               order.by = tt)
     Prod <- prodGCPV(lat = lat,
                      modeRad = 'bd',
@@ -157,3 +157,37 @@ xx <- c(lat, sis, tas)
 
 xProd <- fooProd(xx, timePeriod = 'year') 
 xProd <- fooProd(xx, timePeriod = 'month') 
+
+######################################
+
+## Simulación con datos de G en el plano del generador.
+
+fooProd <- function(data){
+    ## Number of days
+    n <- (length(data))/2
+    #lat <- data[1]
+    Gin <- data[1:n]
+    Ta <- data[(n + 1):(2*n)]
+    BD <- zoo(data.frame(Gef = Gin, Ta = 25),
+              order.by = tt)
+    Prod <- fProd(inclin=BD,
+                     module=list(Vocn=21.6, Iscn=6.54, Vmn=17.4, Imn=6.09, Ncs=36, Ncp=1),
+                     generator=list(Nms=35,Nmp=27),
+                     inverter=list(Pinv=100000,Vmin=450)
+                     )
+}
+
+
+load('../photocampa.Rdata')
+G <- photocampa$G
+Ta <- photocampa$G
+
+G <- as.vector(G)
+Ta < as.vector(Ta)
+xx <- c(G, Ta)
+
+xProd <- fooProd(xx)
+Prod <- xProd$Pac
+Yf <- Prod/Pg
+
+mon <- aggregate(Yf, by=as.yearmon, 'mean')
