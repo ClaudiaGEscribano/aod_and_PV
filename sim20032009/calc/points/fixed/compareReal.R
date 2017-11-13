@@ -21,7 +21,7 @@ lon <- 1.19
 
 
 ## agrego los datos diarios por medias mensuales de energía diaria
-photocampaMon <- aggregate(photocampa$Yf, by=as.yearmon, 'mean', na.rm=TRUE)
+photocampaMon <- aggregate(photocampa$Yf, by=as.yearmon, 'mean', na.rm=TRUE) 
 ## para comprobar si faltan días en el mes
 p <-aggregate(photocampa$Yf, by=as.yearmon, FUN=function(x) length(x))
 ## Para los meses en los que hay Nan en algún inversor, no haygo la media, sino que tomo el único valor que hay.
