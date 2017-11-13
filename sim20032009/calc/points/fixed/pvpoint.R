@@ -188,6 +188,11 @@ xx <- c(G, Ta)
 
 xProd <- fooProd(xx)
 Prod <- xProd$Pac
+
+## la salida está en W/m2
+
+Prod <- Prod/1000 ## kW
+
 Yf <- Prod/Pg
 
 mon <- aggregate(Yf, by=as.yearmon, 'mean')
