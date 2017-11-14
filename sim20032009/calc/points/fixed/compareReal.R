@@ -104,6 +104,8 @@ extent(aod) <- extent(mascara)
 aod <- extract(aod, bsrnlonlat, method="simple")
 photocampa_aod <- as.zoo(t(aod), as.yearmon(idx))
 
+##_______________________________________________________________________________________
+## ESTE CÓDIGO NO SE USA:
 #c <- merge(photocampaMon, photocampa_fixedMeses_sat, photocampa_fixedMeses_caer, photocampa_fixedMeses_cno, photocampa_aod, all=FALSE) 
 #names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD")
 
@@ -124,7 +126,7 @@ photocampa_aod <- as.zoo(t(aod), as.yearmon(idx))
 #xyplot(c,screens=c(1,1,1,1,2,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 #dev.off()
 
-#####################################################################################################
+##______________________________________________________________________________________-
 
 ## 2. COMPARACIÓN CON LA SIMULACIÓN CON DATOS DEL pv system CORRECTOS
 
