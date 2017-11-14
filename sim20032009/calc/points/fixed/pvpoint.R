@@ -7,7 +7,7 @@ library(solaR)
 ## 1. LOAD RSDS DATA FROM MODELS ##
 ###############################################
 
-## 1.1 Tengo que proyectar los datos del modelo para poder extraer el punto
+## 1.1 Tengo que proyectar los datos del modelo para poder extraer el punto. Los datos de satélite están en una malla latlon regular, por lo que usaré fooProjregular para asignarle la proyección.  Los datos de las simulaciones de RCM están en proyección lcc, por lo que necesito la función fooproj para asignarlos la proyección.
 
 ## PROJECT RASTERS ##
 
@@ -96,6 +96,8 @@ mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 
+## radiación y temperatura en la latitud de la planta según los modelos (o satélite)
+
 sis <- extract(SISS, bsrnlonlat, method="simple")
 tas <- extract(Tas, bsrnlonlat, method="simple")
 
@@ -160,7 +162,7 @@ xProd <- fooProd(xx, timePeriod = 'month')
 
 ######################################
 
-## Simulación con datos de G en el plano del generador.
+## Función para calcular la productividad con datos de radiación efectiva de la planta.
 
 fooProd <- function(data){
     ## Number of days
