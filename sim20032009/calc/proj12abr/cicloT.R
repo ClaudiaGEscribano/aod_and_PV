@@ -5,6 +5,8 @@ library(zoo)
 
 ## La ecuación que vamos a seguir es la ecuación de la referencia de Crook et al.
 
+tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
+
 function <- fooTday(Tmax, Tmin, Tavg, tt){
 
     Tmax <- stack(Tmax, varname='tas')
@@ -13,12 +15,21 @@ function <- fooTday(Tmax, Tmin, Tavg, tt){
     
     Tmax <- setZ(Tmax, tt)
     Tmin <- setZ(Tmin, tt)
-    Tavg <- stack(Tavg, tt)
-    
+    Tavg <- setZ(Tavg, tt)
+
     Tmm <- zApply(Tavg, by=as.yearmon, 'mean')
     DTR <- Tmax-Tmin
     DTR4 <- DTR/4
+    DTR4 <- setZ(DTR4, tt)
 
+    l <- lapply(as.yearmon(getZ(Tmm)), FUN=function(x)
+        DTR4[[which(as.yearmon(getZ(DTR4)) == x)]] + Tmm[[which(getZ(Tmm) == x)]])
+
+    a <- brick(unlist(l, recursive=TRUE))
+    names(a) <- tt
+    return(a)
+}    
+
+##    DTR4[[which(as.yearmon(getZ(DTR4)) == "ene 2003")]]+Tmm[[which(getZ(Tmm) == "ene 2003")]]
     
-    foo  <- function(x) {Tmm + (Tmax-Tmin)/4
-    
+##    DTR4[[which(as.yearmon(getZ(DTR4)) == "ene 2003")]]+Tmm[[which(getZ(Tmm) == "ene 2003")]]
