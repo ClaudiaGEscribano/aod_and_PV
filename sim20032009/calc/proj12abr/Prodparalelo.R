@@ -5,7 +5,8 @@ library(parallel)
 library(solaR)
  
 ## Calculat productivity using parallel function
-source('fooGef.R')
+source('fooProd.R')
+source('cicloT.R')
 
 ##########################################################################
 ## 1. DATA
@@ -15,7 +16,7 @@ source('fooGef.R')
 
 ## Cambio de ficheros dependiendo de si la radiación la obtengo de la simulación CAER, CNO o del satélite
 
-SISS <- brick('../../data/C-AER/rsds_day_20032009.nc')
+SISS <- brick('/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc')
 ##SISS <- brick('../../data/SAT/SISdm20032009eur.nc', varname='SIS') 
 
 #SISS <- brick('/home/claudia/clusters/SIS_cmsaf30_Wh')
@@ -25,15 +26,24 @@ SISS <- brick('../../data/C-AER/rsds_day_20032009.nc')
 SISS <- SISS*24
 
 #Tas <- brick('../../data/TEMP/tg_0.44deg_20032009.nc')
-Tas <- brick('../../data/C-AER/tas_day_20032009.nc')
-
+Tasmax <- '/home/datos/aod/sim20032009/data/C-NO/tmax/cno_tasmax_day_20032009.nc'
+Tasmin <- '/home/datos/aod/sim20032009/data/C-NO/tmin/cno_tmin_day_20032009.nc'
+Tavg <- '/home/datos/aod/sim20032009/data/C-NO/tas_no_day_20032009.nc'
+    
 ## Time index
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 names(SISS) <- tt
-names(Tas) <- tt
 
-SISS <- setZ(SISS, tt)
+## names(Tasmax) <- tt
+## names(Tasmin) <- tt
+## names(Tavg) <- tt
+ 
+Tas <- fooTday(Tasmax, Tasmin, Tavg, tt)
+names(Tas) <- tt
 Tas <- setZ(Tas, tt)
+
+## SISS <- setZ(SISS, tt)
+## Tas <- setZ(Tas, tt)
 
 ##Tas[!is.na(Tas)] <- 25
 ## ## Crop objects
@@ -47,7 +57,7 @@ Tas <- setZ(Tas, tt)
 ## tt <- tt[1:365]
 
 ## latitude values as a new raster
-y <- raster("../../data/C-AER/rsds_day_20032009.nc", varname='lat') #Esto es para los modelos que tienen estos datos
+y <- raster("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", varname='lat') #Esto es para los modelos que tienen estos datos
 ##y <- init(SISS, v='y')
 
 ########################################################################
@@ -55,7 +65,7 @@ y <- raster("../../data/C-AER/rsds_day_20032009.nc", varname='lat') #Esto es par
 #######################################################################
 
 ## Productividad anual. Dependiendo del tipo de seguidor en la función fooProd dentro de fooParallel tendré que cambiar el modeTrk de prodCGPV
-modeTrk <- 'fixed'
+modeTrk <- 'two'
 
 ## Parallel blocks configuration
 blocks <- 6
@@ -76,7 +86,7 @@ resCl <- mclapply(iCluster,
                           vals <- cbind(lat, vG0, vTa)
                           cat('Lat: ', i, ':', range(lat), '\n')
                           res0 <- try(apply(vals, MARGIN=1L,
-                                            FUN=fooGef,
+                                            FUN=fooProd,
                                             modeTrk = modeTrk))
                           if (!inherits(res0, 'try-error')) 
                           {
@@ -105,6 +115,6 @@ out <- setValues(out, resCl)
 ##out <- setZ(out, unique(year(tt)))
 ##names(out) <- unique(year(tt))
 
-writeRaster(out, filename='Gef_fixed_caer_yearlyProd_20032009.grd', overwrite=TRUE)
+writeRaster(out, filename='twoAxes_cno_yearlyProd_tday_20032009.grd', overwrite=TRUE)
 
 

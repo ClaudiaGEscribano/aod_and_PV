@@ -5,14 +5,14 @@ library(zoo)
 
 ## La ecuación que vamos a seguir es la ecuación de la referencia de Crook et al.
 
-tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
+## tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 
-function <- fooTday(Tmax, Tmin, Tavg, tt){
+fooTday <- function(Tasmax, Tasmin, Tavg, tt){
 
-    Tmax <- stack(Tmax, varname='tas')
-    Tmin <- stack(Tmin, varname='tas')
+    Tmax <- stack(Tasmax, varname='tasmax')
+    Tmin <- stack(Tasmin, varname='tasmin')
     Tavg <- stack(Tavg, varname='tas')
-    
+
     Tmax <- setZ(Tmax, tt)
     Tmin <- setZ(Tmin, tt)
     Tavg <- setZ(Tavg, tt)
