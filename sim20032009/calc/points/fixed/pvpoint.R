@@ -130,6 +130,8 @@ tas <- extract(Tas, bsrnlonlat, method="simple")
 sisno <- extract(SISSno, bsrnlonlat, method="simple")
 tasno <- extract(Tasno, bsrnlonlat, method="simple")
 
+## ¿Tienen sentido los datos de temperatura diurnos que hemos calculado? con summary(t(tas)) y summary(t(tasno)) podemos ver los valores de estos vectores que se encuentran denro de rangos lógicos.
+
 #######################################
 ## 2. FUNCIÓN CALCULO DE PRODUCTIVIDAD
 #######################################
@@ -188,12 +190,13 @@ xx <- c(lat, sis, tas)
 
 sisno <- as.vector(sisno)
 tasno <- as.vector(tasno)
-xx <- c(lat, sisno, tasno)
+xxno <- c(lat, sisno, tasno)
 
-xProd <- fooProd(xx, timePeriod = 'year') 
+xProdY <- fooProd(xx, timePeriod = 'year') 
 xProd <- fooProd(xx, timePeriod = 'month') 
 
-xProdno <- fooProd(xx, timePeriod = 'month') 
+xProdYno <- fooProd(xxno, timePeriod='year')
+xProdno <- fooProd(xxno, timePeriod = 'month') 
 ######################################
 
 ## Función para calcular la productividad con datos de radiación efectiva de la planta.

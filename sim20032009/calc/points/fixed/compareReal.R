@@ -2,7 +2,7 @@ library(raster)
 library(rasterVis)
 library(zoo)
 
-## This script will compare real PV data with the assessment with satelite data.
+## This script will compare real PV data with the simulatios of model with/without aerosols
 
 ## ## load the real data ## ##
 ##############################
@@ -18,7 +18,6 @@ load("../photocampa.Rdata")
 
 lat <- 41.1
 lon <- 1.19
-
 
 ## agrego los datos diarios por medias mensuales de energía diaria
 photocampaMon <- aggregate(photocampa$Yf, by=as.yearmon, 'mean', na.rm=TRUE) 
@@ -160,3 +159,11 @@ mae <- mean(c$CAER - c$REAL)
 ## 0.6805526
 maeNO <- mean(c$CNO - c$REAL)
 ## 0.87685
+
+## Elimino los datos de producción reales por debajo de 1
+
+d2 <- d[-15,]
+
+pdf("modelsreal2.pdf")
+xyplot(d2$REAL~d2$CAER+d2$CNO, xlab='REAL', ylab='models')
+dev.off()
