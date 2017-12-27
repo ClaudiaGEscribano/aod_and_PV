@@ -46,6 +46,23 @@ rsds <- rbind(sat,caer,cno)
 rsds$zonas <- rep(c("AFRW","AFRE", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),36)
 names(rsds) <- c("zonas", "month", "rsds", "data")
 
+myTheme <- custom.theme.2(cex=0.7)
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+myTheme$superpose.symbol$pch <-c(20,8,5) 
+
+pdf("dif_model_sat_cicloAnualzonas.pdf")  
+xyplot(rsds~month|as.factor(zonas), group=data,data=rsds, type=c('o','l'), scales=list(rot=45),lwd=1.5, auto.key=TRUE, par.settings=myTheme,ylab='rsds[W/m^2]',
+    panel = function(...) {
+        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
+        panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+
+
 xyplot(rsds~month|as.factor(zonas), group=data, data=rsds, type='l', lwd=2, scales=list(rot=45),auto.key=TRUE,
     panel = function(...) {
         panel.grid(col="grey", lwd=0.1)

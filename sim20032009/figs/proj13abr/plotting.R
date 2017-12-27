@@ -12,7 +12,7 @@ data(worldMapEnv)
 
 fixedY <- stack("../../calc/proj12abr/output/fixed_caer_yearlyProd_temp_20032009.grd") ## C-AER
 fixedYno <- stack("../../calc/proj12abr/output/fixed_cno_yearlyProd_temp_20032009.grd")
-fixedYsat <- stack("../../calc/proj12abr/output/fixed_sat_yearlyProd_temp_20032009.grd")
+fixedYsat <- stack("../../calc/proj12abr/outputTmean/fixed_sat_yearlyProd_temp_20032009.grd")
 
 ## mask
 

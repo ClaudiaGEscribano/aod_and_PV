@@ -3,19 +3,18 @@
 library(zoo)
 library(lattice)
 
-## DIFERENCIAS RELATIVAS RADIACION ZONAS CON EL SATÉLITE.
-
-load("../../calc/regions/Dif_rel_caer_sat_zonas.Rdata")
-load("../../calc/regions/Dif_rel_cno_sat_zonas.Rdata")
+## DIFERENCIAS RELATIVAS ó DIFERENCIAS ABSOLUTAS EN RADIACION ZONAS CON EL SATÉLITE.
+load("../../calc/regions/Dif_caer_sat_zonas.Rdata")
+load("../../calc/regions/Dif_cno_sat_zonas.Rdata")
 
 library(reshape2)
 
-caer <- melt(Dif_rel_caer_sat_zonas, id.vars='zonas')
+caer <- melt(Dif_caer_sat_zonas, id.vars='zonas')
 caer$model <- rep("caer", length(caer[,1]))
 
 names(caer) <- c("zonas", "year", "rsds", "model")
 
-cno <- melt(Dif_rel_cno_sat_zonas, id.vars='zonas')
+cno <- melt(Dif_cno_sat_zonas, id.vars='zonas')
 cno$model <- rep("cno", length(cno[,1]))
 
 names(cno) <- c("zonas", "year", "rsds", "model")
@@ -32,15 +31,21 @@ xyplot(rsds~year|as.factor(zonas), group=model, data=rsds_dif, type='l', lwd=3, 
  
 rsds_dif$zonas <- rep(c("AFRE","AFRW", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),14)
 
-  
-xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type='l', lwd=3, auto.key=TRUE,
+myTheme <- custom.theme.2()
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+myTheme$superpose.symbol$pch <-c(20,8) 
+
+pdf("dif_model_sat_zonas.pdf")  
+xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme,ylab='rsds[W/m^2]',
     panel = function(...) {
-        panel.grid(col="grey", lwd=0.1)
+        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
         panel.abline(h=0, col='black', lwd=1)
                panel.xyplot(...)
        }
 )
-
+dev.off()
+ 
 ## DIFERENCIAS RELATIVAS EN PRODUCTIVIDAD
 
 load("../../calc/regions/Dif_rel_fixed_caer_sat_zonas.Rdata")
