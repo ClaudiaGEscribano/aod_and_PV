@@ -31,17 +31,22 @@ prsdslonlat <- SpatialPoints(rsdslonlat, proj4string = CRS("+proj=longlat +datum
 
 prsdslonlat <- spTransform(prsdslonlat, CRSobj = mycrs) 
 extent(rsds) <- extent(prsdslonlat)
+projection(rsds) <- projection(prsdslonlat)
 
 ## Hago las medias anuales de la simulación C-AER
 
 month <- function(x) as.numeric(format(x, '%m'))
 rsdsCiclo <- zApply(rsds, by=month, fun='mean')
 
+rsdsmon <- zApply(rsds, by=as.yearmon, fun='mean')
 
 ## extraigo los valores mensuales en los puntos donde están las estaciones:
 
 bsrn_rsdsCiclo_caer <- extract(rsdsCiclo, bsrnlonlat, method="simple")
 save(bsrn_rsdsCiclo_caer, file='bsrn_rsdsCiclo_caer.Rdata')
+
+bsrn_rsdsMon_caer <- extract(rsdsmon, bsrnlonlat, method='simple')
+save(bsrn_rsdsMon_caer, file='bsrn_rsdsMon_caer.Rdata')
 
 ##########################################################
 ## CNO
@@ -70,10 +75,14 @@ extent(rsdsno) <- extent(prsdslonlat)
 
 rsdsCiclono <- zApply(rsdsno, by=month, fun='mean')
 
+rsdsmonno <- zApply(rsdsno, by=as.yearmon, fun='mean')
 ## extraigo los valores anuales en los puntos donde están las estaciones:
  
 bsrn_rsdsCiclo_cno <- extract(rsdsCiclono, bsrnlonlat, method='simple')
 save(bsrn_rsdsCiclo_cno, file='bsrn_rsdsCiclo_cno.Rdata')
+
+bsrn_rsdsMon_cno <- extract(rsdsmonno, bsrnlonlat, method='simple')
+save(bsrn_rsdsMon_cno, file='bsrn_rsdsMon_cno.Rdata')
 
 ############################################################
 ## SIS
@@ -90,9 +99,14 @@ bsrnlonlat <- data.frame(bsrn, lon, lat)
 SIS <- stack("../../data/SAT/SISdm20032009eur.nc", varname='SIS')
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 SIS <- setZ(SIS, idx)
-
+ 
 month <- function(x) as.numeric(format(x, '%m')) 
 SISCiclo <- zApply(SIS, by=month, fun='mean')
 
+SISmon <- zApply(SIS, by=as.yearmon, fun='mean')
+
 bsrn_rsdsCiclo_sat <- extract(SISCiclo, SpatialPoints(cbind(lon, lat)))
 save(bsrn_rsdsCiclo_sat, file='bsrn_rsdsCiclo_sat.Rdata')
+
+bsrn_rsdsMon_sat <- extract(SISmon, SpatialPoints(cbind(lon, lat)))
+save(bsrn_rsdsMon_sat, file='bsrn_rsdsMon_sat.Rdata')

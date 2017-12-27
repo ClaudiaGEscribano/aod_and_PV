@@ -2,7 +2,7 @@
 ## irradiation values, and the vector of temperature values. See
 ## example below
 
-fooProd <- function(data, modeTrk = 'two', timePeriod = 'year'){
+fooProd <- function(data, modeTrk = 'two', timePeriod = 'month'){
     ## Number of days
     n <- (length(data) - 1)/2
     lat <- data[1]

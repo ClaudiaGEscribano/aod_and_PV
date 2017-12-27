@@ -12,14 +12,14 @@ mycrs <- CRS("+proj=lcc +lat_1=43 +lat_2=43 +lat_0=43 +lon_0=15 +k=0.684241 +uni
 ## CAER
 #########################################################
  
-rsds <- stack("../../data/C-AER/rsds_day_20032009.nc")
+rsds <- stack("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 rsds <- setZ(rsds, idx)
  
 ## defino el raster del modelo bien:
 
-rsdslat <- raster("../../data/C-AER/rsds_day_20032009.nc", varname='lat')
-rsdslon <- raster("../../data/C-AER/rsds_day_20032009.nc", varname='lon')
+rsdslat <- raster("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", varname='lat')
+rsdslon <- raster("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", varname='lon')
 
 prsdslat <- rasterToPoints(rsdslat)
 prsdslon <- rasterToPoints(rsdslon)
@@ -30,6 +30,7 @@ prsdslonlat <- SpatialPoints(rsdslonlat, proj4string = CRS("+proj=longlat +datum
 
 prsdslonlat <- spTransform(prsdslonlat, CRSobj = mycrs) 
 extent(rsds) <- extent(prsdslonlat)
+projection(rsds) <- projection(prsdslonlat)
 
 ## Hago las medias anuales de la simulación C-AER
 
@@ -45,14 +46,14 @@ save(bsrn_rsdsY_caer, file='bsrn_rsdsY_caer.Rdata')
 ## CNO
 #########################################################
  
-rsdsno <- stack("../../data/C-NO/rsds_no_day_20032009.nc")
+rsdsno <- stack("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 rsdsno <- setZ(rsdsno, idx)
 
 ## defino el raster del modelo bien:
 
-rsdsnolat <- raster("../../data/C-NO/rsds_no_day_20032009.nc", varname='lat')
-rsdsnolon <- raster("../../data/C-NO/rsds_no_day_20032009.nc", varname='lon')
+rsdsnolat <- raster("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc", varname='lat')
+rsdsnolon <- raster("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc", varname='lon') 
 
 prsdslat <- rasterToPoints(rsdsnolat)
 prsdslon <- rasterToPoints(rsdsnolon)
@@ -63,6 +64,7 @@ prsdslonlat <- SpatialPoints(rsdslonlat, proj4string = CRS("+proj=longlat +datum
 
 prsdslonlat <- spTransform(prsdslonlat, CRSobj = mycrs) 
 extent(rsdsno) <- extent(prsdslonlat)
+projection(rsds) <- projection(prsdslonlat)
 
 ## Hago las medias anuales de la simulación C-AER
 
@@ -91,7 +93,7 @@ bsrnlonlat <- data.frame(bsrn, lon, lat)
 
 ## datos SIS
 
-SIS <- stack("../../data/SAT/SISdm20032009eur.nc", varname='SIS')
+SIS <- stack("/home/datos/aod/sim20032009/data/SAT/SISdm20032009eur.nc", varname='SIS')
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 SIS <- setZ(SIS, idx)
 

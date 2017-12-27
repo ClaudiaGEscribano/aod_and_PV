@@ -13,240 +13,104 @@ load("carmonaSimYf_month.Rdata")
 ## los datos son la energía diaria acumulada. Calculo la media mensual de energía diaria acumulada.
 
 carmonaMon <- aggregate(Yf, by=as.yearmon, 'mean')
+carmonaSD <- apply(carmonaMon, 1, FUN='sd', na.rm=TRUE)
+
 p <-aggregate(Yf, by=as.yearmon, FUN=function(x) length(x)) # para comprobar si faltan días
-carmonaMon <- zoo(rowMeans(carmonaMon), index(carmonaMon))
 
-## extract at the point in the stack of models en sat ##
-########################################################
+carmonaMon <- zoo(rowMeans(carmonaMon, na.rm=TRUE), index(carmonaMon))
 
-## 1. Hay que asignar al raster la proyección que le corresponde. Para CAER es LCC, para el satélite es long/lat.
+## 'a' contiene los valores medios de producción mensuales y la desviación estandar parlos 18 inversores.
 
-mycrs <- CRS("+proj=lcc +lat_1=43 +lat_2=43 +lat_0=43 +lon_0=15 +k=0.684241 +units=m +datum=WGS84 +no_defs")
-
-## mascara data to project pvoutput data
-
-mascara <- raster("../../../figs/masque_terre_mer.nc", varname='zon_new')
-maslat <- raster("../../../figs/masque_terre_mer.nc", varname='lat')
-maslon <- raster("../../../figs/masque_terre_mer.nc", varname='lon')
-
-pmaslat <- rasterToPoints(maslat)
-pmaslon <- rasterToPoints(maslon)
-maslonlat <- cbind(pmaslon[,3], pmaslat[,3])
-
-# Specify the lonlat as spatial points with projection as long/lat
-maslonlat <- SpatialPoints(maslonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
-pmaslonlat <- spTransform(maslonlat, CRSobj = mycrs)
-
-projection(mascara) <- mycrs
-extent(mascara) <- extent(pmaslonlat)
-
-#######
-## CAER
-#######
-
-two <- stack("../../proj12abr/twoAxes_caer_monthlyProd_temp_20032009.grd")
-idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-two <- setZ(two, idx)
- 
-## defino el raster del modelo bien:
-
-projection(two) <- projection(mascara)
-extent(two) <- extent(mascara)
-
-## Hago las medias anuales de la simulación C-AER
-
-twoMeses <- zApply(two, by=as.yearmon, fun='mean')
-
-## EXTRAER AQUI
-
-## Para extraer los puntos del modelo necesito un Spatialdata con la lat y la lon primero.
-## Ahora proyecto los puntos que quiero extraer a LCC
-
-lat <- c(37.4)
-lon <- c(-5.66)
-
-bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
-bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
-
-twoMeses_caer <- extract(twoMeses, bsrnlonlat, method="simple")
-
-carmona_twoMeses_caer <- as.zoo(t(twoMeses_caer), as.yearmon(idx))
-
-#######
-## SAT
-#######
-
-twosat <- stack("../../proj12abr/twoAxes_sat_monthlyProd_temp_20032009.grd")
-idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-twosat <- setZ(twosat, idx) 
-
-twoMesessat <- zApply(twosat, by=as.yearmon, fun='mean')
-
-lat <- c(37.4)
-lon <- c(-5.66)
-
-carmonalonlat <- data.frame(lon, lat)
-
-carmona_twoMeses_sat <- extract(twoMesessat, SpatialPoints(cbind(lon, lat)))
-
-carmona_twoMeses_sat <- as.zoo(t(carmona_twoMeses_sat), as.yearmon(idx))
-## 2. después extraer el punto en la latitud que buscamos.
-
-## comparacion
-  
-c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, all=FALSE)
-names(c) <- c("REAL", "SAT","CAER")
-
-## elimino el ultimo mes porque los datos son de solo 14 dias.
-c2 <- c[-18,]
- 
-pdf("seriesCarmona.pdf")
-xyplot(c2, scales = list(y = list(relation = "same", alternating = FALSE)), superpose=TRUE, type='b')
-dev.off()
-
-
-pdf("seriesCarmona2.pdf")
-xyplot(c2,scales = list(x = list(at = index(c2), rot=45)), superpose=TRUE, type='b')
-dev.off()
-
-## añadir cno
-
-twocno <- stack("../../proj12abr/twoAxes_cno_monthlyProd_temp_20032009.grd")
-idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-twocno <- setZ(twocno, idx)
- 
-## defino el raster del modelo bien:
-
-projection(twocno) <- projection(mascara)
-extent(twocno) <- extent(mascara)
-
-## Hago las medias anuales de la simulación C-AER
-
-twoMesescno <- zApply(twocno, by=as.yearmon, fun='mean')
-
-## EXTRAER AQUI
-
-## Para extraer los puntos del modelo necesito un Spatialdata con la lat y la lon primero.
-## Ahora proyecto los puntos que quiero extraer a LCC
-
-bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
-bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
-
-twoMeses_cno <- extract(twoMesescno, bsrnlonlat, method="simple")
-
-carmona_twoMeses_cno <- as.zoo(t(twoMeses_cno), as.yearmon(idx))
-
-c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, carmona_twoMeses_cno, all=FALSE)
-names(c) <- c("REAL", "SAT","CAER", "CNO")
-
-## elimino el ultimo mes porque los datos son de solo 14 dias.
-c2 <- c[-18,]
-
-pdf("seriesCarmona3.pdf")
-xyplot(c2,scales = list(x = list(at = index(c2), rot=45)), superpose=TRUE, type='b')
-dev.off()
-
-######## AOD #########
-######################
-
-aod <- stack("../../AOD_total_monthly20032009.grd")
-idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-aod <- setZ(aod, idx)
- 
-## defino el raster de aod bien:
-
-projection(aod) <- projection(mascara)
-aod <- crop(aod, mascara)
-extent(aod) <- extent(mascara)
-
-aod <- extract(aod, bsrnlonlat, method="simple")
-carmona_aod <- as.zoo(t(aod), as.yearmon(idx))
- 
-c <- merge(carmonaMon, carmona_twoMeses_sat, carmona_twoMeses_caer, carmona_twoMeses_cno, carmona_aod, all=FALSE)
-names(c) <- c("REAL", "SAT","CAER", "CNO", "AOD")
-
-c2 <- c[-18,]
- 
-pdf("seriesCarmonaAOD2.pdf")
-xyplot(c2,screens=c(1,1,1,1,2),scales = list(x = list(at = index(c2), rot=45)), type='b')
-dev.off()
-
-
-## pruebas para que el panel dos sea mas pequeño o sean barras etc.
-
-    panel = function(...) {
-        panel.grid(col="grey", lwd=0.1)
-        panel.abline(h=0, col='black', lwd=1)
-               panel.xyplot(...)
-       }
-)
+a <- cbind(carmonaMon, carmonaSD)
  
 ########################################
-##comparación con una simulacion de CAER con los datos del sistema corregidos################
+## COMPARE CAER/CNO SIMULATION WITH REAL DATA
+########################################
 
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
-xProd <- zoo(xProd, order.by=as.yearmon(tt))
-c <- merge(carmonaMon, xProd, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
-names(c) <- c("REAL", "CAER", "CNO", "SAT", "AOD")
 
-c <- c[-18]
+## xProdM y xProdMno son los datos obtenidos con pvpoint.R
 
-pdf("seriesCarmonaCAER.pdf")
-xyplot(c,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+xProd <- zoo(xProdM, order.by=as.yearmon(tt))
+xProdno <- zoo(xProdMno, order.by=as.yearmon(tt))
+
+c <- merge(carmonaMon, xProd, xProdno, all=FALSE)#, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
+names(c) <- c("REAL", "CAER", "CNO") #, "SAT", "AOD")
+
+d <- as.data.frame(c)
+d <- melt(d)
+
+c <- c[-18] ## Este mes tiene muy pocos días.
+  
+pdf("seriesCarmonamodelosreal2.pdf")
+xyplot(c,screens=c(1,1,1),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
 
-## creo un objeto que sea la diferencia
+rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
+## 1.041356
 
-b <-c[,2:4]-c[,1]
-b$AOD <- c[,5]
-z <- c("DIF REAL DATA [kWh/kWp]", "AOD")
+rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) ) 
+## 0.7850891
 
-pdf("seriesDifCarmona.pdf")
-xyplot(b,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE, strip=strip.custom(factor.levels=z),
-       panel=function(...) {
-          panel.xyplot(...)
-          panel.abline(h=c(0, 0.5, 1.0, 1.5), col='grey')})
-dev.off()
+mae <- mean(c$CAER - c$REAL)
+## -0.7962638
+maeNO <- mean(c$CNO - c$REAL)
+## -0.4136843
+
+#####################################################
+
+## ## creo un objeto que sea la diferencia
+
+## b <-c[,2:4]-c[,1]
+## b$AOD <- c[,5]
+## z <- c("DIF REAL DATA [kWh/kWp]", "AOD")
+
+## pdf("seriesDifCarmona.pdf")
+## xyplot(b,screens=c(1,1,1,2),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE, strip=strip.custom(factor.levels=z),
+##        panel=function(...) {
+##           panel.xyplot(...)
+##           panel.abline(h=c(0, 0.5, 1.0, 1.5), col='grey')})
+## dev.off()
 
 
-###
+## ###
 
-caer <-as.data.frame( b[,1])
-cno <- as.data.frame(b[,2])
-sat <- as.data.frame(b[,3])
-AOD <- as.data.frame(b[,4])
+## caer <-as.data.frame( b[,1])
+## cno <- as.data.frame(b[,2])
+## sat <- as.data.frame(b[,3])
+## AOD <- as.data.frame(b[,4])
 
-caer$model <- "caer"
-names(caer) <- c("value", "model")
-cno$model <- "cno"
-names(cno) <- c("value", "model")
-sat$model <- "sat"
-names(sat) <- c("value", "model")
+## caer$model <- "caer"
+## names(caer) <- c("value", "model")
+## cno$model <- "cno"
+## names(cno) <- c("value", "model")
+## sat$model <- "sat"
+## names(sat) <- c("value", "model")
 
-data <- rbind(caer, cno, sat)
-data$AOD <- rep(b[,4], 3)
+## data <- rbind(caer, cno, sat)
+## data$AOD <- rep(b[,4], 3)
 
-myTheme <- custom.theme.2(pch = 20, cex = 1.3)
+## myTheme <- custom.theme.2(pch = 20, cex = 1.3)
 
-pdf("scatterALL2.pdf")
-xyplot(value~AOD, group=model, data=data, par.settings =custom.theme(pch=20, cex=1.3), auto.key=TRUE,
-       panel=function(...){
-       panel.xyplot(...)
-       panel.abline(h=c(0.5, 0, 1.0), col='grey')})
-dev.off()
+## pdf("scatterALL2.pdf")
+## xyplot(value~AOD, group=model, data=data, par.settings =custom.theme(pch=20, cex=1.3), auto.key=TRUE,
+##        panel=function(...){
+##        panel.xyplot(...)
+##        panel.abline(h=c(0.5, 0, 1.0), col='grey')})
+## dev.off()
  
 
-sat <- as.vector(carmona_twoMeses_sat)
-cno <- as.vector(twoMeses_cno)
-aod <- as.vector(aod)
-xProd <- as.vector(xProd)
-carmona <- as.vector(carmonaMon)
+## sat <- as.vector(carmona_twoMeses_sat)
+## cno <- as.vector(twoMeses_cno)
+## aod <- as.vector(aod)
+## xProd <- as.vector(xProd)
+## carmona <- as.vector(carmonaMon)
 
-matrix <- cbind( cno, sat, aod, xProd, carmona)
-df <- as.data.frame(matrix)
-names(df) <- c( "cno", "sat", "aod", "xProd")
+## matrix <- cbind( cno, sat, aod, xProd, carmona)
+## df <- as.data.frame(matrix)
+## names(df) <- c( "cno", "sat", "aod", "xProd")
  
-dfm <- df[,4]-df[1:3]
-##
+## dfm <- df[,4]-df[1:3]
+## ##
 
-x <- data.frame(b)
+## x <- data.frame(b)

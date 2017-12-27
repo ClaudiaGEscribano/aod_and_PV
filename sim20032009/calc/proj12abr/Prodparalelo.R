@@ -65,7 +65,7 @@ y <- raster("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", varna
 #######################################################################
 
 ## Productividad anual. Dependiendo del tipo de seguidor en la función fooProd dentro de fooParallel tendré que cambiar el modeTrk de prodCGPV
-modeTrk <- 'two'
+modeTrk <-'two'
 
 ## Parallel blocks configuration
 blocks <- 6
@@ -115,6 +115,6 @@ out <- setValues(out, resCl)
 ##out <- setZ(out, unique(year(tt)))
 ##names(out) <- unique(year(tt))
 
-writeRaster(out, filename='twoAxes_cno_yearlyProd_tday_20032009.grd', overwrite=TRUE)
+writeRaster(out, filename='twoAxes_cno_monthlyProd_tday_20032009.grd', overwrite=TRUE)
 
 

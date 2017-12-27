@@ -1,66 +1,98 @@
 ## compute pv production in a point of the domain in order to compare with real data
 
-## LOAD RSDS DATA FROM MODELS ##
+## LOAD SSR DATA FROM MODELS ##
+
+library(raster)
+library(solaR)
 
 ## Tengo que proyectar los datos del modelo para poder extraer el punto
 
-## CAER ##
+## 1. Asigno proyección a modelos con malla lcc ##
 
-SISS <- brick('../../../data/C-AER/rsds_day_20032009.nc', varname='rsds')
-SISS <- SISS*24
-Tas <- brick('../../../data/C-AER/tas_day_20032009.nc')
+crslcc <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+crslonlat <- CRS("+proj=longlat +datum=WGS84")    
 
-## time steps
+fooproj <- function(rutadatos, proj, var){
+    lat <- raster(rutadatos, varname='lat')
+    lon <- raster(rutadatos, varname='lon')
+
+    plat <- rasterToPoints(lat)
+    plon <- rasterToPoints(lon)
+    plonlat <- cbind(plon[,3], plat[,3])
+
+    splonlat <- SpatialPoints(plonlat,proj4string=crs("+proj=longlat +datum=WGS84"))
+    lonlat <- spTransform(splonlat, CRSobj = proj)                                                                      
+    s <- stack(rutadatos, varname=var)
+    projection(s) <- proj
+    extent(s) <- extent(lonlat)
+
+    return(s)
+}
+
+AER <- fooproj("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", crslcc, 'rsds')
+AER <- AER*24 
+
+NO <- fooproj("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc", crslcc, 'rsds')
+NO <- NO*24 
+
+## Si la función tiene proyeccion regular:
+
+fooprojRegular <- function(rutadatos, proj, var){
+    s <- stack(rutadatos, varname=var)
+    lat <- init(s, 'x')
+    lon <- init(s, 'y')
+
+    plat <- rasterToPoints(lat)
+    plon <- rasterToPoints(lon)
+    plonlat <- cbind(plon[,3], plat[,3])
+
+    splonlat <- SpatialPoints(plonlat,proj4string=crs("+proj=longlat +datum=WGS84"))
+
+    projection(s) <- proj
+    extent(s) <- extent(splonlat)
+
+    return(s)
+}
+
+sissat <- fooprojRegular("/home/datos/aod/sim20032009/data/SAT/SISdm20032009_med44.nc", crslonlat, 'SIS')
+sissat <- sissat*24 
+
+#### TEMPERATURA ##
+
+source("/home/claudia/aod_and_PV/sim20032009/calc/proj12abr/cicloT.R")
 tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
-names(SISS) <- tt
-names(Tas) <- tt
 
-SISS <- setZ(SISS, tt)
-Tas <- setZ(Tas, tt)
+Tasmax <- '/home/datos/aod/sim20032009/data/C-AER/tmax/caer_tasmax_day_20032009.nc'
+Tasmin <- '/home/datos/aod/sim20032009/data/C-AER/tmin/caer_tmin_day_20032009.nc'
+Tavg <- '/home/datos/aod/sim20032009/data/C-AER/tas_day_20032009.nc' 
+ 
+Tas <- fooTday(Tasmax, Tasmin, Tavg, tt)
 
-## PROJECT THE 2 RASTERS ##
+Tasmax <- '/home/datos/aod/sim20032009/data/C-NO/tmax/cno_tasmax_day_20032009.nc'
+Tasmin <- '/home/datos/aod/sim20032009/data/C-NO/tmin/cno_tmin_day_20032009.nc'
+Tavg <- '/home/datos/aod/sim20032009/data/C-NO/tas_no_day_20032009.nc' 
+ 
+Tasno <- fooTday(Tasmax, Tasmin, Tavg, tt)
 
-## mascara ##
+## Asigno la proyección a TAS
 
-mascara <- raster("../../../figs/masque_terre_mer.nc", varname='zon_new')
-maslat <- raster("../../../figs/masque_terre_mer.nc", varname='lat')
-maslon <- raster("../../../figs/masque_terre_mer.nc", varname='lon')
+projection(Tas) <- projection(AER)
+extent(Tas) <- extent(AER)
+ 
+projection(Tasno) <- projection(AER)
+extent(Tasno) <- extent(AER)
 
-pmaslat <- rasterToPoints(maslat)
-pmaslon <- rasterToPoints(maslon)
-maslonlat <- cbind(pmaslon[,3], pmaslat[,3])
-
-# Specify the lonlat as spatial points with projection as long/lat
-maslonlat <- SpatialPoints(maslonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
-pmaslonlat <- spTransform(maslonlat, CRSobj = mycrs)
-
-projection(mascara) <- mycrs
-extent(mascara) <- extent(pmaslonlat)
 ##
 
-projection(SISS) <- projection(mascara)
-extent(SISS) <- extent(mascara)
+names(AER) <- tt
+names(NO) <- tt
+names(Tas) <- tt
+names(Tasno) <- tt
 
-
-latsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lat')
-lonsis <- raster('../../../data/C-AER/rsds_day_20032009.nc', varname='lon')
-
-mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
-
-plat <- rasterToPoints(latsis)
-plon <- rasterToPoints(lonsis)
-lonlat <- cbind(plon[,3], plat[,3])
-
-# Specify the lonlat as spatial points with projection as long/lat
-lonlat <- SpatialPoints(lonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
-lonlat <- spTransform(lonlat, CRSobj = mycrs) 
-projection(SISS) <- projection(lonlat)
-extent(SISS) <- extent(lonlat)
-
-## proyecto la temperatura
-
-projection(Tas) <- projection(mascara)
-extent(Tas) <- extent(mascara)
+AER <- setZ(AER, tt)
+NO <- setZ(NO, tt)
+Tas <- setZ(Tas, tt)
+Tasno <- setZ(Tasno, tt)
 
 ## EXTRACT THE DATA AT THE POINT ##
 
@@ -76,8 +108,10 @@ mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m
 bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 
-sis <- extract(SISS, bsrnlonlat, method="simple")
+sis <- extract(AER, bsrnlonlat, method="simple")
 tas <- extract(Tas, bsrnlonlat, method="simple")
+sisno <- extract(NO, bsrnlonlat, method="simple")
+tasno <- extract(Tasno, bsrnlonlat, method="simple")
 
 #######################################
 ## FUNCIÓN CALCULO DE PRODUCTIVIDAD
@@ -127,5 +161,12 @@ sis <- as.vector(sis)
 tas <- as.vector(tas)
 xx <- c(lat, sis, tas)
 
+sisno <- as.vector(sisno)
+tasno <- as.vector(tasno)
+xxno <- c(lat, sisno,tasno)
+
 xProd <- fooProd(xx, timePeriod = 'year')
-xProd <- fooProd(xx, timePeriod = 'month')
+xProdM <- fooProd(xx, timePeriod = 'month')
+
+xProdno <- fooProd(xx, timePeriod = 'year')
+xProdMno <- fooProd(xxno, timePeriod = 'month')
