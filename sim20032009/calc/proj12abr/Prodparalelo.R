@@ -42,6 +42,7 @@ Tas <- fooTday(Tasmax, Tasmin, Tavg, tt)
 names(Tas) <- tt
 Tas <- setZ(Tas, tt)
 
+
 ## SISS <- setZ(SISS, tt)
 ## Tas <- setZ(Tas, tt)
 
