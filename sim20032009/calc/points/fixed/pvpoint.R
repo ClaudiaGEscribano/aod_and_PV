@@ -18,21 +18,22 @@ crslcc <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=
 
 ## función para proyectar si los datos son regulares, como en el sat.
 
-fooProjregular <- function(rutaDatos, var){                                     
-    s <- stack(rutaDatos, varname=var)                                          
-    lat <- init(s, 'y')                                                         
-    lon <- init(s, 'x')                                                         
-                                                                                
-    plat <- rasterToPoints(lat)                                                 
-    plon <- rasterToPoints(lon)                                                 
-    plonlat <- cbind(plon[,3], plat[,3])                                        
-                                                                                
+fooProjregular <- function(rutaDatos, var){
+    s <- stack(rutaDatos, varname=var)
+
+    lat <- init(s, 'y')
+    lon <- init(s, 'x')
+
+    plat <- rasterToPoints(lat)
+    plon <- rasterToPoints(lon)
+    plonlat <- cbind(plon[,3], plat[,3])
+
     splonlat <- SpatialPoints(plonlat,proj4string=CRS("+proj=longlat +datum=WGS84"))
-                                                                                
-    projection(s) <- projection(splonlat)                                       
-    extent(s) <- extent(splonlat)                                               
-                                                                                
-    return(s)                                                                   
+
+    projection(s) <- projection(splonlat)
+    extent(s) <- extent(splonlat)
+
+    return(s)
 }            
 
 SAT <- fooProjregular('../../../data/SAT/SISdm20032009_med44.nc', var='SIS')
@@ -40,31 +41,56 @@ SAT <- SAT*24
 
 ## función si los datos son en malla no regular (modelo)
 
-fooproj <- function(rutadatos, proj, var){                                      
-    lat <- raster(rutadatos, varname='lat')                                     
-    lon <- raster(rutadatos, varname='lon')                                                    
-    plat <- rasterToPoints(lat)                                                 
-    plon <- rasterToPoints(lon)                                                 
-    plonlat <- cbind(plon[,3], plat[,3])                                        
-                                                                                
+fooproj <- function(rutadatos, proj, var){
+
+    lat <- raster(rutadatos, varname='lat')
+    lon <- raster(rutadatos, varname='lon')
+
+    plat <- rasterToPoints(lat)
+    plon <- rasterToPoints(lon)
+    plonlat <- cbind(plon[,3], plat[,3])
+
     splonlat <- SpatialPoints(plonlat,proj4string=crs("+proj=longlat +datum=WGS84"))
-    lonlat <- spTransform(splonlat, CRSobj = proj) 
-                                                                                
-    s <- stack(rutadatos, varname=var)                                          
-    projection(s) <- proj                                                       
-    extent(s) <- extent(lonlat)                                                 
-                                                                                
-    return(s)                                                                   
+    lonlat <- spTransform(splonlat, CRSobj = proj)
+
+    s <- stack(rutadatos, varname=var)
+    projection(s) <- proj
+    extent(s) <- extent(lonlat)
+
+    return(s)
 }
  
-SISS <- fooproj('../../../data/C-AER/rsds_day_20032009.nc', crslcc, var='rsds')
+SISS <- fooproj('/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc', crslcc, var='rsds')
 SISS <- SISS*24
 
-SISSno <- fooproj('../../../data/C-NO/rsds_no_day_20032009.nc', crslcc, var='rsds')
+SISSno <- fooproj('/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc', crslcc, var='rsds')
 SISSno <- SISSno*24
 
-Tas <- fooproj('../../../data/C-AER/tas_day_20032009.nc', crslcc, var='tas')
-Tasno <- fooproj('../../../data/C-NO/tas_no_day_20032009.nc', crslcc, var='tas')
+## TEMPERATURA DIURNA ##
+
+source("/home/claudia/aod_and_PV/sim20032009/calc/proj12abr/cicloT.R")
+tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
+
+Tasmax <- '/home/datos/aod/sim20032009/data/C-AER/tmax/caer_tasmax_day_20032009.nc'
+Tasmin <- '/home/datos/aod/sim20032009/data/C-AER/tmin/caer_tmin_day_20032009.nc'
+Tavg <- '/home/datos/aod/sim20032009/data/C-AER/tas_day_20032009.nc' 
+ 
+Tas <- fooTday(Tasmax, Tasmin, Tavg, tt)
+
+Tasmax <- '/home/datos/aod/sim20032009/data/C-NO/tmax/cno_tasmax_day_20032009.nc'
+Tasmin <- '/home/datos/aod/sim20032009/data/C-NO/tmin/cno_tmin_day_20032009.nc'
+Tavg <- '/home/datos/aod/sim20032009/data/C-NO/tas_no_day_20032009.nc' 
+ 
+Tasno <- fooTday(Tasmax, Tasmin, Tavg, tt)
+
+projection(Tas) <- projection(SISS)
+projection(Tasno) <- projection(SISS)
+
+extent(Tas) <- extent(SISS)
+extent(Tasno) <- extent(SISS)
+
+#Tas <- fooproj('../../../data/C-AER/tas_day_20032009.nc', crslcc, var='tas')
+#Tasno <- fooproj('../../../data/C-NO/tas_no_day_20032009.nc', crslcc, var='tas')
 
 ## Añado indice temporal
 
@@ -97,9 +123,12 @@ bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +da
 bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
 
 ## radiación y temperatura en la latitud de la planta según los modelos (o satélite)
-
+ 
 sis <- extract(SISS, bsrnlonlat, method="simple")
 tas <- extract(Tas, bsrnlonlat, method="simple")
+
+sisno <- extract(SISSno, bsrnlonlat, method="simple")
+tasno <- extract(Tasno, bsrnlonlat, method="simple")
 
 #######################################
 ## 2. FUNCIÓN CALCULO DE PRODUCTIVIDAD
@@ -157,9 +186,14 @@ sis <- as.vector(sis)
 tas <- as.vector(tas)
 xx <- c(lat, sis, tas)
 
+sisno <- as.vector(sisno)
+tasno <- as.vector(tasno)
+xx <- c(lat, sisno, tasno)
+
 xProd <- fooProd(xx, timePeriod = 'year') 
 xProd <- fooProd(xx, timePeriod = 'month') 
 
+xProdno <- fooProd(xx, timePeriod = 'month') 
 ######################################
 
 ## Función para calcular la productividad con datos de radiación efectiva de la planta.
@@ -194,7 +228,5 @@ Prod <- xProd$Pac
 ## la salida está en W/m2
 
 Prod <- Prod/1000 ## kW
-
 Yf <- Prod/Pg
-
 mon <- aggregate(Yf, by=as.yearmon, 'mean')

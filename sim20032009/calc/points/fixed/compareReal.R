@@ -24,7 +24,7 @@ lon <- 1.19
 photocampaMon <- aggregate(photocampa$Yf, by=as.yearmon, 'mean', na.rm=TRUE) 
 ## para comprobar si faltan días en el mes
 p <-aggregate(photocampa$Yf, by=as.yearmon, FUN=function(x) length(x))
-## Para los meses en los que hay Nan en algún inversor, no haygo la media, sino que tomo el único valor que hay.
+## Para los meses en los que hay Nan en algún inversor, no hago la media, sino que tomo el único valor que hay.
 
 ## La energía Yf es la que tengo que comparar con los datos simulados. Algunos de los valores menores de lo esperado debido a paradas por mantenimiento, mejora etc. Por ello, podemos simular con la Gefectiva para compara con la simulada con datos del modelo.
 
@@ -135,15 +135,28 @@ photocampa_aod <- as.zoo(t(aod), as.yearmon(idx))
 tt <- seq(as.Date('2003-01-01'), as.Date('2009-12-31'), 'month')
 
 xProd <- as.zoo(xProd, order.by=as.yearmon(tt))
+xProdno <- as.zoo(xProdno, order.by=as.yearmon(tt))
  
 photocampa_fixedMeses_caer <- xProd
-photocampa_fixedMeses_no <- xProd
-photocampa_fixed_sat <- xProd
-c <- merge(photocampaMon, photocampa_fixedMeses_caer, photocampa_fixedMeses_no, photocampa_fixed_sat)dias, photocampa_aod, all=FALSE)
-c <- c[which(index(c) >= "ene 2003" & index(c) <= "dic 2003")]
-names(c) <- c("REAL", "CAER", "CNO", "SAT")
+photocampa_fixedMeses_no <- xProdno
+#photocampa_fixed_sat <- xProd
+c <- merge(photocampaMon, photocampa_fixedMeses_caer, photocampa_fixedMeses_no, all=FALSE)#, photocampa_fixed_sat)dias, photocampa_aod, all=FALSE)
+#c <- c[which(index(c) >= "ene 2003" & index(c) <= "dic 2003")]
+names(c) <- c("REAL", "CAER", "CNO")#, "SAT")
 names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
-
-pdf("seriesPhotocampaaerno.pdf")
-xyplot(c,screens=c(1,1,1,1,3),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+pdf("seriesPhotocampamodelsreal.pdf")
+xyplot(c,screens=c(1,1,1) ,scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
+
+## root mean squared error and mean absoulte error
+
+rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
+## 0.8215362
+
+rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) ) 
+## 0.9933572
+
+mae <- mean(c$CAER - c$REAL)
+## 0.6805526
+maeNO <- mean(c$CNO - c$REAL)
+## 0.87685

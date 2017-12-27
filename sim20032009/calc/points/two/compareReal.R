@@ -56,7 +56,7 @@ mae <- mean(c$CAER - c$REAL)
 ## -0.7962638
 maeNO <- mean(c$CNO - c$REAL)
 ## -0.4136843
-
+  
 #####################################################
 
 ## ## creo un objeto que sea la diferencia
