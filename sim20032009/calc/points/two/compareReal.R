@@ -42,20 +42,21 @@ d <- melt(d)
 
 c <- c[-18] ## Este mes tiene muy pocos días.
   
-pdf("seriesCarmonamodelosreal2.pdf")
+pdf("seriesCarmonamodelosreal3.pdf")
 xyplot(c,screens=c(1,1,1),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
 dev.off()
 
 rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
-## 1.041356
+## 0.4294658
 
-rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) ) 
-## 0.7850891
+rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) )
+## 0.778846
+
 
 mae <- mean(c$CAER - c$REAL)
-## -0.7962638
+## 0.255634
 maeNO <- mean(c$CNO - c$REAL)
-## -0.4136843
+## 0.6641473
   
 #####################################################
 
