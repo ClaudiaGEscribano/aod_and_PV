@@ -167,3 +167,70 @@ d2 <- d[-15,]
 pdf("modelsreal2.pdf")
 xyplot(d2$REAL~d2$CAER+d2$CNO, xlab='REAL', ylab='models')
 dev.off()
+
+## DIFERENCIAS ##
+
+err <- cbind(c$CAER-c$REAL, c$CNO-c$REAL)
+names(err) <- c("CAER", "CNO")
+
+rerr <- cbind((c$CAER-c$REAL)/c$REAL, (c$CNO-c$REAL)/c$REAL)
+names(rerr) <- c("CAER", "CNO")
+
+myTheme <- custom.theme.2()
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+myTheme$superpose.symbol$pch <-c(20) 
+
+pdf("PhotocampaDiferencias.pdf")
+xyplot(err, scales = list(x = list(at = index(c), rot=45)), type='p', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE,
+           panel = function(...) {
+        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
+        panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+## summary(rerr)
+##      Index           CAER                CNO           
+##  Min.   :2003   Min.   : -0.05591   Min.   :  0.08489  
+##  1st Qu.:2003   1st Qu.:  0.17673   1st Qu.:  0.22019  
+##  Median :2004   Median :  0.20478   Median :  0.30306  
+##  Mean   :2004   Mean   :  7.48121   Mean   :  7.90140  
+##  3rd Qu.:2004   3rd Qu.:  0.37431   3rd Qu.:  0.46659  
+##  Max.   :2005   Max.   :130.60100   Max.   :136.91210  
+
+## Nos quedamos con el valor de la mediana. 0.2 y 0.3 en cada caso. (20% y 30%)
+
+## Elimino el valo de diciembre de 2004 porque está claro que lo obtenido es inferior de lo que debería obtenerse teóricamente.
+err2 <- c[-15,]
+
+rerr2 <- cbind((err2$CAER-err2$REAL)/err2$REAL, (err2$CNO-err2$REAL)/err2$REAL)
+names(rerr2) <- c("CAER", "CNO")
+
+## summary(rerr2)
+##      Index           CAER               CNO         
+##  Min.   :2003   Min.   :-0.05591   Min.   :0.08489  
+##  1st Qu.:2003   1st Qu.: 0.17601   1st Qu.:0.21357  
+##  Median :2004   Median : 0.19306   Median :0.30280  
+##  Mean   :2004   Mean   : 0.23887   Mean   :0.31254  
+##  3rd Qu.:2004   3rd Qu.: 0.35160   3rd Qu.:0.40555  
+##  Max.   :2005   Max.   : 0.51921   Max.   :0.58243
+
+## Si elimino los dos otros dos puntos sospechosos: julio y agosto de 2003
+
+err3 <- c[-7,]
+err3 <- err3[-7,]
+err3 <- err3[-13,]
+
+rerr3 <- cbind((err3$CAER-err3$REAL)/err3$REAL, (err3$CNO-err3$REAL)/err3$REAL)
+names(rerr3) <- c("CAER", "CNO")
+
+## summary(rerr3)
+##      Index           CAER               CNO         
+##  Min.   :2003   Min.   :-0.05591   Min.   :0.08489  
+##  1st Qu.:2003   1st Qu.: 0.16977   1st Qu.:0.20707  
+##  Median :2004   Median : 0.19026   Median :0.28138  
+##  Mean   :2004   Mean   : 0.20944   Mean   :0.28292  
+##  3rd Qu.:2004   3rd Qu.: 0.24789   3rd Qu.:0.33559  
+##  Max.   :2005   Max.   : 0.46005   Max.   :0.49792

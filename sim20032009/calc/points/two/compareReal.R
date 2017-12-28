@@ -47,17 +47,54 @@ xyplot(c,screens=c(1,1,1),scales = list(x = list(at = index(c), rot=45)), type='
 dev.off()
 
 rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
-## 0.4294658
+## 0.2674931
 
 rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) )
-## 0.778846
-
+## 0.6730644
+ 
 
 mae <- mean(c$CAER - c$REAL)
-## 0.255634
+## 0.185356
 maeNO <- mean(c$CNO - c$REAL)
-## 0.6641473
-  
+## 0.5976998
+
+## DIFERENCIAS
+
+err <- cbind(c$CAER-c$REAL, c$CNO-c$REAL)
+names(err) <- c("CAER", "CNO")
+
+pdf("CarmonaDiferencias2.pdf")
+xyplot(err, scales = list(x = list(at = index(c), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE,
+           panel = function(...) {
+        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
+        panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+## summary(err)
+##      Index           CAER               CNO        
+##  Min.   :2008   Min.   :-0.13962   Min.   :0.1568  
+##  1st Qu.:2008   1st Qu.: 0.07222   1st Qu.:0.3674  
+##  Median :2008   Median : 0.16710   Median :0.5654  
+##  Mean   :2008   Mean   : 0.18536   Mean   :0.5977  
+##  3rd Qu.:2008   3rd Qu.: 0.22946   3rd Qu.:0.8206  
+##  Max.   :2009   Max.   : 0.60867   Max.   :1.2248
+ 
+rerr <- cbind((c$CAER-c$REAL)/c$REAL, (c$CNO-c$REAL)/c$REAL)
+names(rerr) <- c("CAER", "CNO")
+
+## summary(rerr)
+##      Index           CAER                CNO         
+##  Min.   :2008   Min.   :-0.024826   Min.   :0.02788  
+##  1st Qu.:2008   1st Qu.: 0.008794   1st Qu.:0.04690  
+##  Median :2008   Median : 0.033898   Median :0.11500  
+##  Mean   :2008   Mean   : 0.036286   Mean   :0.11145  
+##  3rd Qu.:2008   3rd Qu.: 0.050163   3rd Qu.:0.15666  
+##  Max.   :2009   Max.   : 0.149535   Max.   :0.24856
+
+
 #####################################################
 
 ## ## creo un objeto que sea la diferencia
