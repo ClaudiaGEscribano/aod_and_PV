@@ -46,7 +46,7 @@ maslon <- raster("../../../figs/masque_terre_mer.nc", varname='lon')
 pmaslat <- rasterToPoints(maslat)
 pmaslon <- rasterToPoints(maslon)
 maslonlat <- cbind(pmaslon[,3], pmaslat[,3])
-
+ 
 # Specify the lonlat as spatial points with projection as long/lat
 maslonlat <- SpatialPoints(maslonlat, proj4string = CRS("+proj=longlat +datum=WGS84"))
 pmaslonlat <- spTransform(maslonlat, CRSobj = mycrs)
@@ -57,7 +57,7 @@ extent(mascara) <- extent(pmaslonlat)
 #######
 ## CAER
 #######
-
+ 
 fixed <- stack("../../proj12abr/fixed_caer_monthlyProd_temp_20032009.grd")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
 fixed <- setZ(fixed, idx)
@@ -163,6 +163,7 @@ maeNO <- mean(c$CNO - c$REAL)
 ## Elimino los datos de producción reales por debajo de 1
 
 d2 <- d[-15,]
+c2 <- c[-15,]
 
 pdf("modelsreal2.pdf")
 xyplot(d2$REAL~d2$CAER+d2$CNO, xlab='REAL', ylab='models')
@@ -181,15 +182,49 @@ myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
 myTheme$superpose.symbol$pch <-c(20) 
 
-pdf("PhotocampaDiferencias.pdf")
-xyplot(err, scales = list(x = list(at = index(c), rot=45)), type='p', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE,
+pdf("PhotocampaDiferencias2.pdf")
+xyplot(err, scales = list(x = list(at = index(c), rot=45)), type='p', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
            panel = function(...) {
-        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
-        panel.abline(h=0, col='black', lwd=1)
+                panel.abline(h=0, col='black', lwd=1)
                panel.xyplot(...)
        }
 )
 dev.off()
+
+
+err2 <- cbind(c2$CAER-c2$REAL, c2$CNO-c$REAL)
+names(err2) <- c("CAER", "CNO")
+
+rerr2 <- cbind((c2$CAER-c2$REAL)/c2$REAL, (c2$CNO-c2$REAL)/c2$REAL)
+names(rerr2) <- c("CAER", "CNO")
+
+pdf("PhotocampaDiferencias3.pdf")
+xyplot(err2, scales = list(x = list(at = index(c2), rot=45)), type='p', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+                panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+## summary(err2)
+##      Index           CAER              CNO        
+##  Min.   :2003   Min.   :-0.1725   Min.   :0.1975  
+##  1st Qu.:2003   1st Qu.: 0.4932   1st Qu.:0.6363  
+##  Median :2004   Median : 0.6453   Median :0.7749  
+##  Mean   :2004   Mean   : 0.6247   Mean   :0.8279  
+##  3rd Qu.:2004   3rd Qu.: 0.7331   3rd Qu.:1.0222  
+##  Max.   :2005   Max.   : 1.5825   Max.   :1.7752
+
+## summary(rerr2)
+##      Index           CAER               CNO         
+##  Min.   :2003   Min.   :-0.05591   Min.   :0.08489  
+##  1st Qu.:2003   1st Qu.: 0.17601   1st Qu.:0.21357  
+##  Median :2004   Median : 0.19306   Median :0.30280  
+##  Mean   :2004   Mean   : 0.23887   Mean   :0.31254  
+##  3rd Qu.:2004   3rd Qu.: 0.35160   3rd Qu.:0.40555  
+##  Max.   :2005   Max.   : 0.51921   Max.   :0.58243  
+
 
 ## summary(rerr)
 ##      Index           CAER                CNO           
@@ -234,3 +269,41 @@ names(rerr3) <- c("CAER", "CNO")
 ##  Mean   :2004   Mean   : 0.20944   Mean   :0.28292  
 ##  3rd Qu.:2004   3rd Qu.: 0.24789   3rd Qu.:0.33559  
 ##  Max.   :2005   Max.   : 0.46005   Max.   :0.49792
+
+## La mejora es muy notable.
+ 
+rmse <- sqrt( mean( (err3$CAER - err3$REAL)^2, na.rm = TRUE) )
+## 0.5764781
+
+rmseNO <- sqrt( mean( (err3$CNO - err3$REAL)^2, na.rm = TRUE) )
+## 0.7626082
+ 
+
+mae <- mean(err3$CAER - err3$REAL)
+## 0.5081601
+maeNO <- mean(err3$CNO - err3$REAL)
+## 0.7051249
+
+err3 <- cbind(err3$CAER-err3$REAL, err3$CNO-err3$REAL)
+names(err3) <- c("CAER", "CNO")
+
+myTheme <- custom.theme.2()
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+myTheme$superpose.symbol$pch <-c(20) 
+
+pdf("PhotocampaDiferencias3.pdf")
+xyplot(err3, scales = list(x = list(at = index(err3), rot=45)), type='p', ylab='kWh/m^2', par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+                panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+###############################
+## agregar por meses
+
+month <- function(x) format(as.Date(x, '%m'))
+
+monPhoto <- format(as.Date(index(photocampa)), '%m')
