@@ -36,7 +36,7 @@ fooProjregular <- function(rutaDatos, var){
     return(s)
 }            
 
-SAT <- fooProjregular('../../../data/SAT/SISdm20032009_med44.nc', var='SIS')
+SAT <- fooProjregular('/home/datos/aod/sim20032009/data/SAT/SISdm20032009_med44.nc', var='SIS')
 SAT <- SAT*24
 
 ## función si los datos son en malla no regular (modelo)
@@ -83,6 +83,40 @@ Tavg <- '/home/datos/aod/sim20032009/data/C-NO/tas_no_day_20032009.nc'
  
 Tasno <- fooTday(Tasmax, Tasmin, Tavg, tt)
 
+Tasmax <- '/home/datos/aod/sim20032009/data/TEMP/tx_0.50_20032009.nc'
+Tasmin <- '/home/datos/aod/sim20032009/data/TEMP/tn_0.50_20032009.nc'
+Tavg <- '/home/datos/aod/sim20032009/data/TEMP/tg_0.50_20032009.nc' 
+
+## función ciclo diurnoi de temp para los datos de ECAD
+
+fooTdayREG <- function(Tasmax, Tasmin, Tavg, tt){
+
+    Tmax <- stack(Tasmax, varname='tx')
+    Tmin <- stack(Tasmin, varname='tn')
+    Tavg <- stack(Tavg, varname='tg')
+
+    Tmax <- setZ(Tmax, tt)
+    Tmin <- setZ(Tmin, tt)
+    Tavg <- setZ(Tavg, tt)
+
+    Tmm <- zApply(Tavg, by=as.yearmon, 'mean')
+    DTR <- Tmax-Tmin
+    DTR4 <- DTR/4
+    DTR4 <- setZ(DTR4, tt)
+
+    l <- lapply(as.yearmon(getZ(Tmm)), FUN=function(x)
+        DTR4[[which(as.yearmon(getZ(DTR4)) == x)]] + Tmm[[which(getZ(Tmm) == x)]])
+
+    a <- brick(unlist(l, recursive=TRUE))
+    names(a) <- tt
+    return(a)
+}
+
+TasSAT <- fooTdayREG(Tasmax, Tasmin, Tavg, tt)
+
+projection(TasSAT) <- projection(SAT)
+extent(TasSAT) <- extent(SAT)
+
 projection(Tas) <- projection(SISS)
 projection(Tasno) <- projection(SISS)
 
@@ -101,12 +135,14 @@ names(Tas) <- tt
 names(SAT) <- tt
 names(SISSno) <- tt
 names(Tasno) <- tt
+names(TasSAT) <- tt
 
 SISS <- setZ(SISS, tt)
 Tas <- setZ(Tas, tt)
 SISSno <- setZ(SISSno, tt)
 Tasno <- setZ(Tasno, tt)
 SAT <- setZ(SAT, tt)
+TasSAT <- setZ(TasSAT, tt)
 
 ## 1.2 EXTRACT THE DATA AT THE POINT ##
 
@@ -129,6 +165,13 @@ tas <- extract(Tas, bsrnlonlat, method="simple")
 
 sisno <- extract(SISSno, bsrnlonlat, method="simple")
 tasno <- extract(Tasno, bsrnlonlat, method="simple")
+
+## extraer en SAT
+
+bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
+
+sisSAT <- extract(SAT, bsrnlonlat, method="simple")
+tasSAT <- extract(TasSAT, bsrnlonlat, method="simple")
 
 ## ¿Tienen sentido los datos de temperatura diurnos que hemos calculado? con summary(t(tas)) y summary(t(tasno)) podemos ver los valores de estos vectores que se encuentran denro de rangos lógicos.
 
@@ -192,11 +235,19 @@ sisno <- as.vector(sisno)
 tasno <- as.vector(tasno)
 xxno <- c(lat, sisno, tasno)
 
+sisSAT <- as.vector(sisSAT)
+tasSAT <- as.vector(tasSAT)
+xxSAT <- c(lat, sisSAT,tasSAT)
+
 xProdY <- fooProd(xx, timePeriod = 'year') 
 xProd <- fooProd(xx, timePeriod = 'month') 
 
 xProdYno <- fooProd(xxno, timePeriod='year')
 xProdno <- fooProd(xxno, timePeriod = 'month') 
+
+xProdsat <- fooProd(xxSAT, timePeriod = 'year')
+xProdMsat <- fooProd(xxSAT, timePeriod = 'month')
+
 ######################################
 
 ## Función para calcular la productividad con datos de radiación efectiva de la planta.

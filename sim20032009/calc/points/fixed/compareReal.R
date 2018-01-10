@@ -135,16 +135,25 @@ tt <- seq(as.Date('2003-01-01'), as.Date('2009-12-31'), 'month')
 
 xProd <- as.zoo(xProd, order.by=as.yearmon(tt))
 xProdno <- as.zoo(xProdno, order.by=as.yearmon(tt))
+xProdsat <- as.zoo(xProdMsat, order.by=as.yearmon(tt))
  
 photocampa_fixedMeses_caer <- xProd
 photocampa_fixedMeses_no <- xProdno
-#photocampa_fixed_sat <- xProd
-c <- merge(photocampaMon, photocampa_fixedMeses_caer, photocampa_fixedMeses_no, all=FALSE)#, photocampa_fixed_sat)dias, photocampa_aod, all=FALSE)
+photocampa_fixed_sat <- xProdsat
+
+c <- merge(photocampaMon, photocampa_fixedMeses_caer, photocampa_fixedMeses_no, photocampa_fixed_sat, all=FALSE)#, photocampa_fixed_sat)dias, photocampa_aod, all=FALSE)
 #c <- c[which(index(c) >= "ene 2003" & index(c) <= "dic 2003")]
-names(c) <- c("REAL", "CAER", "CNO")#, "SAT")
-names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
-pdf("seriesPhotocampamodelsreal.pdf")
-xyplot(c,screens=c(1,1,1) ,scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+names(c) <- c("REAL", "CAER", "CNO", "SAT")
+#names(c) <- c("REAL", "CAER_SIS", "CAER_GEN", "DAYS", "AOD") 
+
+myTheme <- custom.theme.2()
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+myTheme$superpose.symbol$pch <-c(20) 
+
+pdf("seriesPhotocampaALL.pdf")
+xyplot(c,screens=c(1,1,1), scales = list(x = list(at = index(c), rot=45)),
+       grid=TRUE,  par.settings=myTheme, type='b', superpose=TRUE)
 dev.off()
 
 ## root mean squared error and mean absoulte error
@@ -206,6 +215,44 @@ xyplot(err2, scales = list(x = list(at = index(c2), rot=45)), type='p', ylab='kW
        }
 )
 dev.off()
+
+
+err3 <- cbind(c2$CAER-c2$REAL, c2$CNO-c2$REAL, c2$SAT-c2$REAL)
+names(err3) <- c("CAER", "CNO", "SAT")
+
+pdf("PhotocampaDiferenciasabsolutas.pdf")
+xyplot(err3, scales = list(x = list(at = index(c2), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+                panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+## summary(err3)
+##      Index           CAER              CNO              SAT         
+##  Min.   :2003   Min.   :-0.1725   Min.   :0.1975   Min.   :0.08237  
+##  1st Qu.:2003   1st Qu.: 0.4932   1st Qu.:0.6363   1st Qu.:0.44773  
+##  Median :2004   Median : 0.6453   Median :0.7749   Median :0.70663  
+##  Mean   :2004   Mean   : 0.6247   Mean   :0.8279   Mean   :0.69957  
+##  3rd Qu.:2004   3rd Qu.: 0.7331   3rd Qu.:1.0222   3rd Qu.:0.95380  
+##  Max.   :2005   Max.   : 1.5825   Max.   :1.7752   Max.   :1.70121
+
+rerr3 <- cbind((c2$CAER-c2$REAL)/c2$REAL, (c2$CNO-c2$REAL)/c2$REAL)
+names(rerr2) <- c("CAER", "CNO")
+
+rerr4 <- cbind((c2$CAER-c2$REAL)/c2$REAL, (c2$CNO-c2$REAL)/c2$REAL, (c2$SAT-c2$REAL)/c2$REAL)
+names(rerr4) <- c("CAER", "CNO", "SAT")
+
+## summary(rerr4)
+##      Index           CAER               CNO               SAT         
+##  Min.   :2003   Min.   :-0.05591   Min.   :0.08489   Min.   :0.04146  
+##  1st Qu.:2003   1st Qu.: 0.17601   1st Qu.:0.21357   1st Qu.:0.14831  
+##  Median :2004   Median : 0.19306   Median :0.30280   Median :0.25638  
+##  Mean   :2004   Mean   : 0.23887   Mean   :0.31254   Mean   :0.27753  
+##  3rd Qu.:2004   3rd Qu.: 0.35160   3rd Qu.:0.40555   3rd Qu.:0.33426  
+##  Max.   :2005   Max.   : 0.51921   Max.   :0.58243   Max.   :0.60075
+
 
 ## summary(err2)
 ##      Index           CAER              CNO        
