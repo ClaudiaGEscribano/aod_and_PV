@@ -33,30 +33,44 @@ tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'month')
 
 xProd <- zoo(xProdM, order.by=as.yearmon(tt))
 xProdno <- zoo(xProdMno, order.by=as.yearmon(tt))
+xProdsat <- zoo(xProdMsat, order.by=as.yearmon(tt))  
 
-c <- merge(carmonaMon, xProd, xProdno, all=FALSE)#, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
+c <- merge(carmonaMon, xProd, xProdno, xProdsat, all=FALSE)#, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
 names(c) <- c("REAL", "CAER", "CNO") #, "SAT", "AOD")
 
 d <- as.data.frame(c)
 d <- melt(d)
 
 c <- c[-18] ## Este mes tiene muy pocos días.
-  
-pdf("seriesCarmonamodelosreal3.pdf")
-xyplot(c,screens=c(1,1,1),scales = list(x = list(at = index(c), rot=45)), type='b', superpose=TRUE)
+
+
+myTheme <- custom.theme.2()
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+myTheme$superpose.symbol$pch <-c(20) 
+
+names(c) <- c("REAL", "CAER", "CNO", "SAT")
+
+pdf("seriesCarmonaALL.pdf")
+xyplot(c,screens=c(1,1,1), scales = list(x = list(at = index(c), rot=45)),
+       type='b', par.settings=myTheme, superpose=TRUE, grid=TRUE)
 dev.off()
 
 rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
 ## 0.2674931
-
 rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) )
 ## 0.6730644
- 
+rmseSAT <- sqrt( mean( (c$SAT - c$REAL)^2, na.rm = TRUE) )
+## 0.5871861
+
 
 mae <- mean(c$CAER - c$REAL)
 ## 0.185356
 maeNO <- mean(c$CNO - c$REAL)
 ## 0.5976998
+maeSAT <- mean(c$SAT - c$REAL)
+## 0.550029
+
 
 ## DIFERENCIAS
 
@@ -81,7 +95,33 @@ dev.off()
 ##  Mean   :2008   Mean   : 0.18536   Mean   :0.5977  
 ##  3rd Qu.:2008   3rd Qu.: 0.22946   3rd Qu.:0.8206  
 ##  Max.   :2009   Max.   : 0.60867   Max.   :1.2248
- 
+
+## Errores añadiendo el sat
+
+err2 <- cbind(c$CAER-c$REAL, c$CNO-c$REAL, c$SAT-c$REAL)
+names(err2) <- c("CAER", "CNO", "SAT")
+
+pdf("CarmonaDiferenciasabsolutas.pdf")
+xyplot(err2, scales = list(x = list(at = index(c), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+               panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+
+## summary(err2)
+##      Index           CAER               CNO              SAT        
+##  Min.   :2008   Min.   :-0.13962   Min.   :0.1568   Min.   :0.1592  
+##  1st Qu.:2008   1st Qu.: 0.07222   1st Qu.:0.3674   1st Qu.:0.3940  
+##  Median :2008   Median : 0.16710   Median :0.5654   Median :0.5242  
+##  Mean   :2008   Mean   : 0.18536   Mean   :0.5977   Mean   :0.5500  
+##  3rd Qu.:2008   3rd Qu.: 0.22946   3rd Qu.:0.8206   3rd Qu.:0.7385  
+##  Max.   :2009   Max.   : 0.60867   Max.   :1.2248   Max.   :0.8504
+
+## errores relativos:
+
 rerr <- cbind((c$CAER-c$REAL)/c$REAL, (c$CNO-c$REAL)/c$REAL)
 names(rerr) <- c("CAER", "CNO")
 
@@ -93,6 +133,20 @@ names(rerr) <- c("CAER", "CNO")
 ##  Mean   :2008   Mean   : 0.036286   Mean   :0.11145  
 ##  3rd Qu.:2008   3rd Qu.: 0.050163   3rd Qu.:0.15666  
 ##  Max.   :2009   Max.   : 0.149535   Max.   :0.24856
+
+## errores relativos con el sat:
+
+rerr2 <- cbind((c$CAER-c$REAL)/c$REAL, (c$CNO-c$REAL)/c$REAL, (c$SAT-c$REAL)/c$REAL)
+names(rerr2) <- c("CAER", "CNO", "SAT")
+
+## summary(rerr2)
+##      Index           CAER                CNO               SAT         
+##  Min.   :2008   Min.   :-0.024826   Min.   :0.02788   Min.   :0.02726  
+##  1st Qu.:2008   1st Qu.: 0.008794   1st Qu.:0.04690   1st Qu.:0.06857  
+##  Median :2008   Median : 0.033898   Median :0.11500   Median :0.08941  
+##  Mean   :2008   Mean   : 0.036286   Mean   :0.11145   Mean   :0.09704  
+##  3rd Qu.:2008   3rd Qu.: 0.050163   3rd Qu.:0.15666   3rd Qu.:0.12474  
+##  Max.   :2009   Max.   : 0.149535   Max.   :0.24856   Max.   :0.19109
 
 
 #####################################################
