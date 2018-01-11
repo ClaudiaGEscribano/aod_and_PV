@@ -36,7 +36,7 @@ xProdno <- zoo(xProdMno, order.by=as.yearmon(tt))
 xProdsat <- zoo(xProdMsat, order.by=as.yearmon(tt))  
 
 c <- merge(carmonaMon, xProd, xProdno, xProdsat, all=FALSE)#, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
-names(c) <- c("REAL", "CAER", "CNO") #, "SAT", "AOD")
+names(c) <- c("REAL", "CAER", "CNO","SAT") ##"AOD")
 
 d <- as.data.frame(c)
 d <- melt(d)
@@ -103,6 +103,26 @@ names(err2) <- c("CAER", "CNO", "SAT")
 
 pdf("CarmonaDiferenciasabsolutas.pdf")
 xyplot(err2, scales = list(x = list(at = index(c), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+               panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+dferr2 <- melt(as.data.frame(err2))
+
+pdf("pruebasvis.pdf")
+xyplot(value~variable, groups=variable,data=dferr2, type='p', ylab='Error kWh/kWp', xlab='model', cex=1.3 ,par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+               panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+pdf("pruebascatter.pdf")
+xyplot(CAER+CNO+SAT~REAL, data=c, type='p', ylab='MODEL', xlab='REAL', cex=1.3 ,par.settings=myTheme,superpose=TRUE, grid=TRUE, auto.key=TRUE, xlim=c(4,9.3), ylim=c(4,9.3),
            panel = function(...) {
                panel.abline(h=0, col='black', lwd=1)
                panel.xyplot(...)

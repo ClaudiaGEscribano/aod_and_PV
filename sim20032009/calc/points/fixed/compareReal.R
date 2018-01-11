@@ -34,7 +34,7 @@ p <-aggregate(photocampa$Yf, by=as.yearmon, FUN=function(x) length(x))
 ## Las simulaciones generales tienen un sistema que no se corresponde con la planta real, es genérico. Si se quiere, se puede extraer la información de un raster en una latitud concreta con el código a continuación, pero para una comparación hay que simular la generación en un putno con las características del sistema concreto. Los resultados de esto es la salida de pvpoint.R
 
 ## 1. Hay que asignar al raster la proyección que le corresponde. Para CAER es LCC, para el satélite es long/lat.
-
+ 
 mycrs <- CRS("+proj=lcc +lat_1=43 +lat_2=43 +lat_0=43 +lon_0=15 +k=0.684241 +units=m +datum=WGS84 +no_defs")
 
 ## mascara data to project pvoutput data
@@ -132,7 +132,7 @@ photocampa_aod <- as.zoo(t(aod), as.yearmon(idx))
 ## comparación con una simulacion de CAER con los datos del sistema corregidos################
 
 tt <- seq(as.Date('2003-01-01'), as.Date('2009-12-31'), 'month')
-
+ 
 xProd <- as.zoo(xProd, order.by=as.yearmon(tt))
 xProdno <- as.zoo(xProdno, order.by=as.yearmon(tt))
 xProdsat <- as.zoo(xProdMsat, order.by=as.yearmon(tt))
@@ -140,7 +140,7 @@ xProdsat <- as.zoo(xProdMsat, order.by=as.yearmon(tt))
 photocampa_fixedMeses_caer <- xProd
 photocampa_fixedMeses_no <- xProdno
 photocampa_fixed_sat <- xProdsat
-
+ 
 c <- merge(photocampaMon, photocampa_fixedMeses_caer, photocampa_fixedMeses_no, photocampa_fixed_sat, all=FALSE)#, photocampa_fixed_sat)dias, photocampa_aod, all=FALSE)
 #c <- c[which(index(c) >= "ene 2003" & index(c) <= "dic 2003")]
 names(c) <- c("REAL", "CAER", "CNO", "SAT")
@@ -155,6 +155,17 @@ pdf("seriesPhotocampaALL.pdf")
 xyplot(c,screens=c(1,1,1), scales = list(x = list(at = index(c), rot=45)),
        grid=TRUE,  par.settings=myTheme, type='b', superpose=TRUE)
 dev.off()
+
+
+pdf("pruebascatterFixed.pdf")
+xyplot(CAER+CNO+SAT~REAL, data=c2, type='p', ylab='MODEL', xlab='REAL', cex=1.3 ,par.settings=myTheme,superpose=TRUE, grid=TRUE, auto.key=TRUE, xlim=c(1,6), ylim=c(1,6),
+           panel = function(...) {
+               panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
 
 ## root mean squared error and mean absoulte error
 
@@ -177,6 +188,24 @@ c2 <- c[-15,]
 pdf("modelsreal2.pdf")
 xyplot(d2$REAL~d2$CAER+d2$CNO, xlab='REAL', ylab='models')
 dev.off()
+
+rmse <- sqrt( mean( (c2$CAER - c2$REAL)^2, na.rm = TRUE) )
+##  0.7471841
+
+rmseNO <- sqrt( mean( (c2$CNO - c2$REAL)^2, na.rm = TRUE) ) 
+## 0.934339
+
+rmseSAT <- sqrt( mean( (c2$SAT - c2$REAL)^2, na.rm = TRUE) )
+##  0.7946017
+
+
+mae <- mean(c2$CAER - c2$REAL)
+## 0.6246872
+maeNO <- mean(c2$CNO - c2$REAL)
+## 0.8278974
+maeSAT <- mean(c2$SAT-c2$REAL)
+## 0.699568
+
 
 ## DIFERENCIAS ##
 
@@ -220,6 +249,15 @@ dev.off()
 err3 <- cbind(c2$CAER-c2$REAL, c2$CNO-c2$REAL, c2$SAT-c2$REAL)
 names(err3) <- c("CAER", "CNO", "SAT")
 
+## summary(err3)
+##      Index           CAER              CNO              SAT         
+##  Min.   :2003   Min.   :-0.1725   Min.   :0.1975   Min.   :0.08237  
+##  1st Qu.:2003   1st Qu.: 0.4932   1st Qu.:0.6363   1st Qu.:0.44773  
+##  Median :2004   Median : 0.6453   Median :0.7749   Median :0.70663  
+##  Mean   :2004   Mean   : 0.6247   Mean   :0.8279   Mean   :0.69957  
+##  3rd Qu.:2004   3rd Qu.: 0.7331   3rd Qu.:1.0222   3rd Qu.:0.95380  
+## Max.   :2005   Max.   : 1.5825   Max.   :1.7752   Max.   :1.70121
+
 pdf("PhotocampaDiferenciasabsolutas.pdf")
 xyplot(err3, scales = list(x = list(at = index(c2), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
            panel = function(...) {
@@ -228,6 +266,20 @@ xyplot(err3, scales = list(x = list(at = index(c2), rot=45)), type='b', ylab='kW
        }
 )
 dev.off()
+
+dferr2 <- melt(as.data.frame(err3))
+
+pdf("pruebasvisFixed.pdf")
+xyplot(value~variable, groups=variable,data=dferr2, type='p', ylab='Error kWh/kWp', xlab='model', cex=1.3 ,par.settings=myTheme,superpose=TRUE, grid=TRUE,
+           panel = function(...) {
+               panel.abline(h=0, col='black', lwd=1)
+               panel.xyplot(...)
+       }
+)
+dev.off()
+
+
+
 
 ## summary(err3)
 ##      Index           CAER              CNO              SAT         
