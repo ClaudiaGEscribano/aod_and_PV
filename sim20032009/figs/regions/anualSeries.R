@@ -9,17 +9,19 @@ load("../../calc/regions/Dif_cno_sat_zonas.Rdata")
 
 library(reshape2)
 
-caer <- melt(Dif_caer_sat_zonas, id.vars='zonas')
-caer$model <- rep("caer", length(caer[,1]))
+names(Dif_caer_sat_zonas) <- c("2003", "2004", "2005", "2006", "2007", "2008", "2009", "zonas")
+aer <- melt(Dif_caer_sat_zonas, id.vars='zonas')
+aer$model <- rep("aer", length(caer[,1]))
 
-names(caer) <- c("zonas", "year", "rsds", "model")
+names(aer) <- c("zonas", "year", "rsds", "model")
 
-cno <- melt(Dif_cno_sat_zonas, id.vars='zonas')
-cno$model <- rep("cno", length(cno[,1]))
+names(Dif_cno_sat_zonas) <- c("2003", "2004", "2005", "2006", "2007", "2008", "2009", "zonas")
+no_aer <- melt(Dif_cno_sat_zonas, id.vars='zonas')
+no_aer$model <- rep("no-aer", length(cno[,1]))
 
-names(cno) <- c("zonas", "year", "rsds", "model")
+names(no_aer) <- c("zonas", "year", "rsds", "model")
 
-rsds_dif <- rbind(caer,cno)
+rsds_dif <- rbind(aer,no_aer)
   
 xyplot(rsds~year|as.factor(zonas), group=model, data=rsds_dif, type='l', lwd=3, auto.key=TRUE,
     panel = function(...) {
@@ -29,28 +31,31 @@ xyplot(rsds~year|as.factor(zonas), group=model, data=rsds_dif, type='l', lwd=3, 
        }
 )
  
-rsds_dif$zonas <- rep(c("AFRE","AFRW", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),14)
+rsds_dif$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),14)
 
 myTheme <- custom.theme.2()
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
-myTheme$superpose.symbol$pch <-c(20,8) 
-
-pdf("dif_model_sat_zonas.pdf")  
-xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme,ylab='rsds[W/m^2]',
+myTheme$superpose.symbol$pch <-c(20) #,8) 
+ 
+pdf("dif_model_sat_zonas.pdf", height=4, width=7)  
+xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme, scales=list(x=list(rot=45), y=list(rot=0, cex=0.8)), aspect=2/3, layout=c(4,2), grid=TRUE, ylab='rsds[W/m^2]',
     panel = function(...) {
-        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
+#        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
         panel.abline(h=0, col='black', lwd=1)
                panel.xyplot(...)
-       }
-)
+       })
+#)
 dev.off()
- 
+   
 ## DIFERENCIAS RELATIVAS EN PRODUCTIVIDAD
 
 load("../../calc/regions/Dif_rel_fixed_caer_sat_zonas.Rdata")
 load("../../calc/regions/Dif_rel_fixed_cno_sat_zonas.Rdata")
 
+
+names(Dif_rel_fixed_caer_sat_zonas) <- c("2003", "2004", "2005", "2006", "2007", "2008", "2009", "zonas")
+names(Dif_rel_fixed_cno_sat_zonas) <- c("2003", "2004", "2005", "2006", "2007", "2008", "2009", "zonas")
 caerfixed <- melt(Dif_rel_fixed_caer_sat_zonas, id.vars='zonas')
 caerfixed$model <- rep("caer", length(caer[,1]))
 
@@ -63,9 +68,10 @@ names(cnofixed) <- c("zonas", "year", "yield", "model")
 
 fixed_dif <- rbind(caerfixed,cnofixed)
 
-fixed_dif$zonas <- rep(c("AFRE","AFRW", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),14)
- 
-xyplot(yield~year|as.factor(zonas), group=model, data=fixed_dif, type='l', lwd=3, ylab='rel.dif', scales=list(rot=45), auto.key=TRUE,
+fixed_dif$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),14)
+
+
+xyplot(yield~year|as.factor(zonas), group=model, data=fixed_dif, type='l', lwd=3, ylab='rel.dif', scales=list(rot=45), par.settings=myTheme, layout=c(2,4),grid=TRUE, auto.key=TRUE,
     panel = function(...) {
         panel.grid(col="grey", lwd=0.1)
         panel.abline(h=0, col='black', lwd=1)

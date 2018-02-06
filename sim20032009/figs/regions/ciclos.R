@@ -1,5 +1,5 @@
 library(zoo)
-library(lattice)
+library(latticeExtra)
 library(reshape2)
 
 ## DIFERENCIAS RELATIVAS RADIACION ZONAS CON EL SATÉLITE.
@@ -24,37 +24,37 @@ load("../../calc/regions/cno_two_cicloMean_zones.Rdata")
 
 sat <- sat_rsds_cicloMean_zones
 sat <- as.data.frame(sat)
-caer <- caer_rsds_cicloMean_zones
-caer <- as.data.frame(caer)
-cno <- cno_rsds_cicloMean_zones
-cno <- as.data.frame(cno)
+aer <- caer_rsds_cicloMean_zones
+aer <- as.data.frame(aer)
+no_aer<- cno_rsds_cicloMean_zones
+no_aer<- as.data.frame(no_aer)
 
 names(sat) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
-names(caer) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
-names(cno) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
+names(aer) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
+names(no_aer) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 
 sat <- melt(sat, id.vars='zonas')
-caer <- melt(caer, id.vars='zonas')
-cno <- melt(cno, id.vars='zonas')
+aer <- melt(aer, id.vars='zonas')
+no_aer<- melt(no_aer, id.vars='zonas')
 
 sat$data <- "sat"
-caer$data <-"caer"
-cno$data <- "cno"
+aer$data <-"aer"
+no_aer$data <- "no-aer"
 
-rsds <- rbind(sat,caer,cno)
+rsds <- rbind(sat,aer,no_aer)
  
-rsds$zonas <- rep(c("AFRW","AFRE", "EMED", "EURS", "EURW","CNEUR","NEEUR","BISL"),36)
-names(rsds) <- c("zonas", "month", "rsds", "data")
+rsds$zonas <-  rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),36) 
+names(rsds) <- c("zonas", "month", "SSR", "data")
 
-myTheme <- custom.theme.2(cex=0.7)
+myTheme <- custom.theme.2(cex=0.5, alpha=0.7)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
-myTheme$superpose.symbol$pch <-c(20,8,5) 
+myTheme$superpose.symbol$pch <-c(20) #,8,5) 
 
-pdf("dif_model_sat_cicloAnualzonas.pdf")  
-xyplot(rsds~month|as.factor(zonas), group=data,data=rsds, type=c('o','l'), scales=list(rot=45),lwd=1.5, auto.key=TRUE, par.settings=myTheme,ylab='rsds[W/m^2]',
+pdf("dif_model_sat_cicloAnualzonas.pdf", width=7, height=4)  
+xyplot(SSR~month|as.factor(zonas), group=data,data=rsds, type=c('o','l'), scales=list(x=list(rot=45, cex=0.5)),lwd=1.5, auto.key=TRUE, grid=TRUE, layout=c(4,2), aspect=2/3, par.settings=myTheme,ylab='SSR[W/m^2]',
     panel = function(...) {
-        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
+      #  panel.grid()#col="grey", lwd=0.1, h=5, v=0)
         panel.abline(h=0, col='black', lwd=1)
                panel.xyplot(...)
        }
@@ -88,23 +88,20 @@ caerF <- melt(caerF, id.vars='zonas')
 cnoF <- melt(cnoF, id.vars='zonas')
 
 satF$data <- "sat"
-caerF$data <-"caer"
-cnoF$data <- "cno"
+caerF$data <-"aer"
+cnoF$data <- "no-aer"
 
 fixed <- rbind(satF,caerF,cnoF)
 
-fixed$zonas <- rep(c("1.AFRW","2.AFRE", "3.MIDE", "5.EURS", "6.EURW","7.EURC","4.EURE","8.BISL"),36)
+fixed$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),36)
+#rep(c("1.AFRW","2.AFRE", "3.MIDE", "5.EURS", "6.EURW","7.EURC","4.EURE","8.BISL"),36)
 names(fixed) <- c("zonas", "month", "fixed", "data")
 
-pdf("ciclosAnualsFIXED.pdf")
-xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type='l', lwd=2, scales=list(rot=45),ylab='fixed [kWh/kWp]', auto.key=TRUE,
-    panel = function(...) {
-        panel.grid(col="grey", lwd=0.1)
-        panel.abline(h=0, col='black', lwd=1)
-               panel.xyplot(...)
-       }
-)
- 
+pdf("ciclosAnualsFIXED.pdf", width=7, height=5)
+xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.5)),ylab='fixed productivity [kWh/kWp]', par.settings=myTheme, grid=TRUE, layout=c(4,2),auto.key=TRUE, aspect=2/3)
+
+dev.off()
+
 ## ONE PRODUCTIVITY ##
  
 satO <- sat_one_cicloMean_zones
