@@ -1,6 +1,10 @@
 ## Datos de radiacion de satelite y modelos para ver las diferencias por zonas
 
-library(raster)
+library(rasterVis)
+library(maps)
+library(maptools)
+library(mapdata)
+library(reshape2)
 
 ## raster de la máscara de regiones. Asigno proyección.
 
@@ -79,13 +83,73 @@ zonas <- raster(zonas_land)
 zonas <- setValues(zonas, values=zonas1[,1])
 
 writeRaster(zonas, filename='zonas.grd', overwrite=TRUE)
-
 ##represento el mapa de zonas
 
-my.at <- seq(1:8)
-myPal <- brewer.pal(9, 'Set1')
-myTheme <- rasterTheme(region = myPal)
+my.at <- seq(from=0, to=8, by=1)
+myPal <- brewer.pal(8, 'Set2')
+myTheme <- rasterTheme(region = myPal, alpha=0.7)
  
-pdf("zonasmejoradas2.pdf", height=4, width=5)
-levelplot(zonas,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme)
+data('worldMapEnv')
+
+## si cargo border es la definición antigua.
+
+load("/home/claudia/aod_and_PV/sim20032009/calc/border_aod.Rdata")
+
+pdf("zonasNew5.pdf", height=4, width=5)
+levelplot(zonas,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme, at=my.at)+ layer(sp.lines(border_aod, lwd=0.5))
 dev.off()
+
+## insert points:
+
+## tengo que crear un objeto spatialpoints con las coordenadas:
+
+lat <- c(44.08, 46.81, 30.86)
+lon <- c(5.06, 6.94, 34.78)
+
+mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
+bsrnlonlat <- spTransform(bsrnlonlat, mycrs)
+
+pdf("zonasPuntos2.pdf", height=4, width=5)
+levelplot(zonas,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme, at=my.at)+ layer(sp.lines(border_aod, lwd=0.5))+ layer(sp.points(bsrnlonlat, cex=0.5, pch=19, col='red'))
+dev.off()
+
+## inserto también la localización de las plantas.
+
+lat <- c(37.7,41.1)
+lon <- c(-5.7,1.19)
+
+mycrs <- CRS("+proj=lcc +lat_1=43.f +lat_0=43.f +lon_0=15.f +k=0.684241 +units=m +datum=WGS84 +no_defs")
+plantslonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
+plantslonlat <- spTransform(plantslonlat, mycrs)
+
+pdf("zonasPuntos3.pdf", height=4, width=5)
+levelplot(zonas,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme, at=my.at)+ layer(sp.lines(border_aod, lwd=0.5))+ layer(sp.points(bsrnlonlat, cex=0.5, pch=19, col='red'))+layer(sp.points(plantslonlat, cex=0.5, lwd=1, col='red'))
+dev.off()
+
+## categorical data
+
+z <- ratify(zonas)
+
+rat <- levels(z)[[1]]
+rat$zonas <- c('AFRW', 'AFRE', 'EMED', 'EURS', 'EURW','EURC','EURNE','BISL') 
+levels(z) <- rat
+
+pdf("zonasPuntos4.pdf", height=3, width=5)
+levelplot(z ,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme, at=my.at)+
+    layer(sp.lines(border_aod, lwd=0.5))+
+    layer(sp.points(bsrnlonlat, cex=0.5, pch=19, col='blue'))+ layer(sp.points(plantslonlat, cex=0.5, lwd=1, col='blue'))
+dev.off()
+
+pdf("zonasPuntosLabel.pdf", height=3, width=5)
+levelplot(z ,margin=FALSE, scales=list(draw=FALSE), par.settings=myTheme, at=my.at)+
+    layer(sp.lines(border, lwd=0.3))+
+    layer(sp.points(bsrnlonlat, cex=0.5, pch=19, col='brown1'))+ layer(sp.pointLabel(bsrnlonlat, labels=c("Carpentras", "Payerne","Sde Boker"), cex=0.5, pos='1')) + layer(sp.points(plantslonlat, cex=0.5, lwd=1, col='brown1'))+ layer(sp.pointLabel(plantslonlat, labels=c("Seville", "Tarragona"), cex=0.5, pos='1'))
+dev.off()
+
+
+
+
+####
+b <- seq(min(getValues(zonas), na.rm=TRUE), max(getValues(zonas), na.rm=TRUE),1)
+ 
