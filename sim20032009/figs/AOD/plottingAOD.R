@@ -131,15 +131,15 @@ seasonal <- stack(DJF, MAM, JJA, SON)
 names(seasonal) <- c("DJF", "MAM", "JJA", "SON")
   
 my.at <- seq(0, 0.6, 0.05)
-div.pal <- brewer.pal(n=11, 'RdYlGn')
-pal <- rev(div.pal)
-pal[1] <- "#FFFFFF"
+div.pal <- brewer.pal(n=7, 'YlGnBu')
+#pal <- rev(div.pal)
+#pal[1] <- "#FFFFFF"
 
 seasonal[seasonal[]>=0.6] <-0.6
 
-pdf("seasonalAOD.pdf")
+pdf("seasonalAOD.pdf", width=7, height=5)
 
-levelplot(seasonal, at=my.at,scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) + layer(sp.lines(border, lwd=0.2))+
+levelplot(seasonal, at=my.at,scales=list(draw=FALSE), par.settings=rasterTheme(region=div.pal)) + layer(sp.lines(border, lwd=0.2))+
     ## and the graticule
     layer(sp.lines(grat, lwd=0.2)) +
     layer(sp.text(coordinates(labsLon),
