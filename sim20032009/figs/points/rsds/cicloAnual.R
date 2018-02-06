@@ -89,11 +89,11 @@ ciclo <- fooC(carpentras20032009, bsrn_rsdsCiclo_caer, bsrn_rsdsCiclo_cno, bsrn_
 #ciclo <- melt(ciclo)
 
 ## PLOT
-
-myTheme <- custom.theme.2(pch = 19, cex =0.7)
+ 
+myTheme <- custom.theme.2(pch = 20, cex =0.5)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
-myTheme$superpose.symbol$pch <-c(20,8,5,10) 
+myTheme$superpose.symbol$pch <-c(20),8,5,10) 
 
 pdf('CarpentrasCicloAnual.pdf')
 xyplot(value~Var1, group=Var2, data=ciclo, type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
@@ -112,20 +112,35 @@ carpentras <- carpentras20032009[,-1]
 carpentras <- carpentras[,-13]
 station <- as.vector(t(carpentras))
 
-CAER <- bsrn_rsdsMon_caer[3,]
-CNO <- bsrn_rsdsMon_cno[3,]
-SAT <- bsrn_rsdsMon_sat[3,]
+aer <- bsrn_rsdsMon_caer[3,]
+no_aer <- bsrn_rsdsMon_cno[3,]
+sat <- bsrn_rsdsMon_sat[3,]
 
-names(station) <- names(CAER)
-Meses <- cbind(station, CAER, CNO, SAT)
+names(station) <- names(aer)
+Meses <- cbind(station, aer, no_aer, sat)
 
 Meses <- Meses-Meses[,1]
 Meses <- Meses[, -1]
+ 
 
-Meses <-melt(Meses)
+M2 <- zoo(Meses, order.by=index(Meses))
+tt <- as.yearmon(seq(as.Date("2003-01-01"), as.Date("2009-12-01"), "month"))
+index(M2) <- tt
 
-pdf("CarpentrasMesesDif.pdf")
-xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
+
+#Meses2 <- as.zoo(Meses, order.by=Meses$Var1)
+#M <- as.zoo(Meses, order.by=rownames(Meses))
+#Meses2 <- Meses2[,-1]
+
+    
+## pdf("CarpentrasMesesDif.pdf")
+## xyplot(value~Var1, group=Var2, data=Meses, scales=list(x=list(labels=zoo(Meses$Var1), cex=0.5, rot=45)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE)
+## dev.off()
+ 
+pdf("CarpentrasMesesDif.pdf", width=7, height=5)
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.5)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+)
+
 dev.off()
 
 ## CICLO
@@ -172,7 +187,7 @@ xyplot(value~Var1, group=Var2 , data=ciclo,type=c('o','l'), xlab='month', ylab='
 dev.off()
 
 ## Represento la diferencia
-
+ 
 sedebroker <- sedebroker20032009[,2:13]
 sedebroker[sedebroker[] == -999] <- NA
 station <- as.vector(t(sedebroker))
@@ -187,10 +202,21 @@ Meses <- cbind(station, CAER, CNO, SAT)
 Meses <- Meses-Meses[,1]
 Meses <- Meses[, -1]
 
-Meses <-melt(Meses)
+M2 <- zoo(Meses, order.by=index(Meses))
+tt <- as.yearmon(seq(as.Date("2003-01-01"), as.Date("2009-12-01"), "month"))
+index(M2) <- tt
 
-pdf("SedebokerMesesDif.pdf")
-xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
+names(M2) <- c("aer", "no-aer", "sat")
+#Meses <-melt(Meses)
+
+## pdf("SedebokerMesesDif.pdf")
+## xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
+## dev.off()
+
+pdf("SedebokerMesesDif.pdf", width=7, height=5)
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.5)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+)
+
 dev.off()
 
 sedeboker <- sedebroker20032009[,2:13]
@@ -251,11 +277,22 @@ Meses <- cbind(station, CAER, CNO, SAT)
 Meses <- Meses-Meses[,1]
 Meses <- Meses[, -1]
 
-Meses <-melt(Meses)
+M2 <- zoo(Meses, order.by=index(Meses))
+tt <- as.yearmon(seq(as.Date("2003-01-01"), as.Date("2009-12-01"), "month"))
+index(M2) <- tt
+
+names(M2) <- c("aer", "no-aer", "sat")
+#Meses <-melt(Meses)
 
 pdf("PayerneMesesDif.pdf")
 xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
 dev.off()
+
+pdf("PayerneMesesDif.pdf", width=7, height=5)
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.5)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+)
+dev.off()
+
 
 payerne <- payerne20032009[,2:13]
 payerne[payerne[] == -999] <- NA
