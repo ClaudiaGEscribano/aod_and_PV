@@ -219,3 +219,4 @@ xProdMno <- fooProd(xxno, timePeriod = 'month')
 
 xProdsat <- fooProd(xxSAT, timePeriod = 'year')
 xProdMsat <- fooProd(xxSAT, timePeriod = 'month')
+
