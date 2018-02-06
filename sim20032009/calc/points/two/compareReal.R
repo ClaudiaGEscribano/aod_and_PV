@@ -43,6 +43,7 @@ d <- melt(d)
 
 c <- c[-18] ## Este mes tiene muy pocos días.
 
+## Theme for plotting
 
 myTheme <- custom.theme.2()
 myTheme$strip.background$col <- 'transparent'
@@ -99,7 +100,7 @@ dev.off()
 ## Errores añadiendo el sat
 
 err2 <- cbind(c$CAER-c$REAL, c$CNO-c$REAL, c$SAT-c$REAL)
-names(err2) <- c("CAER", "CNO", "SAT")
+names(err2) <- c("AER", "NO-AER", "SAT")
 
 pdf("CarmonaDiferenciasabsolutas.pdf")
 xyplot(err2, scales = list(x = list(at = index(c), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
@@ -129,6 +130,54 @@ xyplot(CAER+CNO+SAT~REAL, data=c, type='p', ylab='MODEL', xlab='REAL', cex=1.3 ,
        }
 )
 dev.off()
+
+pdf("pruebasviolinTwo.pdf")
+bwplot(value~variable, groups=variable,data=dferrCarmona, ylab='Error kWh/kWp', xlab='model', ylim=c(-0.5,2),
+       panel = function(..., cex,box.ratio) {
+           panel.violin(..., col='transparent',
+ varwidth = FALSE, box.ratio = box.ratio)
+ panel.bwplot(..., col='black',
+ cex=2, pch='|', fill=c(blue,red,green), box.ratio =0.1)
+           panel.abline(h=0, col='grey')
+       },
+ par.settings = list(box.rectangle=list(col='black',lwd=2),
+ plot.symbol = list(pch='.', cex=4,lwd= 1)))
+dev.off()
+
+ 
+pdf("pruebasboxTwo.pdf")
+bwplot(value~variable, groups=variable,data=dferrCarmona, ylab='Error kWh/kWp', xlab='model',
+       panel = function(...,box.ratio) {
+       panel.bwplot(..., col='black',
+ cex=2, pch='|', fill='gray', box.ratio =1)
+ },
+ par.settings = list(box.rectangle=list(col='black',lwd=2),
+ plot.symbol = list(pch='.', cex=4,lwd= 1)))
+dev.off()
+
+
+## Un color para cada  grupo
+## defino los colores:
+
+pal <- brewer.pal(n=7, 'Set1')
+colors <- pal[1:3]
+key <- list(col=colors)
+
+red <- "#E41A1C"
+blue <- "#377EB8"
+green <- "#4DAF4A"
+
+
+pdf("a.pdf")
+bwplot(value~variable, groups=variable,data=dferrCarmona, ylab='Error kWh/kWp', xlab='model',
+       panel = function(...,box.ratio) {
+       panel.bwplot(..., col='black',
+ cex=2, pch='|', fill=c(blue,red,green), box.ratio =1)
+ },
+ par.settings = list(box.rectangle=list(col='black',lwd=2),
+ plot.symbol = list(pch='.', cex=4,lwd= 1)))
+dev.off()
+
 
 
 ## summary(err2)
