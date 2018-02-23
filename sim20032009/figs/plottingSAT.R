@@ -9,7 +9,7 @@ data(worldMapEnv)
 ## load the cmsaf daily data.
 
 ## datos del satélite en lat/lon
-SIS <- stack("../data/SAT/SISdm20032009_med44.nc", varname='SIS')
+SIS <- stack("/home/datos/aod/sim20032009/data/SAT/SISdm20032009_med44.nc", varname='SIS')
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 SIS <- setZ(SIS, idx)
 
@@ -115,14 +115,14 @@ dev.off()
 
 ## MODELO
  
-rsds <- stack("../data/C-AER/rsds_day_20032009.nc")
+rsds <- stack("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 rsds <- setZ(rsds, idx)
 
 ## defino el raster del modelo bien:
-
-rsdslat <- raster("../data/C-AER/rsds_day_20032009.nc", varname='lat')
-rsdslon <- raster("../data/C-AER/rsds_day_20032009.nc", varname='lon')
+ 
+rsdslat <- raster("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", varname='lat')
+rsdslon <- raster("/home/datos/aod/sim20032009/data/C-AER/rsds_day_20032009.nc", varname='lon')
 
 prsdslat <- rasterToPoints(rsdslat)
 prsdslon <- rasterToPoints(rsdslon)
@@ -207,7 +207,7 @@ levelplot(diferencia_caer_sat, margin=FALSE, scales=list(draw=FALSE),at=breaks, 
                   cex = 0.4))
 dev.off()
 
-dif_rel_caer_sat <- diferencia_caer_sat/rsdsYm
+#dif_rel_caer_sat <- diferencia_caer_sat/rsdsYm
 dif_rel_sat_caer <- diferencia_sat_caer/SISym
 dif_rel_caer_sat <- diferencia_caer_sat/SISym
 
@@ -255,14 +255,14 @@ dev.off()
 
 ## DIFERENCIA ENTRE SAT Y SIMULACIÓN C-NO
 
-rsdsno <- stack("../data/C-NO/rsds_no_day_20032009.nc")
+rsdsno <- stack("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc")
 idx <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
 rsdsno <- setZ(rsdsno, idx)
 
 ## defino el raster del modelo bien:
 
-rsdsnolat <- raster("../data/C-NO/rsds_no_day_20032009.nc", varname='lat')
-rsdsnolon <- raster("../data/C-NO/rsds_no_day_20032009.nc", varname='lon')
+rsdsnolat <- raster("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc", varname='lat')
+rsdsnolon <- raster("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc", varname='lon')
 
 prsdsnolat <- rasterToPoints(rsdsnolat)
 prsdsnolon <- rasterToPoints(rsdsnolon)
@@ -333,7 +333,7 @@ levelplot(diferencia_cno_sat, at=breaks,margin=FALSE, scales=list(draw=FALSE), p
                   cex = 0.6))
 dev.off()
 
-dif_rel_cno_sat <- diferencia_cno_sat/rsdsYmno
+#dif_rel_cno_sat <- diferencia_cno_sat/rsdsYmno
 dif_rel_sat_cno <- diferencia_sat_cno/SISym
 dif_rel_cno_sat <- diferencia_cno_sat/SISym
 
@@ -383,13 +383,13 @@ dev.off()
 s <- stack(diferencia_caer_sat, diferencia_cno_sat)
 names(s) <- c("CAER-SAT","CNO-SAT")
 s1 <- stack(dif_rel_caer_sat, dif_rel_cno_sat)
-names(s1) <- c("CAER-SAT","CNO-SAT")
-
+names(s1) <- c("AER/SAT","NO-AER/SAT")
 
 ## paleta
 div.pal <- brewer.pal(n=11, 'RdBu')
+div.pal=rev(div.pal)
 
-rng <- range(s1[], na.rm=TRUE)
+rng <- range(s[], na.rm=TRUE)
 nInt <- 9
 
 inc0 <- diff(rng)/nInt
@@ -398,8 +398,8 @@ inc <- abs(rng[1])/(n0+1/2)
 n1 <- ceiling((rng[2]/inc-1/2)+1)
 breaks <- seq(rng[1],by=inc,length=n0+1+n1)
 
-idxx <- findInterval(s1[], breaks, rightmost.closed=TRUE)
-mids <-tapply(s1[], idxx,median)
+idxx <- findInterval(s[], breaks, rightmost.closed=TRUE)
+mids <-tapply(s[], idxx,median)
 mx <- max(abs(breaks))
 
 break2pal <- function(x,mx,pal){
@@ -411,8 +411,33 @@ divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
 pal[2] <- "#FFFFFF"
 
-pdf("dif_rel_caer_sat_cno_20032009.pdf")
-levelplot(s1, at=breaks, scales=list(draw=FALSE), par.settings=rasterTheme(region=pal)) +
+
+my.at <- seq(-20, 70, 10)
+
+myColorkey <- list(at=breaks, ## where the colors change
+                   labels=list(
+                       at=my.at ## where to print labels
+                   ))
+
+#levelplot(r, at=my.at, colorkey=myColorkey)
+ 
+pdf("dif_rel_caer_sat_cno_sat20032009.pdf", width=7, height=4)
+levelplot(s1, at=breaks,layout=c(2,1), scales=list(draw=FALSE), par.settings=rasterTheme(region=pal), colorkey=list(space='bottom', at=my.at, labels=list(at=my.at.lab))) +
+    layer(sp.lines(border, lwd=0.5))+
+    ## and the graticule
+    layer(sp.lines(grat, lwd=0.5)) +
+    layer(sp.text(coordinates(labsLon),
+                  txt = parse(text = labsLon$lab),
+                  adj = c(1.1, -0.25),
+                  cex = 0.6)) +
+    layer(sp.text(coordinates(labsLat),
+                  txt = parse(text = labsLat$lab),
+                  adj = c(-0.25, -0.25),
+                  cex = 0.6))
+dev.off()
+
+pdf("dif_abs_caer_sat_cno_sat20032009.pdf", width=7, height=4)
+levelplot(s, at=breaks, layout=c(2,1), scales=list(draw=FALSE), par.settings=rasterTheme(region=pal),colorkey=list(space='bottom', at=breaks, labels=list(at=my.at))) +
     layer(sp.lines(border, lwd=0.5))+
     ## and the graticule
     layer(sp.lines(grat, lwd=0.5)) +

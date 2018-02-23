@@ -8,7 +8,7 @@ library(reshape2)
 ## DATA ##
 
 ## Datos de diferencias relativas del scri plotMap.R
-
+ 
 all <- stack(fixedDJF,oneDJF,twoDJF,fixedMAM,oneMAM,twoMAM,fixedJJA,oneJJA,twoJJA,fixedSON,oneSON,twoSON)
 
 ## by country usando zonal
@@ -85,17 +85,17 @@ SONbyc <- melt(byCountrySON)
 
 seasonByC <- rbind(DJFbyc, MAMbyc, JJAbyc, SONbyc)
 
-myTheme <- custom.theme.2(pch = 19, cex =0.7)
+myTheme <- custom.theme.2(pch = 19, cex =0.7, alpha=0.5)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
-myTheme$superpose.symbol$pch <-c(20,8,5) 
+myTheme$superpose.symbol$pch <-c(20)##,8,5) 
 myTheme$dot.symbol$lwd <- 2
 myTheme$plot.symbol$lwd <- 2
  
 pdf("pruebadotplot3.pdf", width=7, height=7)
-dotplot(COUNTRY~value|SEASON, group=variable, data=seasonByC, layout=c(4,1), par.settings=myTheme, scales=list(x=list(rot=45, cex=1), y=list(cex=0.6)), auto.key=TRUE, lwd=2)
+dotplot(reorder(COUNTRY, value)~value|SEASON,  group=variable, data=s, layout=c(4,1),par.settings=myTheme, scales=list(x=list(rot=45, cex=1), y=list(cex=0.6)), auto.key=TRUE, lwd=2)
 dev.off()
-
+  
 myTheme$superpose.symbol$pch <-1:3
 scales=list(y=list(rot=45), x=list(rot=45))
 

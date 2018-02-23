@@ -34,9 +34,9 @@ Done <- oneAERm-oneNOm
 twoAERm <- mean(twoAER)
 twoNOm <- mean(twoNO)
 Dtwo <- twoAERm-twoNOm
-
+ 
 S <- stack(Dfixed, Done, Dtwo)
-names(S) <- c("FIXED", "ONE", "TWO")
+names(S) <- c("Fixed", "One", "Two")
  
 pdf("useTday/dif_aer_no_all_Ym20032009.pdf", height=3, width=7)
 levelplot(S, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'),layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
@@ -62,7 +62,7 @@ reldiftwo <- (twoAERm-twoNOm)/twoNOm
 my.at <- seq(-0.20, 0, 0.02)
 
 S <- stack(reldiffixed, reldifone, reldiftwo)
-names(S) <- c("FIXED", "ONE", "TWO")
+names(S) <- c("Fixed", "One", "Two")
 
 pdf("useTday/RelDif_aer_no_all_Ym20032009.pdf", height=3, width=7)
 levelplot(S, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'), at=my.at, layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
@@ -105,7 +105,7 @@ twoNO <- setProj(twoDJFno)
 twoDJF <- (twoAER-twoNO)/twoNO
 
 DJF <- stack(fixedDJF, oneDJF, twoDJF)
-names(DJF) <- c("FIXED", "ONE", "TWO")
+names(DJF) <- c("Fixed", "One", "Two")
 
 
 my.at <- seq(-0.35, 0, 0.05)
@@ -147,7 +147,7 @@ twoNO <- setProj(twoMAMno)
 twoMAM <- (twoAER-twoNO)/twoNO
  
 MAM <- stack(fixedMAM, oneMAM, twoMAM)
-names(MAM) <- c("FIXED", "ONE", "TWO")
+names(MAM) <- c("Fixed", "One", "Two")
 
 pdf("useTday/RelDif_aer_no_MAM20032009.pdf", height=3, width=7)
 levelplot(MAM, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'), at=my.at, layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
@@ -186,7 +186,7 @@ twoNO <- setProj(twoJJAno)
 twoJJA <- (twoAER-twoNO)/twoNO
  
 JJA <- stack(fixedJJA, oneJJA, twoJJA)
-names(JJA) <- c("FIXED", "ONE", "TWO")
+names(JJA) <- c("Fixed", "One", "Two")
  
 pdf("useTday/RelDif_aer_no_JJA20032009.pdf", height=3, width=7)
 levelplot(JJA, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'), at=my.at, layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
@@ -223,9 +223,9 @@ twoSONno <- raster("../../calc/proj12abr/outputTciclo/SON_two_cno.grd")
 twoAER <- setProj(twoSONaer)
 twoNO <- setProj(twoSONno)
 twoSON <- (twoAER-twoNO)/twoNO
- 
+
 SON <- stack(fixedSON, oneSON, twoSON)
-names(SON) <- c("FIXED", "ONE", "TWO")
+names(SON) <- c("Fixed", "One", "Two")
 
 pdf("useTday/RelDif_aer_no_SON20032009.pdf", height=3, width=7)
 levelplot(SON, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'), at=my.at, layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
@@ -243,9 +243,12 @@ dev.off()
 ## TODOS
 
 s <- stack(fixedDJF, oneDJF, twoDJF, fixedMAM, oneMAM, twoMAM, fixedJJA, oneJJA, twoJJA, fixedSON, oneSON, twoSON)
- 
+
+nl <- nlayers(s)
+
 pdf("useTday/RelDif_aer_no_all20032009.pdf", height=5, width=4)
-levelplot(s, scales=list(draw=FALSE), names.attr=rep(c("FIXED","ONE","TWO"), 4), colorkey=list(space='bottom', title='kWh/kWp'), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.5))+
+              
+levelplot(s, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), rot=0), xlab=c("Fixed", "One", "Two"), names.attr=c(rep('', 12)), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.5))+
     layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
