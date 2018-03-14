@@ -1,11 +1,9 @@
-## Este script es para crear un raster con la temperatura diurna a partir de los datos de temperatura máxima y mínima del modelo.
+## Create a raster with daytime temperature from maximum, minimun and average daily temperature from models or satelite.
 
 library(raster)
 library(zoo)
 
-## La ecuación que vamos a seguir es la ecuación de la referencia de Crook et al.
-
-## tt <- seq(as.Date("2003-01-01"), as.Date("2009-12-31"), 'day')
+## The reference equation for daytime temp is in Crook et al.
 
 fooTday <- function(Tasmax, Tasmin, Tavg, tt){
 
@@ -29,7 +27,3 @@ fooTday <- function(Tasmax, Tasmin, Tavg, tt){
     names(a) <- tt
     return(a)
 }    
-
-##    DTR4[[which(as.yearmon(getZ(DTR4)) == "ene 2003")]]+Tmm[[which(getZ(Tmm) == "ene 2003")]]
-    
-##    DTR4[[which(as.yearmon(getZ(DTR4)) == "ene 2003")]]+Tmm[[which(getZ(Tmm) == "ene 2003")]]
