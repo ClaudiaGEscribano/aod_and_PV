@@ -13,6 +13,10 @@ library(zoo)
 ## datos 2003-2005
 load("../photocampa.Rdata")
 
+## porcentaje de días que faltan:
+
+length(photocampa$Yf[photocampa$Yf == 0.000000])*100/length(photocampa$Yf)
+
 ## simulados
 ##load("photocampaSimYf_month.Rdata")
 
@@ -112,6 +116,8 @@ pdf("modelsreal2.pdf")
 xyplot(d2$REAL~d2$CAER+d2$CNO, xlab='REAL', ylab='models')
 dev.off()
 
+## Cálculo de estimadores estadísticos
+
 rmse <- sqrt( mean( (c2$CAER - c2$REAL)^2, na.rm = TRUE) )
 ##  0.7471841
 
@@ -129,6 +135,22 @@ maeNO <- mean(c2$CNO - c2$REAL)
 maeSAT <- mean(c2$SAT-c2$REAL)
 ## 0.699568
 
+## correlations:
+
+cor1 <- cor(c2$REAL, c2$CAER)
+## 0.9389825
+cor2 <- cor(c2$REAL, c2$CNO)
+## 0.9467177
+cor3 <- cor(c2$REAL, c2$SAT)
+## 0.9402751
+
+## sdr 
+sdr1 <- sd(c2$CAER)/sd(c2$REAL)
+## 1.25709
+sdr2 <- sd(c2$CNO)/sd(c2$REAL)
+## 1.322594
+sdr3 <- sd(c2$SAT)/sd(c2$REAL)
+## 1.204076
 
 ## DIFERENCIAS ##
 

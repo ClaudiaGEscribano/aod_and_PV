@@ -6,12 +6,12 @@ library(zoo)
 
 ## MODELOS
 
-load("../../calc/points/bsrn_rsdsY_caer.Rdata")
-load("../../calc/points/bsrn_rsdsY_cno.Rdata")
+load("../../../calc/points/rsds/srn_rsdsY_caer.Rdata")
+load("../../../calc/points/rsds/bsrn_rsdsY_cno.Rdata")
 
 ## SATELITE
 
-load("../../calc/points/bsrn_rsdsY_sat.Rdata")
+load("../../../calc/points/rsds/bsrn_rsdsY_sat.Rdata")
 
 #########################################
 ## CARPENTRAS

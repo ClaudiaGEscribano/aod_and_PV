@@ -16,11 +16,21 @@ all <- stack(fixedDJF,oneDJF,twoDJF,fixedMAM,oneMAM,twoMAM,fixedJJA,oneJJA,twoJJ
 fixedDJFbyc <- zonal(fixedDJF, country, 'mean', na.rm=TRUE)
 fixedDJFbyc <- as.data.frame(fixedDJFbyc)
 
+## anual:
+
+Z <- zonal(S, country, 'mean', na.rm=TRUE)
+Z <- as.data.frame(S)
+
 ## o
 
 byCountry <- extract(all, boundaries_lcc, fun=mean, na.rm=TRUE, df=TRUE)
 row.names(byCountry) <- names(boundaries_lcc)
- 
+
+## anual
+
+byCountry <- extract(S, boundaries_lcc, fun=mean, na.rm=TRUE, df=TRUE)
+row.names(byCountry) <- names(boundaries_lcc)
+
 ##
 
 fixedDJFbyc <- zonal(fixedDJF, country, 'mean', na.rm=TRUE)
@@ -29,12 +39,15 @@ fixedDJFbyc <- zonal(fixedDJF, country, 'mean', na.rm=TRUE)
 
 num <- seq(length(byCountry$ID))
 for (i in num){
-country[which(getValues(country)== i )] <- byCountry[i,2]}
+    country[which(getValues(country)== i )] <- byCountry[i,4]}
 
-my.at <- seq(-0.25, 0, 0.02)
+s <- stack(fixed, one, two)
+names(s) <- c("Fixed", "One", "Two")
+ 
+my.at <- seq(-15, 0, 1)
 
-pdf("useTday/SON_two_bycountry.pdf", width=7, height=4)
-levelplot(country, scales=list(draw=FALSE), margin=FALSE,colorkey=list(space='right', title='kWh/kWp'), at=my.at)+ layer(sp.lines(border, lwd=0.5))+
+pdf("useTday/year_all_bycountry.pdf", width=7, height=4)
+levelplot(s, scales=list(draw=FALSE), margin=FALSE,colorkey=list(space='bottom'), layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
     layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
@@ -45,7 +58,7 @@ levelplot(country, scales=list(draw=FALSE), margin=FALSE,colorkey=list(space='ri
                   adj = c(-0.25, -0.25),
                   cex = 0.3))
 dev.off()
-
+ 
 
 ####
 

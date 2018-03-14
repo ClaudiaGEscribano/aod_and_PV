@@ -33,6 +33,33 @@ names(sat) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","
 names(aer) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 names(no_aer) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 
+## si quiero representar diferencias utilizo este código, si no, salto hasta después de ##
+
+aer_sat <- aer-sat
+aer_sat$zonas <- sat$zonas
+no_sat <- no_aer-sat
+no_sat$zonas <- sat$zonas
+
+aer <- melt(aer_sat, id.vars='zonas')
+noaer <- melt(no_sat, id.vars='zonas')
+
+aer$data <- "aer"
+noaer$data <-"no-aer"
+
+ssr <- rbind(aer, noaer)
+
+ssr$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),24)
+#rep(c("1.AFRW","2.AFRE", "3.MIDE", "5.EURS", "6.EURW","7.EURC","4.EURE","8.BISL"),36)
+names(ssr) <- c("zonas", "month", "ssr", "data")
+
+pdf("diferencia_mesesSSR.pdf", width=7, height=5)
+xyplot(ssr~month|as.factor(zonas), group=data, data=ssr, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.7)),ylab=list(label='SSR difference [W/m^2]', cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2),auto.key=TRUE, aspect=2/3)
+dev.off()
+
+###########################################
+
+
+
 sat <- melt(sat, id.vars='zonas')
 aer <- melt(aer, id.vars='zonas')
 no_aer<- melt(no_aer, id.vars='zonas')
@@ -82,6 +109,32 @@ cnoF <- as.data.frame(cnoF)
 names(satF) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 names(caerF) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 names(cnoF) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
+
+## Si quiero representar diferencias utilizo este trozo de codifo, si no, salto al siguiente
+
+caer_sat <- caerF-satF
+caer_sat$zonas <- satF$zonas
+cno_sat <- cnoF-satF
+cno_sat$zonas <- satF$zonas
+
+aer <- melt(caer_sat, id.vars='zonas')
+noaer <- melt(cno_sat, id.vars='zonas')
+
+aer$data <- "aer"
+noaer$data <-"no-aer"
+
+fixed <- rbind(aer, noaer)
+
+fixed$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),24)
+#rep(c("1.AFRW","2.AFRE", "3.MIDE", "5.EURS", "6.EURW","7.EURC","4.EURE","8.BISL"),36)
+names(fixed) <- c("zonas", "month", "fixed", "data")
+
+pdf("diferencia_mesesFIXED.pdf", width=7, height=5)
+xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.7)),ylab=list(label='daily productivity difference [kWh/kWp]', cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2),auto.key=TRUE, aspect=2/3)
+
+dev.off()
+
+############################################
 
 satF <- melt(satF, id.vars='zonas')
 caerF <- melt(caerF, id.vars='zonas')

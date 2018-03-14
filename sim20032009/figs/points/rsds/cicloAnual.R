@@ -41,6 +41,37 @@ foo <- function(data, model1, model2, model3, numstation){
 
 Meses <- foo(carpentras20032009,bsrn_rsdsMon_caer, bsrn_rsdsMon_cno,bsrn_rsdsMon_sat, 3)
 
+## cálculo de correlaciones y errores:
+
+rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+
+rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+
+rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##----------
+mae1 <- mean(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3])
+
+mae2 <- mean(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3])
+
+mae3 <- mean(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3])
+##-----------
+
+cor1 <- cor(Meses[Meses$Var2 == 'CAER', 3],Meses[Meses$Var2 == 'station', 3])
+
+cor2 <- cor(Meses[Meses$Var2 == 'CNO', 3],Meses[Meses$Var2 == 'station', 3])
+
+cor3 <- cor(Meses[Meses$Var2 == 'SAT', 3],Meses[Meses$Var2 == 'station', 3])
+
+##------------
+
+sdr1 <- sd(Meses[Meses$Var2 == 'CAER', 3])/sd(Meses[Meses$Var2 == 'station', 3])
+ 
+sdr2 <- sd(Meses[Meses$Var2 == 'CNO', 3])/sd(Meses[Meses$Var2 == 'station', 3])
+
+sdr3 <- sd(Meses[Meses$Var2 == 'SAT', 3])/sd(Meses[Meses$Var2 == 'station', 3])
+
+##----------------
+ 
 #carpentras <- carpentras20032009[,-1]
 #carpentras <- carpentras[,-13]
 #station <- as.vector(t(carpentras))
@@ -93,7 +124,7 @@ ciclo <- fooC(carpentras20032009, bsrn_rsdsCiclo_caer, bsrn_rsdsCiclo_cno, bsrn_
 myTheme <- custom.theme.2(pch = 20, cex =0.5)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
-myTheme$superpose.symbol$pch <-c(20),8,5,10) 
+myTheme$superpose.symbol$pch <-c(20) #,8,5,10) 
 
 pdf('CarpentrasCicloAnual.pdf')
 xyplot(value~Var1, group=Var2, data=ciclo, type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
@@ -138,7 +169,7 @@ index(M2) <- tt
 ## dev.off()
  
 pdf("CarpentrasMesesDif.pdf", width=7, height=5)
-xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.5)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.8), y=list(cex=0.9)),type=c('o','l'), xlab='date', ylab='SSR difference [W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
 )
 
 dev.off()
@@ -214,7 +245,7 @@ names(M2) <- c("aer", "no-aer", "sat")
 ## dev.off()
 
 pdf("SedebokerMesesDif.pdf", width=7, height=5)
-xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.5)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.9), y=list(cex=0.8)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
 )
 
 dev.off()
@@ -241,6 +272,36 @@ pdf('sedebokerCicloAnualDif.pdf')
 xyplot(value~Var1, group=Var2, data=ciclo, type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
 dev.off()
 
+
+## Cálculo de los estadísticos 
+
+rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+
+rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+
+rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+
+##----------
+mae1 <- mean(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+
+mae2 <- mean(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+
+mae3 <- mean(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+##-----------
+
+cor1 <- cor(Meses[Meses$Var2 == 'CAER', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
+
+cor2 <- cor(Meses[Meses$Var2 == 'CNO', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
+
+cor3 <- cor(Meses[Meses$Var2 == 'SAT', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
+
+##------------
+
+sdr1 <- sd(Meses[Meses$Var2 == 'CAER', 3], na.rm=TRUE)/sd(Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+ 
+sdr2 <- sd(Meses[Meses$Var2 == 'CNO', 3], na.rm=TRUE)/sd(Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+
+sdr3 <- sd(Meses[Meses$Var2 == 'SAT', 3], na.rm=TRUE)/sd(Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
 
 ############################################################
 ## PYRENE
@@ -289,7 +350,7 @@ xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6))
 dev.off()
 
 pdf("PayerneMesesDif.pdf", width=7, height=5)
-xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.5)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.8), y=list(cex=0.9)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
 )
 dev.off()
 
@@ -316,12 +377,32 @@ pdf('payerneCicloAnualDif.pdf')
 xyplot(value~Var1, group=Var2, data=ciclo, type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
 dev.off()
 
+## cálculo de los estadísticos:
 
+rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
 
+rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
 
+rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
 
+##----------
+mae1 <- mean(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
 
+mae2 <- mean(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
 
+mae3 <- mean(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+##-----------
 
+cor1 <- cor(Meses[Meses$Var2 == 'CAER', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
 
+cor2 <- cor(Meses[Meses$Var2 == 'CNO', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
 
+cor3 <- cor(Meses[Meses$Var2 == 'SAT', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
+
+##------------
+
+sdr1 <- sd(Meses[Meses$Var2 == 'CAER', 3], na.rm=TRUE)/sd(Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+ 
+sdr2 <- sd(Meses[Meses$Var2 == 'CNO', 3], na.rm=TRUE)/sd(Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+
+sdr3 <- sd(Meses[Meses$Var2 == 'SAT', 3], na.rm=TRUE)/sd(Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)

@@ -11,13 +11,13 @@ library(reshape2)
 
 names(Dif_caer_sat_zonas) <- c("2003", "2004", "2005", "2006", "2007", "2008", "2009", "zonas")
 aer <- melt(Dif_caer_sat_zonas, id.vars='zonas')
-aer$model <- rep("aer", length(caer[,1]))
+aer$model <- rep("aer", length(aer[,1]))
 
 names(aer) <- c("zonas", "year", "rsds", "model")
 
 names(Dif_cno_sat_zonas) <- c("2003", "2004", "2005", "2006", "2007", "2008", "2009", "zonas")
 no_aer <- melt(Dif_cno_sat_zonas, id.vars='zonas')
-no_aer$model <- rep("no-aer", length(cno[,1]))
+no_aer$model <- rep("no-aer", length(no_aer[,1]))
 
 names(no_aer) <- c("zonas", "year", "rsds", "model")
 
@@ -39,7 +39,7 @@ myTheme$strip.shingle$col <- 'transparent'
 myTheme$superpose.symbol$pch <-c(20) #,8) 
  
 pdf("dif_model_sat_zonas.pdf", height=4, width=7)  
-xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme, scales=list(x=list(rot=45), y=list(rot=0, cex=0.8)), aspect=2/3, layout=c(4,2), grid=TRUE, ylab='rsds[W/m^2]',
+xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme, scales=list(x=list(rot=45), y=list(rot=0, cex=0.8)), aspect=2/3, layout=c(4,2), grid=TRUE, ylab=expression('SSR difference [W/m^2]'),
     panel = function(...) {
 #        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
         panel.abline(h=0, col='black', lwd=1)

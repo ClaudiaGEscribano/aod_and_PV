@@ -58,14 +58,19 @@ dev.off()
 reldiffixed <-(fixedAERm-fixedNOm)/fixedNOm
 reldifone <- (oneAERm-oneNOm)/oneNOm
 reldiftwo <- (twoAERm-twoNOm)/twoNOm
- 
-my.at <- seq(-0.20, 0, 0.02)
+
+reldiffixed <- reldiffixed*100
+reldifone <- reldifone*100
+reldiftwo <- reldiftwo*100
+
+
+my.at <- seq(-20, 0, 2)
 
 S <- stack(reldiffixed, reldifone, reldiftwo)
 names(S) <- c("Fixed", "One", "Two")
 
 pdf("useTday/RelDif_aer_no_all_Ym20032009.pdf", height=3, width=7)
-levelplot(S, scales=list(draw=FALSE), colorkey=list(space='bottom', title='kWh/kWp'), at=my.at, layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
+levelplot(S, scales=list(draw=FALSE), colorkey=list(space='bottom'), at=my.at, layout=c(3,1))+ layer(sp.lines(border, lwd=0.5))+
     layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
@@ -244,11 +249,13 @@ dev.off()
 
 s <- stack(fixedDJF, oneDJF, twoDJF, fixedMAM, oneMAM, twoMAM, fixedJJA, oneJJA, twoJJA, fixedSON, oneSON, twoSON)
 
-nl <- nlayers(s)
+s1 <- s*100
+nl <- nlayers(s1)
 
-pdf("useTday/RelDif_aer_no_all20032009.pdf", height=5, width=4)
-              
-levelplot(s, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), rot=0), xlab=c("Fixed", "One", "Two"), names.attr=c(rep('', 12)), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.5))+
+my.at <- seq(-35,0,5)
+
+pdf("useTday/RelDif_aer_no_all20032009.pdf", height=4, width=4)
+levelplot(s1, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), rot=0), xlab=c("Fixed", "One", "Two"), names.attr=c(rep('', 12)), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.5))+
     layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),

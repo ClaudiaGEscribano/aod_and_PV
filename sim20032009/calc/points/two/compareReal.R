@@ -57,6 +57,8 @@ xyplot(c,screens=c(1,1,1), scales = list(x = list(at = index(c), rot=45)),
        type='b', par.settings=myTheme, superpose=TRUE, grid=TRUE)
 dev.off()
 
+## cálculos de los estimadores estadísticos:
+
 rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
 ## 0.2674931
 rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) )
@@ -72,6 +74,22 @@ maeNO <- mean(c$CNO - c$REAL)
 maeSAT <- mean(c$SAT - c$REAL)
 ## 0.550029
 
+## cor
+
+cor1 <- cor(c$CAER,c$REAL)
+##0.9910216
+cor2 <- cor(c$CNO,c$REAL)
+##0.9762674
+cor3 <- cor(c$SAT,c$REAL)
+##0.9894913
+
+## sdr
+sdr1 <- sd(c$CAER)/sd(c$REAL)
+## 0.9482534
+sdr2 <- sd(c$CNO)/sd(c$REAL)
+## 0.9143432
+sdr3 <- sd(c$SAT)/sd(c$REAL)
+## 1.027948
 
 ## DIFERENCIAS
 
