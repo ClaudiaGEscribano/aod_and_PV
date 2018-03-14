@@ -2,6 +2,8 @@
 ## irradiation values, and the vector of temperature values. See
 ## example below
 
+## This function gives PV productivity in monthly or yearly means:
+
 fooProd <- function(data, modeTrk = 'two', timePeriod = 'month'){
     ## Number of days
     n <- (length(data) - 1)/2
@@ -20,7 +22,7 @@ fooProd <- function(data, modeTrk = 'two', timePeriod = 'month'){
            )
 }
 
-## ## Example with a cell
+## Example with a cell
 
 ## iCell <- 10000
 ## xG <- SISS[iCell]
