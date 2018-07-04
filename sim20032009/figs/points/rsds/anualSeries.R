@@ -6,7 +6,7 @@ library(zoo)
 
 ## MODELOS
 
-load("../../../calc/points/rsds/srn_rsdsY_caer.Rdata")
+load("../../../calc/points/rsds/bsrn_rsdsY_caer.Rdata")
 load("../../../calc/points/rsds/bsrn_rsdsY_cno.Rdata")
 
 ## SATELITE
