@@ -4,3 +4,6 @@ This repository has the code of the paper (under review) that analyses the sensi
 
 Este repositorio contiene el código para hacer el análisis de los aerosoles climáticos sobre el Mediterráneo y sun influencia en la radiación solar y producción fotovoltaica.
 
+Notas:
+
+* Las carpetas cv/cor/sensitivityTas contienen scripts que no se utilizan en el artículo
