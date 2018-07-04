@@ -67,10 +67,21 @@ dev.off()
 c <- merge(xProd, xProdno, xProdsat, photocampaMon, all=FALSE)
 
 names(c) <- c("AER", "NO-AER","SAT", "REAL")
-pvmodels <- c[-15,1:3]
-pvobs <- c[-15,4]
+pvmodels <- c[,1:3]
+pvobs <- c[,4]
 
 errModel <- applyStats(pvmodels, pvobs)
+
+errModel
+
+##         mo       mm       sdo      sdm       mbe       mae      rmse      nmbe
+## 1 2.554084 3.165701 0.9125276 1.206845 0.6116167 0.6381562 0.7696081 0.2134457
+## 2 2.554084 3.375753 0.9125276 1.295179 0.8216691 0.8216691 0.9568768 0.2867511
+## 3 2.554084 3.194906 0.9125276 1.129301 0.6408218 0.6408218 0.7580114 0.2236379
+##       cvmbe      nmae     cvmae     nrmse    cvrmse        r2   tStone  model
+## 1 0.2394662 0.2227076 0.2498572 0.2685826 0.3013245 0.8686155 4.535457    AER
+## 2 0.3217080 0.2867511 0.3217080 0.3339367 0.3746458 0.9057974 5.804362 NO-AER
+## 3 0.2509008 0.2236379 0.2509008 0.2645355 0.2967841 0.8772840 5.482774    SAT
 
 pdf('targetTarragona2.pdf')
 targetDiagram(errModel, groups = model, par.settings=myTheme)

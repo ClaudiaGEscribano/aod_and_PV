@@ -133,7 +133,7 @@ dev.off()
 pdf("CarpentrasMeses.pdf")
 xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
 dev.off()
-
+ 
 ## Represento la DIFERENCIA
 
 ## MESES
@@ -169,7 +169,7 @@ index(M2) <- tt
 ## dev.off()
  
 pdf("CarpentrasMesesDif.pdf", width=7, height=5)
-xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.8), y=list(cex=0.9)),type=c('o','l'), xlab='date', ylab='SSR difference [W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=1), y=list(cex=1)),type=c('o','l'), xlab='date', ylab='SSR difference [W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
 )
 
 dev.off()
@@ -245,7 +245,7 @@ names(M2) <- c("aer", "no-aer", "sat")
 ## dev.off()
 
 pdf("SedebokerMesesDif.pdf", width=7, height=5)
-xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.9), y=list(cex=0.8)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=1), y=list(cex=1)),type=c('o','l'), xlab='date', ylab='SSR difference [W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
 )
 
 dev.off()
@@ -350,7 +350,7 @@ xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6))
 dev.off()
 
 pdf("PayerneMesesDif.pdf", width=7, height=5)
-xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=0.8), y=list(cex=0.9)),type=c('o','l'), xlab='date', ylab='[W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
+xyplot(M2, superpose=TRUE, aspect=2/3,scales=list(x=list(cex=1), y=list(cex=1)),type=c('o','l'), xlab='date', ylab='SSR difference [W/m^2]', par.settings=myTheme, auto.key=TRUE, grid=TRUE, abline=list(h=0, col='black')
 )
 dev.off()
 

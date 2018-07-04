@@ -254,9 +254,9 @@ nl <- nlayers(s1)
 
 my.at <- seq(-35,0,5)
 
-pdf("useTday/RelDif_aer_no_all20032009.pdf", height=4, width=4)
-levelplot(s1, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), rot=0), xlab=c("Fixed", "One", "Two"), names.attr=c(rep('', 12)), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.5))+
-    layer(sp.lines(grat, lwd=0.5)) +
+pdf("useTday/RelDif_aer_no_all20032009.pdf", height=6, width=6)
+levelplot(s1, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), rot=0, cex=0.7), xlab=list(c("Fixed", "One", "Two"),cex=0.7), names.attr=c(rep('', 12)), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.5))+
+    layer(sp.lines(grat, lwd=0.2)) +
     layer(sp.text(coordinates(labsLon),
                   txt = parse(text = labsLon$lab),
                   adj = c(1.1, -0.25),
@@ -264,7 +264,7 @@ levelplot(s1, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), 
     layer(sp.text(coordinates(labsLat),
                   txt = parse(text = labsLat$lab),
                   adj = c(-0.25, -0.25),
-                  cex = 0.3))
+                  cex = 0.2))
 dev.off()
-
+ 
 

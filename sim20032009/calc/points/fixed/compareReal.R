@@ -13,9 +13,44 @@ library(zoo)
 ## datos 2003-2005
 load("../photocampa.Rdata")
 
-## porcentaje de días que faltan:
+## nº de días de la serie
+n <- length(photocampa$Yf) ## 363
 
-length(photocampa$Yf[photocampa$Yf == 0.000000])*100/length(photocampa$Yf)
+## porcentaje de días que son 0 en la serie
+cero <- length(photocampa$Yf[photocampa$Yf == 0.000000])*100/length(photocampa$Yf)
+
+## nº de días por mes de la serie
+p <-aggregate(photocampa$Yf, by=as.yearmon, FUN=function(x) length(x)) 
+
+## elimino los meses que tienen menos de 15 días
+
+bad <- index(p[p<15])
+ 
+photcampa <- photocampa[as.yearmon(index(photocampa))!= "dic 2002" &
+                         as.yearmon(index(photocampa))!= "mar 2004" &
+                         as.yearmon(index(photocampa))!= "ago  2004" &
+                         as.yearmon(index(photocampa))!= "dic 2004" &
+                        as.yearmon(index(photocampa))!= "abr  2005" ]
+
+photocampa <- photcampa
+
+## nº de días tras 'clean the data'
+n <- length(photocampa$Yf) ## 315
+
+## porcentaje de días con valor 0:
+
+cero <- length(photocampa$Yf[photocampa$Yf == 0.000000])*100/length(photocampa$Yf) ## 8.571429
+
+## qué días son:
+
+dcero <- index(photocampa[photocampa$Yf == 0.000000])
+
+## elimino mayo de 2003 porque al quitar los ceros se queda con 13 días.
+
+photocampa <- photocampa[as.yearmon(index(photocampa))!= "may 2003"]
+dcero <- index(photocampa[photocampa$Yf == 0.000000])
+cero <- length(photocampa$Yf[photocampa$Yf == 0.000000])*100/length(photocampa$Yf) ## 8%
+
 
 ## simulados
 ##load("photocampaSimYf_month.Rdata")
@@ -27,6 +62,7 @@ lon <- 1.19
 photocampaMon <- aggregate(photocampa$Yf, by=as.yearmon, 'mean', na.rm=TRUE) 
 ## para comprobar si faltan días en el mes
 p <-aggregate(photocampa$Yf, by=as.yearmon, FUN=function(x) length(x))
+
 ## Para los meses en los que hay Nan en algún inversor, no hago la media, sino que tomo el único valor que hay.
 
 ## La energía Yf es la que tengo que comparar con los datos simulados. Algunos de los valores menores de lo esperado debido a paradas por mantenimiento, mejora etc. Por ello, podemos simular con la Gefectiva para compara con la simulada con datos del modelo.
@@ -97,60 +133,41 @@ dev.off()
 ## root mean squared error and mean absoulte error
 
 rmse <- sqrt( mean( (c$CAER - c$REAL)^2, na.rm = TRUE) )
-## 0.8215362
+## 0.7696081
 
 rmseNO <- sqrt( mean( (c$CNO - c$REAL)^2, na.rm = TRUE) ) 
-## 0.9933572
+## 0.9568768
 
 mae <- mean(c$CAER - c$REAL)
-## 0.6805526
+## 0.6116167
 maeNO <- mean(c$CNO - c$REAL)
-## 0.87685
+## 0.8216691
 
-## Elimino los datos de producción reales por debajo de 1
-
-d2 <- d[-15,] 
-c2 <- c[-15,]
+rmseSAT <- sqrt( mean( (c$SAT - c$REAL)^2, na.rm = TRUE) )
+##  0.7580114
+maeSAT <- mean(c$SAT-c$REAL)
+## 0.6408218
 
 pdf("modelsreal2.pdf")
 xyplot(d2$REAL~d2$CAER+d2$CNO, xlab='REAL', ylab='models')
 dev.off()
 
-## Cálculo de estimadores estadísticos
-
-rmse <- sqrt( mean( (c2$CAER - c2$REAL)^2, na.rm = TRUE) )
-##  0.7471841
-
-rmseNO <- sqrt( mean( (c2$CNO - c2$REAL)^2, na.rm = TRUE) ) 
-## 0.934339
-
-rmseSAT <- sqrt( mean( (c2$SAT - c2$REAL)^2, na.rm = TRUE) )
-##  0.7946017
-
-
-mae <- mean(c2$CAER - c2$REAL)
-## 0.6246872
-maeNO <- mean(c2$CNO - c2$REAL)
-## 0.8278974
-maeSAT <- mean(c2$SAT-c2$REAL)
-## 0.699568
-
 ## correlations:
 
-cor1 <- cor(c2$REAL, c2$CAER)
-## 0.9389825
-cor2 <- cor(c2$REAL, c2$CNO)
-## 0.9467177
-cor3 <- cor(c2$REAL, c2$SAT)
-## 0.9402751
+cor1 <- cor(c$REAL, c$CAER)
+##  0.9319954
+cor2 <- cor(c$REAL, c$CNO)
+## 0.9517339
+cor3 <- cor(c$REAL, c$SAT)
+## 0.9366344
 
 ## sdr 
-sdr1 <- sd(c2$CAER)/sd(c2$REAL)
-## 1.25709
-sdr2 <- sd(c2$CNO)/sd(c2$REAL)
-## 1.322594
-sdr3 <- sd(c2$SAT)/sd(c2$REAL)
-## 1.204076
+sdr1 <- sd(c$CAER)/sd(c$REAL)
+## 1.32253
+sdr2 <- sd(c$CNO)/sd(c$REAL)
+## 1.419331
+sdr3 <- sd(c$SAT)/sd(c$REAL)
+## 1.237553
 
 ## DIFERENCIAS ##
 
@@ -174,7 +191,7 @@ xyplot(err, scales = list(x = list(at = index(c), rot=45)), type='p', ylab='kWh/
 )
 dev.off()
 
-
+ 
 err2 <- cbind(c2$CAER-c2$REAL, c2$CNO-c$REAL)
 names(err2) <- c("CAER", "CNO")
 
@@ -191,17 +208,17 @@ xyplot(err2, scales = list(x = list(at = index(c2), rot=45)), type='p', ylab='kW
 dev.off()
 
 
-err3 <- cbind(c2$CAER-c2$REAL, c2$CNO-c2$REAL, c2$SAT-c2$REAL)
+err3 <- cbind(c$CAER-c$REAL, c$CNO-c$REAL, c$SAT-c$REAL)
 names(err3) <- c("AER", "NO-AER", "SAT")
 
 ## summary(err3)
-##      Index           CAER              CNO              SAT         
+##      Index           AER              NO-AER            SAT         
 ##  Min.   :2003   Min.   :-0.1725   Min.   :0.1975   Min.   :0.08237  
-##  1st Qu.:2003   1st Qu.: 0.4932   1st Qu.:0.6363   1st Qu.:0.44773  
-##  Median :2004   Median : 0.6453   Median :0.7749   Median :0.70663  
-##  Mean   :2004   Mean   : 0.6247   Mean   :0.8279   Mean   :0.69957  
-##  3rd Qu.:2004   3rd Qu.: 0.7331   3rd Qu.:1.0222   3rd Qu.:0.95380  
-## Max.   :2005   Max.   : 1.5825   Max.   :1.7752   Max.   :1.70121
+##  1st Qu.:2003   1st Qu.: 0.2762   1st Qu.:0.3554   1st Qu.:0.35750  
+##  Median :2004   Median : 0.5978   Median :0.7749   Median :0.47904  
+##  Mean   :2004   Mean   : 0.6116   Mean   :0.8217   Mean   :0.64082  
+##  3rd Qu.:2004   3rd Qu.: 0.7610   3rd Qu.:1.0624   3rd Qu.:0.84566  
+##  Max.   :2005   Max.   : 1.5825   Max.   :1.7752   Max.   :1.70121  
 
 pdf("PhotocampaDiferenciasabsolutas.pdf")
 xyplot(err3, scales = list(x = list(at = index(c2), rot=45)), type='b', ylab='kWh/m²', par.settings=myTheme,superpose=TRUE, grid=TRUE,
@@ -222,8 +239,9 @@ xyplot(value~variable, groups=variable,data=dferr2, type='p', ylab='Error kWh/kW
        }
 )
 dev.off()
-
-
+ 
+dferrPhoto <- dferr2
+    
 pdf("pruebasviolinFixed.pdf")
 bwplot(value~variable, groups=variable,data=dferrPhoto, ylab='Error kWh/kWp', xlab='model', ylim=c(-0.7,2.3),
        panel = function(..., cex,box.ratio) {
