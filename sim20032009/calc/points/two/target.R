@@ -3,6 +3,7 @@
 library(tdr)
 library(zoo)
 
+
 ######## ejemplos #########
  
 z <- zoo(cbind(pvModels, pvObs),
