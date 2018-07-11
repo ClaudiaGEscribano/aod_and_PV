@@ -43,17 +43,21 @@ Meses <- foo(carpentras20032009,bsrn_rsdsMon_caer, bsrn_rsdsMon_cno,bsrn_rsdsMon
 
 ## cálculo de correlaciones y errores:
 
-rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+rmse1 <- sqrt(sum((Meses[Meses$Var2 == 'CAER',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'CAER', 3])) ## 16.59329
 
-rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+rmse2 <- sqrt(sum((Meses[Meses$Var2 == 'CNO',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'CNO', 3])) ## 27.26103
 
-rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+rmse3 <- sqrt(sum((Meses[Meses$Var2 == 'SAT',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'SAT', 3])) ## 6.378948
+
 ##----------
-mae1 <- mean(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3])
+mae1 <- mean(abs(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE) ##13.96777
 
-mae2 <- mean(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3])
+mae2 <- mean(abs(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE) ##24.49333
 
-mae3 <- mean(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3])
+mae3 <- mean(abs(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE) ## 5.154899
 ##-----------
 
 cor1 <- cor(Meses[Meses$Var2 == 'CAER', 3],Meses[Meses$Var2 == 'station', 3])
@@ -275,18 +279,23 @@ dev.off()
 
 ## Cálculo de los estadísticos 
 
-rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)) ## 12.069
+rmse1 <- sqrt(sum((Meses[Meses$Var2 == 'CAER',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'CAER', 3])) ## 423.4792
 
-rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))## 13.19
+rmse2 <- sqrt(sum((Meses[Meses$Var2 == 'CNO',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'CNO', 3])) ## 436.5937
 
-rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE)) ## 12.24
+rmse3 <- sqrt(sum((Meses[Meses$Var2 == 'SAT',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'SAT', 3])) ## 430.156
 
 ##----------
-mae1 <- mean(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+ 
+mae1 <- mean(abs(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE)## 153.3061
+ 
+mae2 <- mean(abs(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE)## 174.0799
 
-mae2 <- mean(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+mae3 <- mean(abs(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE)## 149.8499
 
-mae3 <- mean(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
 ##-----------
 
 cor1 <- cor(Meses[Meses$Var2 == 'CAER', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
@@ -379,18 +388,21 @@ dev.off()
 
 ## cálculo de los estadísticos:
 
-rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+rmse1 <- sqrt(sum((Meses[Meses$Var2 == 'CAER',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'CAER', 3])) ## 21.20609
 
-rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse2 <- sqrt(mean((Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+rmse2 <- sqrt(sum((Meses[Meses$Var2 == 'CNO',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'CNO', 3])) ## 29.69635
 
-rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+##rmse3 <- sqrt(mean((Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
+rmse3 <- sqrt(sum((Meses[Meses$Var2 == 'SAT',3] - Meses[Meses$Var2 == 'station', 3])^2)/length(Meses[Meses$Var2 == 'SAT', 3])) ## 7.362819
 
 ##----------
-mae1 <- mean(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+mae1 <- mean(abs(Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE) ## 18.79345
 
-mae2 <- mean(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+mae2 <- mean(abs(Meses[Meses$Var2 == 'CNO', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE) ##27.32191
 
-mae3 <- mean(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3], na.rm=TRUE)
+mae3 <- mean(abs(Meses[Meses$Var2 == 'SAT', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE)## 6.425288
 ##-----------
 
 cor1 <- cor(Meses[Meses$Var2 == 'CAER', 3],Meses[Meses$Var2 == 'station', 3], use="complete.obs")
