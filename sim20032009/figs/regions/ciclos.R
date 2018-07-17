@@ -58,8 +58,6 @@ dev.off()
 
 ###########################################
 
-
-
 sat <- melt(sat, id.vars='zonas')
 aer <- melt(aer, id.vars='zonas')
 no_aer<- melt(no_aer, id.vars='zonas')
@@ -110,7 +108,7 @@ names(satF) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep",
 names(caerF) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 names(cnoF) <- c("zonas","Jan","Feb", "Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dec")
 
-## Si quiero representar diferencias utilizo este trozo de codifo, si no, salto al siguiente
+## Si quiero representar diferencias utilizo este trozo de codigo, si no, salto al siguiente
 
 caer_sat <- caerF-satF
 caer_sat$zonas <- satF$zonas
@@ -130,9 +128,20 @@ fixed$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"
 names(fixed) <- c("zonas", "month", "fixed", "data")
 
 pdf("diferencia_mesesFIXED.pdf", width=7, height=5)
-xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.7)),ylab=list(label='daily productivity difference [kWh/kWp]', cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2),auto.key=TRUE, aspect=2/3)
+xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.6)),ylab=list(label='Productivity difference [kWh/kWp]', cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2), auto.key=TRUE, aspect=(2/3),
+       panel=function(...){
+           panel.abline(h=0, col='black', lwd=2)
+           panel.key=list(space='right')
+           panel.xyplot(...)})
 
 dev.off()
+
+##key=list(space="right",
+##         lines=list(col=c("purple","darkgreen"), lty=c(3,2), lwd=6),
+##         text=list(c("Purple Line"," Dark-green Line"))
+##)
+
+
 
 ############################################
 

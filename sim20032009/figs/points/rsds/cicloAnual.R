@@ -41,6 +41,21 @@ foo <- function(data, model1, model2, model3, numstation){
 
 Meses <- foo(carpentras20032009,bsrn_rsdsMon_caer, bsrn_rsdsMon_cno,bsrn_rsdsMon_sat, 3)
 
+fooTarget <- function(data, model1, model2, model3, numstation){
+    dat <- data[2:13]
+    station <- as.vector(t(dat))
+
+    CAER <- model1[numstation,]
+    CNO <- model2[numstation,]
+    SAT <- model3[numstation,]
+    
+    names(station) <- names(CAER)
+    M <- cbind(CAER, CNO, SAT, station)
+    return(M)
+}
+ 
+MesesTarget <- fooTarget(carpentras20032009,bsrn_rsdsMon_caer, bsrn_rsdsMon_cno,bsrn_rsdsMon_sat, 3)
+
 ## cálculo de correlaciones y errores:
 
 ##rmse1 <- sqrt(mean((Meses[Meses$Var2 == 'CAER', 3]-Meses[Meses$Var2 == 'station', 3]), na.rm=TRUE))
@@ -213,6 +228,9 @@ ciclo <- fooC(sedebroker20032009, bsrn_rsdsCiclo_caer, bsrn_rsdsCiclo_cno, bsrn_
 
 Meses[Meses[]== -999] <- NA
 
+MesesTarget <- fooTarget(sedebroker20032009, bsrn_rsdsMon_caer, bsrn_rsdsMon_cno, bsrn_rsdsMon_sat, 7)
+MesesTarget[MesesTarget[]== -999] <- NA
+
 pdf("sedebrokerMeses.pdf")
 xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
 dev.off()
@@ -322,6 +340,9 @@ Meses <- foo(payerne20032009, bsrn_rsdsMon_caer, bsrn_rsdsMon_cno, bsrn_rsdsMon_
 ciclo <- fooC(payerne20032009, bsrn_rsdsCiclo_caer, bsrn_rsdsCiclo_cno, bsrn_rsdsCiclo_sat, 6)
 
 Meses[Meses[]== -999] <- NA
+
+MesesTarget <- fooTarget(payerne20032009, bsrn_rsdsMon_caer, bsrn_rsdsMon_cno, bsrn_rsdsMon_sat, 6)
+MesesTarget[MesesTarget[]== -999] <- NA
 
 pdf("payerneMeses.pdf")
 xyplot(value~Var1, group=Var2 , data=Meses, scales=list(x=list(rot=90, cex=0.6)),type=c('o','l'), xlab='month', ylab='[W/m2]', par.settings=myTheme, auto.key=TRUE)
