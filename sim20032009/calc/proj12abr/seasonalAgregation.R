@@ -5,7 +5,7 @@ library(raster)
 
 source('../../figs/proj13abr/projectInfo.R')
 ## Leo los datos de salida de las simulaciones que vaya a representar.
-
+ 
 fixedAER <- stack("outputTciclo/fixed_caer_monthlyProd_tday_20032009.grd")
 fixedNO <- stack("outputTciclo/fixed_cno_monthlyProd_tday_20032009.grd")
 oneAER <- stack("outputTciclo/oneAxis_caer_monthlyProd_tday_20032009.grd")
@@ -35,66 +35,68 @@ fooSeason <- function(data, a, b, c){
     c <- Meses[[c]]
 
     season <- stack(a,b,c)
-    season <- mean(season)
+##    season <- mean(season)
     return(season)
 }
+
+## comento la penultima linea de fooSeason y obtengo todos los meses en lugar de la media. en 'writeRaster' incluyo 'all' en el nombre del archivo de salida.
 
 ## winter ##
 
 invierno <- fooSeason(fixedAER, 1,2,12)
-writeRaster(invierno, filename='outputTciclo/DJF_fixed_caer.grd', overwrite=TRUE)
+writeRaster(invierno, filename='outputTciclo/DJF_all_fixed_caer.grd', overwrite=TRUE)
 invierno <- fooSeason(fixedNO, 1,2,12)
-writeRaster(invierno, filename='outputTciclo/DJF_fixed_cno.grd', overwrite=TRUE)
+writeRaster(invierno, filename='outputTciclo/DJF_all_fixed_cno.grd', overwrite=TRUE)
 invierno <- fooSeason(oneAER, 1,2,12)
-writeRaster(invierno, filename='outputTciclo/DJF_one_caer.grd', overwrite=TRUE)
+writeRaster(invierno, filename='outputTciclo/DJF_all_one_caer.grd', overwrite=TRUE)
 invierno <- fooSeason(oneNO, 1,2,12)
-writeRaster(invierno, filename='outputTciclo/DJF_one_cno.grd', overwrite=TRUE)
+writeRaster(invierno, filename='outputTciclo/DJF_all_one_cno.grd', overwrite=TRUE)
 invierno <- fooSeason(twoAER, 1,2,12)
-writeRaster(invierno, filename='outputTciclo/DJF_two_caer.grd', overwrite=TRUE)
+writeRaster(invierno, filename='outputTciclo/DJF_all_two_caer.grd', overwrite=TRUE)
 invierno <- fooSeason(twoNO, 1,2,12)
-writeRaster(invierno, filename='outputTciclo/DJF_two_cno.grd', overwrite=TRUE)
+writeRaster(invierno, filename='outputTciclo/DJF_all_two_cno.grd', overwrite=TRUE)
 
 ## spring ##
 
 primavera <- fooSeason(fixedAER, 3,4,5)
-writeRaster(primavera, filename='outputTciclo/MAM_fixed_caer.grd', overwrite=TRUE)
+writeRaster(primavera, filename='outputTciclo/MAM_all_fixed_caer.grd', overwrite=TRUE)
 primavera <- fooSeason(fixedNO, 3,4,5)
-writeRaster(primavera, filename='outputTciclo/MAM_fixed_cno.grd', overwrite=TRUE)
+writeRaster(primavera, filename='outputTciclo/MAM_all_fixed_cno.grd', overwrite=TRUE)
 primavera <- fooSeason(oneAER, 3,4,5)
-writeRaster(primavera, filename='outputTciclo/MAM_one_caer.grd', overwrite=TRUE)
+writeRaster(primavera, filename='outputTciclo/MAM_all_one_caer.grd', overwrite=TRUE)
 primavera <- fooSeason(oneNO, 3,4,5)
-writeRaster(primavera, filename='outputTciclo/MAM_one_cno.grd', overwrite=TRUE)
+writeRaster(primavera, filename='outputTciclo/MAM_all_one_cno.grd', overwrite=TRUE)
 primavera <- fooSeason(twoAER, 3,4,5)
-writeRaster(primavera, filename='outputTciclo/MAM_two_caer.grd', overwrite=TRUE) 
+writeRaster(primavera, filename='outputTciclo/MAM_all_two_caer.grd', overwrite=TRUE) 
 primavera <- fooSeason(twoNO, 3,4,5)
-writeRaster(primavera, filename='outputTciclo/MAM_two_cno.grd', overwrite=TRUE)
+writeRaster(primavera, filename='outputTciclo/MAM_all_two_cno.grd', overwrite=TRUE)
  
 ## summer ##
 
 verano <- fooSeason(fixedAER, 6,7,8)
-writeRaster(verano, filename='outputTciclo/JJA_fixed_caer.grd', overwrite=TRUE)
+writeRaster(verano, filename='outputTciclo/JJA_all_fixed_caer.grd', overwrite=TRUE)
 verano <- fooSeason(fixedNO, 6,7,8)
-writeRaster(verano, filename='outputTciclo/JJA_fixed_cno.grd', overwrite=TRUE)
+writeRaster(verano, filename='outputTciclo/JJA_all_fixed_cno.grd', overwrite=TRUE)
 verano <- fooSeason(oneAER, 6,7,8)
-writeRaster(verano, filename='outputTciclo/JJA_one_caer.grd', overwrite=TRUE)
+writeRaster(verano, filename='outputTciclo/JJA_all_one_caer.grd', overwrite=TRUE)
 verano <- fooSeason(oneNO, 6,7,8)
-writeRaster(verano, filename='outputTciclo/JJA_one_cno.grd', overwrite=TRUE)
+writeRaster(verano, filename='outputTciclo/JJA_all_one_cno.grd', overwrite=TRUE)
 verano <- fooSeason(twoAER, 6,7,8)
-writeRaster(verano, filename='outputTciclo/JJA_two_caer.grd', overwrite=TRUE) 
+writeRaster(verano, filename='outputTciclo/JJA_all_two_caer.grd', overwrite=TRUE) 
 verano <- fooSeason(twoNO, 6,7,8)
-writeRaster(verano, filename='outputTciclo/JJA_two_cno.grd', overwrite=TRUE)
+writeRaster(verano, filename='outputTciclo/JJA_all_two_cno.grd', overwrite=TRUE)
 
 ## autumn ##
 
 otom  <- fooSeason(fixedAER, 9,10,11)
-writeRaster(otom, filename='outputTciclo/SON_fixed_caer.grd', overwrite=TRUE)
+writeRaster(otom, filename='outputTciclo/SON_all_fixed_caer.grd', overwrite=TRUE)
 otom <- fooSeason(fixedNO, 9,10,11)
-writeRaster(otom, filename='outputTciclo/SON_fixed_cno.grd', overwrite=TRUE)
+writeRaster(otom, filename='outputTciclo/SON_all_fixed_cno.grd', overwrite=TRUE)
 otom <- fooSeason(oneAER, 9,10,11)
-writeRaster(otom, filename='outputTciclo/SON_one_caer.grd', overwrite=TRUE)
+writeRaster(otom, filename='outputTciclo/SON_all_one_caer.grd', overwrite=TRUE)
 otom <- fooSeason(oneNO, 9,10,11)
-writeRaster(otom, filename='outputTciclo/SON_one_cno.grd', overwrite=TRUE)
+writeRaster(otom, filename='outputTciclo/SON_all_one_cno.grd', overwrite=TRUE)
 otom <- fooSeason(twoAER, 9,10,11)
-writeRaster(otom, filename='outputTciclo/SON_two_caer.grd', overwrite=TRUE) 
+writeRaster(otom, filename='outputTciclo/SON_all_two_caer.grd', overwrite=TRUE) 
 otom <- fooSeason(twoNO, 9,10,11)
-writeRaster(otom, filename='outputTciclo/SON_two_cno.grd', overwrite=TRUE)
+writeRaster(otom, filename='outputTciclo/SON_all_two_cno.grd', overwrite=TRUE)
