@@ -35,7 +35,7 @@ AER <- AER*24
 NO <- fooproj("/home/datos/aod/sim20032009/data/C-NO/rsds_no_day_20032009.nc", crslcc, 'rsds')
 NO <- NO*24 
 
-## Si la función tiene proyeccion regular:
+## Si el raster tiene proyeccion regular:
 
 fooprojRegular <- function(rutadatos, proj, var){
     s <- stack(rutadatos, varname=var)
@@ -78,7 +78,7 @@ Tasmax <- '/home/datos/aod/sim20032009/data/TEMP/tx_0.50_20032009.nc'
 Tasmin <- '/home/datos/aod/sim20032009/data/TEMP/tn_0.50_20032009.nc'
 Tavg <- '/home/datos/aod/sim20032009/data/TEMP/tg_0.50_20032009.nc' 
 
-## función ciclo diurnoi de temp para los datos de ECAD
+## función ciclo diurno de temp para los datos de ECAD
 
 fooTdayREG <- function(Tasmax, Tasmin, Tavg, tt){
 
@@ -105,7 +105,7 @@ fooTdayREG <- function(Tasmax, Tasmin, Tavg, tt){
 
 TasSAT <- fooTdayREG(Tasmax, Tasmin, Tavg, tt)
 
-## Asigno la proyección a TAS
+## Asigno la proyección a la temperatura: TAS
 
 projection(Tas) <- projection(AER)
 extent(Tas) <- extent(AER)
@@ -116,7 +116,7 @@ extent(Tasno) <- extent(AER)
 projection(TasSAT) <- projection(sissat)
 extent(TasSAT) <- extent(sissat)
 
-##
+## Asigno nombres como serie temporal
 
 names(AER) <- tt
 names(NO) <- tt
@@ -155,6 +155,7 @@ bsrnlonlat <- SpatialPoints(cbind(lon,lat), proj4string = CRS("+proj=longlat +da
 
 sisSAT <- extract(SAT, bsrnlonlat, method="simple")
 tasSAT <- extract(TasSAT, bsrnlonlat, method="simple")
+
 #######################################
 ## FUNCIÓN CALCULO DE PRODUCTIVIDAD
 #######################################
@@ -175,7 +176,7 @@ Pg <- Nmp*Nms*(Vmn*Imn)
 
 Pinv <- 25000
 Vmin <- 405
-
+ 
 fooProd <- function(data, modeTrk = 'two', timePeriod = 'month'){
     ## Number of days
     n <- (length(data) - 1)/2

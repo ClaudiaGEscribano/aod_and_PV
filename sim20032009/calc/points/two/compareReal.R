@@ -2,7 +2,7 @@ library(raster)
 library(rasterVis)
 library(zoo)
 
-## This script will compare real PV data with the assessment with satelite data.
+## This script will compare real PV data with the assessment with satelite and models data.
 
 ## ## load the real data ## ##
 ##############################
@@ -37,7 +37,7 @@ xProdsat <- zoo(xProdMsat, order.by=as.yearmon(tt))
 
 c <- merge(carmonaMon, xProd, xProdno, xProdsat, all=FALSE)#, carmona_twoMeses_cno, carmona_twoMeses_sat, carmona_aod, all=FALSE)
 names(c) <- c("REAL", "CAER", "CNO","SAT") ##"AOD")
-
+ 
 d <- as.data.frame(c)
 d <- melt(d)
 
@@ -150,7 +150,7 @@ xyplot(CAER+CNO+SAT~REAL, data=c, type='p', ylab='MODEL', xlab='REAL', cex=1.3 ,
 dev.off()
 
 pdf("pruebasviolinTwo.pdf")
-bwplot(value~variable, groups=variable,data=dferrCarmona, ylab='Error kWh/kWp', xlab='model', ylim=c(-0.5,2),
+bwplot(value~variable, groups=variable,data=dferr2, ylab='Error kWh/kWp', xlab='model', ylim=c(-0.5,2),
        panel = function(..., cex,box.ratio) {
            panel.violin(..., col='transparent',
  varwidth = FALSE, box.ratio = box.ratio)
@@ -187,7 +187,7 @@ green <- "#4DAF4A"
 
 
 pdf("a.pdf")
-bwplot(value~variable, groups=variable,data=dferrCarmona, ylab='Error kWh/kWp', xlab='model',
+bwplot(value~variable, groups=variable,data=dferr2, ylab='Error kWh/kWp', xlab='model',
        panel = function(...,box.ratio) {
        panel.bwplot(..., col='black',
  cex=2, pch='|', fill=c(blue,red,green), box.ratio =1)
