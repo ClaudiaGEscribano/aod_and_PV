@@ -51,7 +51,7 @@ ssr <- rbind(aer, noaer)
 ssr$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),24)
 #rep(c("1.AFRW","2.AFRE", "3.MIDE", "5.EURS", "6.EURW","7.EURC","4.EURE","8.BISL"),36)
 names(ssr) <- c("zonas", "month", "ssr", "data")
-
+ 
 pdf("diferencia_mesesSSR.pdf", width=7, height=5)
 xyplot(ssr~month|as.factor(zonas), group=data, data=ssr, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.7)),ylab=list(label='SSR difference [W/m^2]', cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2),auto.key=TRUE, aspect=2/3)
 dev.off()
@@ -71,7 +71,7 @@ rsds <- rbind(sat,aer,no_aer)
 rsds$zonas <-  rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"),36) 
 names(rsds) <- c("zonas", "month", "SSR", "data")
 
-myTheme <- custom.theme.2(cex=0.5, alpha=0.7)
+myTheme <- custom.theme.2(cex=0.5, alpha=0.8)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
 myTheme$superpose.symbol$pch <-c(20) #,8,5) 
@@ -128,7 +128,7 @@ fixed$zonas <- rep(c("AFRE","AFRW", "MEDE", "EURS", "EURW","EURC","EURNE","BISL"
 names(fixed) <- c("zonas", "month", "fixed", "data")
 
 pdf("diferencia_mesesFIXED.pdf", width=7, height=5)
-xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.6)),ylab=list(label='Productivity difference [kWh/kWp]', cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2), auto.key=TRUE, aspect=(2/3),
+xyplot(fixed~month|as.factor(zonas), group=data, data=fixed, type=c('o','l'), lwd=2, scales=list(x=list(rot=45, cex=0.6)),ylab=list(label=expression('Productivity difference ' (kWh/kWp)), cex=0.75), par.settings=myTheme, grid=TRUE, layout=c(4,2), auto.key=TRUE, aspect=(2/3),
        panel=function(...){
            panel.abline(h=0, col='black', lwd=2)
            panel.key=list(space='right')

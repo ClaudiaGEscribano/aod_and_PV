@@ -39,7 +39,7 @@ myTheme$strip.shingle$col <- 'transparent'
 myTheme$superpose.symbol$pch <-c(20) #,8) 
  
 pdf("dif_model_sat_zonas.pdf", height=4, width=7)  
-xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme, scales=list(x=list(rot=45), y=list(rot=0, cex=0.8)), aspect=2/3, layout=c(4,2), grid=TRUE, ylab=expression('SSR difference [W/m^2]'),
+xyplot(rsds~year|as.factor(zonas), group=model,data=rsds_dif, type=c('o','l'), lwd=1.5, auto.key=TRUE, par.settings=myTheme, scales=list(x=list(rot=45), y=list(rot=0, cex=0.8)), aspect=2/3, layout=c(4,2), grid=TRUE, ylab=expression('SSR difference ' (W/m^2)),
     panel = function(...) {
 #        panel.grid()#col="grey", lwd=0.1, h=5, v=0)
         panel.abline(h=0, col='black', lwd=1)

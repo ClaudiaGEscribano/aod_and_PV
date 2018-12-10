@@ -24,7 +24,7 @@ stackWilc <- function(s1, s2) {
     y <- v[(split+1):(2*split)]
     if (is.na(v) == TRUE) { v <-  NA}
     else {
-    t.test(x, y, exact=TRUE)$p.value
+    wilcox.test(x, y, exact=TRUE)$p.value
   }}
   s <- stack(s1, s2) 
   split <- nlayers(s)/2
@@ -44,9 +44,9 @@ reldiffixed <-(fixedAERm-fixedNOm)/fixedNOm
 reldiffixed <- reldiffixed*100
 
 ## 4. Defining classes of the qualitative variable
- 
+
 a <- which(pvalue[] >= 0.05)
- 
+
 classes <- levels(factor(pvalue[] >= 0.05))
 nClases <- length(classes)
 
@@ -87,7 +87,7 @@ pList <- lapply(1:nClasses, function(i){
 })
 
 p <- Reduce('+', pList)
- 
+
 ## 6. Creo una malla con los datos de significancia y superpongo.
 
 sig <- pvalueclass
@@ -110,7 +110,7 @@ https://stackoverflow.com/questions/28597149/add-xy-points-to-raster-map-generat
 ## Try to plot for the 3 types in the same graph.
 
 ## 2.1 cargo los datos de los tres seguidores
- 
+
 fixedAER <- stack("../../calc/proj12abr/outputTciclo/fixed_caer_yearlyProd_tday_20032009.grd")
 fixedNO <- stack("../../calc/proj12abr/outputTciclo/fixed_cno_yearlyProd_tday_20032009.grd")
 oneAER <- stack("../../calc/proj12abr/outputTciclo/oneAxis_caer_yearlyProd_tday_20032009.grd")
@@ -169,7 +169,7 @@ pvpoints <- lapply(pv, FUN=function(i){
 })
 
                    
-pdf("useTday/dif_aer_no_all_Ym20032009SIGt.pdf", height=3, width=7)
+pdf("useTday/dif_aer_no_all_Ym20032009SIG3.pdf", height=3, width=7)
 levelplot(S, scales=list(draw=FALSE), colorkey=list(space='bottom'),layout=c(3,1), alpha.regions=1)+ layer(sp.lines(border, lwd=0.5))+
     layer(sp.lines(grat, lwd=0.5)) +
     layer(sp.text(coordinates(labsLon),
@@ -506,7 +506,7 @@ nl <- nlayers(s1)
 
 my.at <- seq(-30,0,5)
 
-pdf("useTday/RelDif_aer_no_all20032009SIGt.pdf", height=6, width=6)
+pdf("useTday/RelDif_aer_no_all20032009SIG2.pdf", height=6, width=6)
 levelplot(s1, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), rot=0, cex=0.7), xlab=list(c("Fixed", "One", "Two"),cex=0.7), names.attr=c(rep('', 12)), at=my.at, layout=c(3,4))+ layer(sp.lines(border, lwd=0.3))+
     layer(sp.lines(grat, lwd=0.1)) +
     layer(sp.text(coordinates(labsLon),
@@ -517,18 +517,18 @@ levelplot(s1, scales=list(draw=FALSE), ylab=list(c("SON", "JJA", "MAM", "DJF"), 
                   txt = parse(text = labsLat$lab),
                   adj = c(-0.25, -0.25),
                   cex = 0.2))+
-    layer(sp.points(pvpointsDJF[[1]], pch=20, cex=0.1, alpha=0.5,lwd=0.2, col='black'),columns=1, rows=1)+
-    layer(sp.points(pvpointsDJF[[2]], pch=20, cex=0.1, alpha=0.5, lwd=0.2, col='black'), columns=2, rows=1)+
-    layer(sp.points(pvpointsDJF[[3]], pch=20, cex=0.1, alpha=0.5, lwd=0.2, col='black'), columns=3, rows=1)+
-    layer(sp.points(pvpointsMAM[[1]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.2), columns=1, rows=2)+
-    layer(sp.points(pvpointsMAM[[2]], pch=20, cex=0.1, alpha=0.5, col='black', lwd=0.2), columns=2, rows=2)+
-    layer(sp.points(pvpointsMAM[[3]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.2), columns=3, rows=2)+
-    layer(sp.points(pvpointsJJA[[1]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.2), columns=1, rows=3)+
-    layer(sp.points(pvpointsJJA[[2]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.1), columns=2, rows=3)+
-    layer(sp.points(pvpointsJJA[[3]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.1), columns=3, rows=3)+
-    layer(sp.points(pvpointsSON[[1]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.1), columns=1, rows=4)+
-    layer(sp.points(pvpointsSON[[2]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.1), columns=2, rows=4)+
-    layer(sp.points(pvpointsSON[[3]], pch=20, cex=0.1, alpha=0.5, col='black',lwd=0.1), columns=3, rows=4)
+    layer(sp.points(pvpointsDJF[[1]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.2), columns=1, rows=1)+
+    layer(sp.points(pvpointsDJF[[2]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.2), columns=2, rows=1)+
+    layer(sp.points(pvpointsDJF[[3]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.2), columns=3, rows=1)+
+    layer(sp.points(pvpointsMAM[[1]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.2), columns=1, rows=2)+
+    layer(sp.points(pvpointsMAM[[2]], pch=20, cex=0.1, alpha=0.8, col='darkgrey', lwd=0.2), columns=2, rows=2)+
+    layer(sp.points(pvpointsMAM[[3]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.2), columns=3, rows=2)+
+    layer(sp.points(pvpointsJJA[[1]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.2), columns=1, rows=3)+
+    layer(sp.points(pvpointsJJA[[2]], pch=20, cex=0.1, alpha=0.8, col='darkgrey',lwd=0.1), columns=2, rows=3)+
+    layer(sp.points(pvpointsJJA[[3]], pch=20, cex=0.1, alpha=0.8, col='black',lwd=0.1), columns=3, rows=3)+
+    layer(sp.points(pvpointsSON[[1]], pch=20, cex=0.1, alpha=0.8, col='black',lwd=0.1), columns=1, rows=4)+
+    layer(sp.points(pvpointsSON[[2]], pch=20, cex=0.1, alpha=0.8, col='black',lwd=0.1), columns=2, rows=4)+
+    layer(sp.points(pvpointsSON[[3]], pch=20, cex=0.1, alpha=0.8, col='black',lwd=0.1), columns=3, rows=4)
  
 dev.off()
 
